@@ -1,4 +1,7 @@
 {
+  "email": "info@moom.be",
+  "date": "2025-10-10",
+  "comment": "Test depuis Render"
   "name": "moom-backend",
   "version": "1.0.0",
   "type": "module",
