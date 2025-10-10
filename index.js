@@ -1,16 +1,3 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import reservations from "./routes/reservations.js";
-
-dotenv.config();
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-app.use("/api/reservations", reservations);
-
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
