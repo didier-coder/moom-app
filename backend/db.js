@@ -1,17 +1,19 @@
 import { createClient } from "@supabase/supabase-js";
-import supabase from "../db.js";
 
-console.log("🔍 [db.js] SUPABASE_URL =", process.env.SUPABASE_URL);
-console.log("🔍 [db.js] SUPABASE_KEY =", process.env.SUPABASE_ANON_KEY ? "✅ Présente" : "❌ Manquante");
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
-if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
-  throw new Error("❌ Variables Supabase manquantes dans db.js !");
+if (!supabaseUrl || !supabaseKey) {
+  console.error("❌ Variables Supabase manquantes dans db.js !");
+  throw new Error("❌ Variables Supabase manquantes !");
 }
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
+console.log("🔍 [db.js] SUPABASE_URL =", supabaseUrl);
+console.log(
+  "🔍 [db.js] SUPABASE_KEY =",
+  supabaseKey ? "✅ Présente" : "❌ Manquante"
 );
 
-export default supabase;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
+export default supabase;
