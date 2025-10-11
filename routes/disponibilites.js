@@ -1,5 +1,5 @@
 import express from "express";
-import { supabase } from "../supabaseClient.js";
+import supabase from "../db.js";
 import dotenv from "dotenv";
 
 dotenv.config();
