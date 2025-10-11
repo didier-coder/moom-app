@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import supabase from "../db.js";
 
 console.log("🔍 [db.js] SUPABASE_URL =", process.env.SUPABASE_URL);
 console.log("🔍 [db.js] SUPABASE_KEY =", process.env.SUPABASE_ANON_KEY ? "✅ Présente" : "❌ Manquante");
