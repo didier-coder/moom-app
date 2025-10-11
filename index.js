@@ -1,41 +1,29 @@
-console.log("🔑 SUPABASE URL:", process.env.NEXT_PUBLIC_SUPABASE_URL ? "✅ Chargée" : "❌ Manquante");
-console.log("🔑 SUPABASE KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "✅ Chargée" : "❌ Manquante");
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
 
-import express from 'express';
-import cors from 'cors';
-//import dotenv from 'dotenv';
-import reservations from './routes/reservations.js';
-import disponibilites from './routes/disponibilites.js';
-app.use('/api/disponibilites', disponibilites);
+// ⚠️ Ne pas activer dotenv sur Render (optionnel si tu l’utilises localement)
+// dotenv.config();
 
+import reservations from "./routes/reservations.js";
+import disponibilites from "./routes/disponibilites.js";
 
-//dotenv.config();
-
+// --- Création du serveur Express ---
 const app = express();
+
 app.use(cors());
-
-// ✅ Ajoute ceci avant app.use(express.json())
-app.use(express.text({ type: '*/*' }));
-app.use((req, res, next) => {
-  try {
-    if (typeof req.body === 'string' && req.body.trim().startsWith('{')) {
-      req.body = JSON.parse(req.body);
-    }
-  } catch {
-    // si ce n’est pas du JSON, on laisse comme tel
-  }
-  next();
-});
-
-// ✅ puis garde ton JSON parser habituel
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send(`<h1>🚀 API MOOM – Backend opérationnel ✅</h1>`);
-});
+// --- Routes ---
+app.use("/api/reservations", reservations);
+app.use("/api/disponibilites", disponibilites);
 
-app.use('/api/reservations', reservations);
+// --- Vérification Supabase ---
+console.log("🔑 SUPABASE URL:", process.env.SUPABASE_URL ? "✅ Présente" : "❌ Manquante");
+console.log("🔑 SUPABASE KEY:", process.env.SUPABASE_ANON_KEY ? "✅ Présente" : "❌ Manquante");
 
+// --- Démarrage du serveur ---
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Backend actif sur le port ${PORT}`));
-
+app.listen(PORT, () => {
+  console.log(`✅ Serveur actif sur le port ${PORT}`);
+});
