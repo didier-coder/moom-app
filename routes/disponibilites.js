@@ -19,22 +19,22 @@ router.get("/", async (req, res) => {
         .json({ error: "restaurant_id et date sont requis" });
     }
 
-    // 🧭 Récupère le jour de la semaine (ex: "lundi")
     const jourSemaine = new Date(date)
       .toLocaleDateString("fr-FR", { weekday: "long" })
       .toLowerCase();
 
-    console.log(`🔎 Recherche des horaires pour restaurant ${restaurant_id}, jour ${jourSemaine}`);
+    console.log(`🔎 Recherche disponibilités pour restaurant ${restaurant_id}, jour ${jourSemaine}`);
 
-    // 🏪 1. Récupère les horaires du restaurant pour ce jour
+    // 1️⃣ Récupère les horaires du restaurant
     const { data: horaires, error: errHoraires } = await supabase
       .from("horaires")
       .select("*")
       .eq("restaurant_id", restaurant_id)
       .eq("jour", jourSemaine)
-      .maybeSingle(); // ✅ évite l’erreur si aucune ligne trouvée
+      .maybeSingle();
 
-    // 🛑 2. Si aucun horaire ou tout est NULL → restaurant fermé
+    // 2️⃣ Si aucun horaire ou tout NULL, appliquer un horaire par défaut
+    let heuresOuverture = [];
     if (
       errHoraires ||
       !horaires ||
@@ -43,40 +43,19 @@ router.get("/", async (req, res) => {
         !horaires.ouverture2 &&
         !horaires.fermeture2)
     ) {
-      console.log(`🚫 Restaurant ${restaurant_id} fermé le ${jourSemaine}`);
-      return res.status(200).json({
-        restaurant_id,
-        date,
-        horaires: [],
-        message: "Restaurant fermé ce jour-là",
-      });
+      console.log(`ℹ️ Aucune donnée horaire → application des horaires par défaut.`);
+      heuresOuverture = [
+        { ouverture: "12:00", fermeture: "15:00" },
+        { ouverture: "18:00", fermeture: "22:00" },
+      ];
+    } else {
+      heuresOuverture = [
+        { ouverture: horaires.ouverture1, fermeture: horaires.fermeture1 },
+        { ouverture: horaires.ouverture2, fermeture: horaires.fermeture2 },
+      ];
     }
 
-    // 🕒 3. Récupère tous les créneaux horaires (12h → 22h)
-    const { data: heures, error: errHeures } = await supabase
-      .from("heure")
-      .select("horaire")
-      .order("horaire", { ascending: true });
-
-    if (errHeures || !heures) {
-      console.error("⚠️ Erreur récupération heures :", errHeures);
-      return res.status(500).json({ error: "Erreur récupération des heures" });
-    }
-
-    let dispos = [];
-
-    // 🧮 4. Filtre les créneaux selon les horaires du jour
-    for (const h of heures) {
-      const t = h.horaire;
-      if (
-        (horaires.ouverture1 && horaires.fermeture1 && t >= horaires.ouverture1 && t <= horaires.fermeture1) ||
-        (horaires.ouverture2 && horaires.fermeture2 && t >= horaires.ouverture2 && t <= horaires.fermeture2)
-      ) {
-        dispos.push(t);
-      }
-    }
-
-    // 🛑 5. Vérifie si c’est un jour de fermeture (recurrente ou exceptionnelle)
+    // 3️⃣ Vérifie les jours de fermeture planifiés
     const { data: fermetures } = await supabase
       .from("fermetures")
       .select("*")
@@ -89,8 +68,8 @@ router.get("/", async (req, res) => {
           (f.type === "exceptionnelle" && f.date === date)
       ) ?? false;
 
-    if (estFerme) {
-      console.log(`🚫 Fermeture planifiée pour ${jourSemaine}`);
+    if (estFerme || jourSemaine === "dimanche") {
+      console.log(`🚫 Fermeture automatique ou planifiée pour ${jourSemaine}`);
       return res.status(200).json({
         restaurant_id,
         date,
@@ -99,7 +78,31 @@ router.get("/", async (req, res) => {
       });
     }
 
-    // 🧾 6. Retire les créneaux déjà réservés
+    // 4️⃣ Récupère la liste complète des heures disponibles
+    const { data: heures } = await supabase
+      .from("heure")
+      .select("horaire")
+      .order("horaire", { ascending: true });
+
+    let dispos = [];
+
+    for (const h of heures) {
+      const t = h.horaire;
+      if (
+        (heuresOuverture[0].ouverture &&
+          heuresOuverture[0].fermeture &&
+          t >= heuresOuverture[0].ouverture &&
+          t <= heuresOuverture[0].fermeture) ||
+        (heuresOuverture[1].ouverture &&
+          heuresOuverture[1].fermeture &&
+          t >= heuresOuverture[1].ouverture &&
+          t <= heuresOuverture[1].fermeture)
+      ) {
+        dispos.push(t);
+      }
+    }
+
+    // 5️⃣ Retire les créneaux déjà réservés
     const { data: reservations } = await supabase
       .from("reservations")
       .select("heure_id")
@@ -119,7 +122,7 @@ router.get("/", async (req, res) => {
       dispos = dispos.filter((h) => !horairesReserves?.includes(h));
     }
 
-    // ✅ 7. Réponse finale
+    // ✅ Réponse finale
     console.log(`✅ ${dispos.length} créneaux disponibles pour ${jourSemaine}`);
 
     return res.status(200).json({
@@ -134,4 +137,5 @@ router.get("/", async (req, res) => {
 });
 
 export default router;
+
 
