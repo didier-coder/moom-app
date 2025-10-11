@@ -22,18 +22,26 @@ router.get("/", async (req, res) => {
       .toLocaleDateString("fr-FR", { weekday: "long" })
       .toLowerCase();
 
-    // 🏪 1. Récupère les horaires du restaurant pour ce jour
     const { data: horaires, error: errHoraires } = await supabase
-      .from("horaires")
-      .select("*")
-      .eq("restaurant_id", restaurant_id)
-      .eq("jour", jourSemaine)
-      .eq("actif", true)
-      .single();
+  .from("horaires")
+  .select("*")
+  .eq("restaurant_id", restaurant_id)
+  .eq("jour", jourSemaine)
+  .maybeSingle(); // ✅ pas d’erreur si aucune ligne
 
-    if (errHoraires || !horaires)
-      return res.status(404).json({ error: "Aucun horaire trouvé pour ce jour" });
-
+// 🧠 Si aucune ligne trouvée OU toutes les colonnes horaires sont null → fermé
+if (
+  errHoraires ||
+  !horaires ||
+  (!horaires.ouverture1 && !horaires.fermeture1 && !horaires.ouverture2 && !horaires.fermeture2)
+) {
+  return res.status(200).json({
+    restaurant_id,
+    date,
+    horaires: [],
+    message: "Restaurant fermé ce jour-là",
+  });
+}
     // 🛑 2. Vérifie si c’est un jour de fermeture
     const { data: fermetures } = await supabase
       .from("fermetures")
