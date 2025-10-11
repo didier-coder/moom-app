@@ -1,3 +1,6 @@
+console.log("🔑 SUPABASE URL:", process.env.NEXT_PUBLIC_SUPABASE_URL ? "✅ Chargée" : "❌ Manquante");
+console.log("🔑 SUPABASE KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "✅ Chargée" : "❌ Manquante");
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
