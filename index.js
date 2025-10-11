@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import reservations from './routes/reservations.js';
+import disponibilites from './routes/disponibilites.js';
+app.use('/api/disponibilites', disponibilites);
+
 
 dotenv.config();
 
