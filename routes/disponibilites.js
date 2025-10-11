@@ -6,11 +6,6 @@ dotenv.config();
 
 const router = express.Router();
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
-
 /**
  * GET /api/disponibilites?restaurant_id=1&date=2025-10-12
  */
