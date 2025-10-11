@@ -3,13 +3,13 @@ console.log("ðŸ”‘ SUPABASE KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "â
 
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
+//import dotenv from 'dotenv';
 import reservations from './routes/reservations.js';
 import disponibilites from './routes/disponibilites.js';
 app.use('/api/disponibilites', disponibilites);
 
 
-dotenv.config();
+//dotenv.config();
 
 const app = express();
 app.use(cors());
