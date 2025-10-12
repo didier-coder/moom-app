@@ -5,6 +5,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+// ✅ Icônes compatibles React 18/19
 import { FaUserFriends, FaCalendarAlt, FaClock } from "react-icons/fa";
 
 function App() {
@@ -143,7 +145,7 @@ function App() {
             <div style={{ marginBottom: "1rem", position: "relative" }}>
               <label>Nombre de personnes :</label>
               <div style={inputBox}>
-                <Users style={iconStyle} />
+                <FaUserFriends style={iconStyle} />
                 <input
                   type="number"
                   min="1"
@@ -159,7 +161,7 @@ function App() {
             <div style={{ marginBottom: "1rem" }}>
               <label>Date :</label>
               <div style={inputBox}>
-                <CalendarDays style={iconStyle} />
+                <FaCalendarAlt style={iconStyle} />
                 <DatePicker
                   selected={selectedDate}
                   onChange={(date) => setSelectedDate(date)}
@@ -172,8 +174,15 @@ function App() {
 
             {/* Heure */}
             <div style={{ marginBottom: "1rem" }}>
-              <label style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
-                <Clock size={18} />
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.4rem",
+                }}
+              >
+                <FaClock size={18} />
                 Heures disponibles :
               </label>
               <div
@@ -379,6 +388,7 @@ const backLink = {
 };
 
 export default App;
+
 
 
 
