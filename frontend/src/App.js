@@ -12,6 +12,7 @@ function App() {
   const [message, setMessage] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const fetchDispos = async (date) => {
     setLoading(true);
@@ -36,7 +37,25 @@ function App() {
     fetchDispos(selectedDate);
   }, [selectedDate]);
 
+  const validateForm = () => {
+    if (!name.trim() || !email.trim()) {
+      setMessage("❌ Veuillez renseigner votre nom et votre email.");
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setMessage("❌ Adresse e-mail invalide.");
+      return false;
+    }
+    return true;
+  };
+
   const handleReservation = async (heure) => {
+    if (!validateForm()) return;
+
+    setSubmitting(true);
+    setMessage("");
+
     try {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
       const data = {
@@ -51,7 +70,7 @@ function App() {
       const res = await axios.post(url, data);
 
       if (res.data.success) {
-        setMessage(`✅ Réservation confirmée à ${heure}`);
+        setMessage(`✅ Réservation confirmée pour ${formattedDate} à ${heure}.`);
         fetchDispos(selectedDate);
       } else {
         setMessage("❌ Une erreur est survenue.");
@@ -59,16 +78,19 @@ function App() {
     } catch (error) {
       console.error(error);
       setMessage("❌ Erreur lors de la réservation.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Réservations</h1>
+    <div style={{ padding: "2rem", fontFamily: "sans-serif", maxWidth: "600px", margin: "auto" }}>
+      <h1 style={{ textAlign: "center", marginBottom: "1.5rem" }}>Réservations</h1>
 
-      <div style={{ marginBottom: "1rem" }}>
-        <label htmlFor="datePicker">Choisissez une date :</label>
-        <br />
+      <div style={{ marginBottom: "1rem", textAlign: "center" }}>
+        <label htmlFor="datePicker" style={{ display: "block", marginBottom: "0.5rem" }}>
+          Choisissez une date :
+        </label>
         <DatePicker
           id="datePicker"
           selected={selectedDate}
@@ -79,39 +101,83 @@ function App() {
         />
       </div>
 
-      <div style={{ marginBottom: "1rem" }}>
+      <div style={{ marginBottom: "1rem", textAlign: "center" }}>
         <input
           type="text"
           placeholder="Votre nom"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          style={{ marginRight: "0.5rem", padding: "0.5rem" }}
+          style={{
+            marginRight: "0.5rem",
+            padding: "0.5rem",
+            border: "1px solid #ccc",
+            borderRadius: "6px",
+          }}
         />
         <input
           type="email"
           placeholder="Votre email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={{ padding: "0.5rem" }}
+          style={{
+            padding: "0.5rem",
+            border: "1px solid #ccc",
+            borderRadius: "6px",
+          }}
         />
       </div>
 
-      {loading && <p>Chargement des disponibilités...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {message && <p>{message}</p>}
+      {loading && <p style={{ textAlign: "center" }}>Chargement des disponibilités...</p>}
+      {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
+      {message && (
+        <p
+          style={{
+            textAlign: "center",
+            color: message.startsWith("✅") ? "green" : "red",
+            fontWeight: "bold",
+            marginBottom: "1rem",
+          }}
+        >
+          {message}
+        </p>
+      )}
 
       {!loading && !error && dispos.length > 0 && (
-        <ul>
+        <ul style={{ listStyle: "none", padding: 0, textAlign: "center" }}>
           {dispos.map((heure, i) => (
-            <li key={i} style={{ marginBottom: "0.5rem" }}>
-              {heure}{" "}
-              <button onClick={() => handleReservation(heure)}>Réserver</button>
+            <li key={i} style={{ marginBottom: "0.8rem" }}>
+              <button
+                onClick={() => handleReservation(heure)}
+                disabled={submitting}
+                style={{
+                  backgroundColor: submitting ? "#ccc" : "#007bff",
+                  color: "white",
+                  border: "none",
+                  padding: "0.6rem 1.2rem",
+                  borderRadius: "8px",
+                  cursor: submitting ? "not-allowed" : "pointer",
+                  transition: "background-color 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  if (!submitting) e.target.style.backgroundColor = "#0056b3";
+                }}
+                onMouseLeave={(e) => {
+                  if (!submitting) e.target.style.backgroundColor = "#007bff";
+                }}
+              >
+                Réserver {heure}
+              </button>
             </li>
           ))}
         </ul>
+      )}
+
+      {!loading && !error && dispos.length === 0 && (
+        <p style={{ textAlign: "center", color: "#777" }}>Aucune disponibilité ce jour-là.</p>
       )}
     </div>
   );
 }
 
 export default App;
+
