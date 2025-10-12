@@ -158,12 +158,14 @@ function App() {
                     <div style={inputBox}>
                       <FaCalendarAlt style={iconStyle} />
                       <DatePicker
-                        selected={selectedDate}
-                        onChange={(date) => setSelectedDate(date)}
-                        dateFormat="dd/MM/yyyy"
-                        minDate={new Date()}
-                        popperPlacement="top-start"
+                      selected={selectedDate}
+                      onChange={(date) => setSelectedDate(date)}
+                      dateFormat="dd/MM/yyyy"
+                      minDate={new Date()}
+                      filterDate={(date) => date >= new Date()} // ✅ bloque les dates antérieures
+                      popperPlacement="top-start"
                       />
+
                     </div>
                   </div>
 
