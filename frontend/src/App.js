@@ -7,71 +7,68 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  const [dispos, setDispos] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [selectedHeure, setSelectedHeure] = useState("");
+  const [personnes, setPersonnes] = useState(2);
+  const [typeClient, setTypeClient] = useState("");
+  const [formData, setFormData] = useState({
+    societe: "",
+    tva: "",
+    prenom: "",
+    nom: "",
+    tel: "",
+    email: "",
+    remarque: "",
+  });
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchDispos = async (date) => {
-    setLoading(true);
-    try {
-      const formattedDate = format(date, "yyyy-MM-dd");
-      const restaurant_id = 1;
-      const url = `${process.env.REACT_APP_API_URL}/api/disponibilites?restaurant_id=${restaurant_id}&date=${formattedDate}`;
-      const response = await axios.get(url);
-      setDispos(response.data.horaires || []);
-      if (response.data.horaires?.length > 0) {
-        toast.info("📅 Disponibilités mises à jour !");
-      } else {
-        toast.warning("⚠️ Aucune disponibilité ce jour-là.");
-      }
-    } catch (err) {
-      console.error("Erreur lors du chargement :", err);
-      toast.error("❌ Impossible de récupérer les disponibilités.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const heuresLunch = ["12:00", "12:30", "13:00", "13:30", "14:00", "14:30"];
+  const heuresDiner = ["18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"];
+  const [heuresDispo, setHeuresDispo] = useState([]);
 
   useEffect(() => {
-    fetchDispos(selectedDate);
+    const h = selectedDate.getHours();
+    // On précharge les créneaux lunch ou dîner selon la période
+    if (h < 16) setHeuresDispo(heuresLunch);
+    else setHeuresDispo(heuresDiner);
   }, [selectedDate]);
 
-  const validateForm = () => {
-    if (!name.trim() || !email.trim()) {
-      toast.warning("⚠️ Veuillez renseigner votre nom et votre email.");
-      return false;
+  const handleReservation = async () => {
+    if (!selectedDate || !selectedHeure || !formData.prenom || !formData.nom || !formData.email) {
+      toast.warning("⚠️ Merci de compléter tous les champs obligatoires.");
+      return;
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      toast.warning("⚠️ Adresse e-mail invalide.");
-      return false;
-    }
-    return true;
-  };
 
-  const handleReservation = async (heure) => {
-    if (!validateForm()) return;
     setSubmitting(true);
-
     try {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
       const data = {
         restaurant_id: 1,
-        name,
-        email,
+        personnes,
         date: formattedDate,
-        heure,
+        heure: selectedHeure,
+        type: typeClient,
+        ...formData,
       };
 
       const url = `${process.env.REACT_APP_API_URL}/api/reservations`;
       const res = await axios.post(url, data);
 
       if (res.data.success) {
-        toast.success(`✅ Réservation confirmée pour ${formattedDate} à ${heure}.`);
-        fetchDispos(selectedDate);
+        toast.success(`✅ Réservation confirmée pour ${formattedDate} à ${selectedHeure}.`);
+        setStep(1);
+        setFormData({
+          societe: "",
+          tva: "",
+          prenom: "",
+          nom: "",
+          tel: "",
+          email: "",
+          remarque: "",
+        });
+        setSelectedHeure("");
+        setTypeClient("");
       } else {
         toast.error("❌ Une erreur est survenue lors de la réservation.");
       }
@@ -87,105 +84,222 @@ function App() {
     <div
       style={{
         padding: "2rem",
-        fontFamily: "sans-serif",
-        maxWidth: "650px",
+        fontFamily: "Inter, sans-serif",
+        maxWidth: "600px",
         margin: "auto",
+        background: "#fff",
+        borderRadius: "20px",
+        boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
       }}
     >
-      <h1 style={{ textAlign: "center", marginBottom: "1.5rem" }}>Réservations</h1>
+      <h1 style={{ textAlign: "center", marginBottom: "1.5rem", color: "#222" }}>
+        Réservation
+      </h1>
 
-      {/* Sélecteur de date */}
-      <div style={{ marginBottom: "1rem", textAlign: "center" }}>
-        <label htmlFor="datePicker" style={{ display: "block", marginBottom: "0.5rem" }}>
-          Choisissez une date :
-        </label>
-        <DatePicker
-          id="datePicker"
-          selected={selectedDate}
-          onChange={(date) => setSelectedDate(date)}
-          dateFormat="dd/MM/yyyy"
-          minDate={new Date()}
-          className="border p-2 rounded"
-        />
-      </div>
+      {/* Étape 1 : Base */}
+      {step === 1 && (
+        <div style={{ textAlign: "center" }}>
+          <div style={{ marginBottom: "1rem" }}>
+            <label>Nombre de personnes :</label>
+            <br />
+            <input
+              type="number"
+              min="1"
+              max="12"
+              value={personnes}
+              onChange={(e) => setPersonnes(e.target.value)}
+              style={{
+                width: "80px",
+                padding: "0.5rem",
+                textAlign: "center",
+                borderRadius: "8px",
+                border: "1px solid #ccc",
+              }}
+            />
+          </div>
 
-      {/* Formulaire utilisateur */}
-      <div style={{ marginBottom: "1.5rem", textAlign: "center" }}>
-        <input
-          type="text"
-          placeholder="Votre nom"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          style={{
-            marginRight: "0.5rem",
-            padding: "0.6rem",
-            border: "1px solid #ccc",
-            borderRadius: "6px",
-          }}
-        />
-        <input
-          type="email"
-          placeholder="Votre email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{
-            padding: "0.6rem",
-            border: "1px solid #ccc",
-            borderRadius: "6px",
-          }}
-        />
-      </div>
+          <div style={{ marginBottom: "1rem" }}>
+            <label>Date :</label>
+            <br />
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date) => setSelectedDate(date)}
+              dateFormat="dd/MM/yyyy"
+              minDate={new Date()}
+              className="border p-2 rounded"
+            />
+          </div>
 
-      {/* Chargement */}
-      {loading && <p style={{ textAlign: "center" }}>Chargement des disponibilités...</p>}
+          <div style={{ marginBottom: "1rem" }}>
+            <label>Heure :</label>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))",
+                gap: "0.6rem",
+                marginTop: "0.5rem",
+              }}
+            >
+              {heuresDispo.map((h) => (
+                <button
+                  key={h}
+                  onClick={() => setSelectedHeure(h)}
+                  style={{
+                    backgroundColor: selectedHeure === h ? "#007bff" : "#f5f5f5",
+                    color: selectedHeure === h ? "#fff" : "#333",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    padding: "0.6rem 0",
+                    cursor: "pointer",
+                    transition: "0.2s",
+                  }}
+                >
+                  {h}
+                </button>
+              ))}
+            </div>
+          </div>
 
-      {/* Liste des disponibilités sous forme de boîtes */}
-      {!loading && dispos.length > 0 && (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
-            gap: "1rem",
-            textAlign: "center",
-          }}
-        >
-          {dispos.map((heure, i) => (
+          <button
+            onClick={() => {
+              if (!selectedHeure) toast.warning("⏰ Choisissez une heure avant de continuer.");
+              else setStep(2);
+            }}
+            style={{
+              backgroundColor: "#007bff",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              padding: "0.7rem 1.5rem",
+              cursor: "pointer",
+            }}
+          >
+            Suivant →
+          </button>
+        </div>
+      )}
+
+      {/* Étape 2 : Type de client */}
+      {step === 2 && (
+        <div style={{ textAlign: "center" }}>
+          <h3>Vous êtes :</h3>
+          <div style={{ marginBottom: "1rem" }}>
             <button
-              key={i}
-              onClick={() => handleReservation(heure)}
+              onClick={() => {
+                setTypeClient("societe");
+                setStep(3);
+              }}
+              style={{
+                marginRight: "1rem",
+                backgroundColor: "#007bff",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                padding: "0.7rem 1.2rem",
+                cursor: "pointer",
+              }}
+            >
+              Société
+            </button>
+            <button
+              onClick={() => {
+                setTypeClient("particulier");
+                setStep(3);
+              }}
+              style={{
+                backgroundColor: "#28a745",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                padding: "0.7rem 1.2rem",
+                cursor: "pointer",
+              }}
+            >
+              Particulier
+            </button>
+          </div>
+          <button onClick={() => setStep(1)} style={{ border: "none", background: "none", color: "#777" }}>
+            ← Retour
+          </button>
+        </div>
+      )}
+
+      {/* Étape 3 : Formulaire selon type */}
+      {step === 3 && (
+        <div>
+          {typeClient === "societe" && (
+            <>
+              <input
+                placeholder="Nom de société"
+                value={formData.societe}
+                onChange={(e) => setFormData({ ...formData, societe: e.target.value })}
+                style={inputStyle}
+              />
+              <input
+                placeholder="N° TVA"
+                value={formData.tva}
+                onChange={(e) => setFormData({ ...formData, tva: e.target.value })}
+                style={inputStyle}
+              />
+            </>
+          )}
+
+          <input
+            placeholder="Prénom"
+            value={formData.prenom}
+            onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
+            style={inputStyle}
+          />
+          <input
+            placeholder="Nom"
+            value={formData.nom}
+            onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
+            style={inputStyle}
+          />
+          <input
+            placeholder="Téléphone"
+            value={formData.tel}
+            onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
+            style={inputStyle}
+          />
+          <input
+            placeholder="Email"
+            type="email"
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            style={inputStyle}
+          />
+          <textarea
+            placeholder="Remarque (facultatif)"
+            value={formData.remarque}
+            onChange={(e) => setFormData({ ...formData, remarque: e.target.value })}
+            style={{ ...inputStyle, height: "80px" }}
+          />
+
+          <div style={{ textAlign: "center", marginTop: "1rem" }}>
+            <button
+              onClick={handleReservation}
               disabled={submitting}
               style={{
                 backgroundColor: submitting ? "#ccc" : "#007bff",
                 color: "white",
                 border: "none",
-                borderRadius: "10px",
-                padding: "1rem",
+                borderRadius: "8px",
+                padding: "0.7rem 1.5rem",
                 cursor: submitting ? "not-allowed" : "pointer",
-                fontSize: "1rem",
-                boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-                transition: "transform 0.2s ease, background-color 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                if (!submitting) {
-                  e.target.style.backgroundColor = "#0056b3";
-                  e.target.style.transform = "scale(1.05)";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!submitting) {
-                  e.target.style.backgroundColor = "#007bff";
-                  e.target.style.transform = "scale(1)";
-                }
               }}
             >
-              {heure}
+              Confirmer la réservation
             </button>
-          ))}
+            <br />
+            <button
+              onClick={() => setStep(2)}
+              style={{ border: "none", background: "none", color: "#777", marginTop: "0.5rem" }}
+            >
+              ← Retour
+            </button>
+          </div>
         </div>
-      )}
-
-      {!loading && dispos.length === 0 && (
-        <p style={{ textAlign: "center", color: "#777" }}>Aucune disponibilité ce jour-là.</p>
       )}
 
       <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
@@ -193,7 +307,18 @@ function App() {
   );
 }
 
+const inputStyle = {
+  width: "100%",
+  marginBottom: "0.7rem",
+  padding: "0.7rem",
+  borderRadius: "8px",
+  border: "1px solid #ccc",
+  fontSize: "1rem",
+  boxSizing: "border-box",
+};
+
 export default App;
+
 
 
 
