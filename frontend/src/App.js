@@ -173,6 +173,7 @@ function App() {
               {/* Étape 1 */}
               {step === 1 && (
                 <div style={{ textAlign: "center" }}>
+                <div className="fadeIn" style={{ textAlign: "center" }}>
                   <div style={{ marginBottom: "1rem" }}>
                     <label>Nombre de personnes :</label>
                     <div style={inputBox}>
@@ -274,6 +275,7 @@ function App() {
               {/* Étape 2 */}
               {step === 2 && (
                 <div style={{ textAlign: "center" }}>
+                <div className="fadeIn" style={{ textAlign: "center" }}>
                   <h3>Vous êtes :</h3>
                   <div style={{ marginTop: "1rem" }}>
                     <button
@@ -354,6 +356,7 @@ function App() {
                   />
 
                   <div style={{ textAlign: "center", marginTop: "1rem" }}>
+                    <div className="fadeIn" style={{ textAlign: "center" }}>
                     <button onClick={handleReservation} disabled={submitting} style={mainButton}>
                       {submitting ? "Envoi en cours..." : "Confirmer la réservation"}
                     </button>
