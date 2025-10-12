@@ -22,6 +22,11 @@ function App() {
       const url = `${process.env.REACT_APP_API_URL}/api/disponibilites?restaurant_id=${restaurant_id}&date=${formattedDate}`;
       const response = await axios.get(url);
       setDispos(response.data.horaires || []);
+      if (response.data.horaires?.length > 0) {
+        toast.info("📅 Disponibilités mises à jour !");
+      } else {
+        toast.warning("⚠️ Aucune disponibilité ce jour-là.");
+      }
     } catch (err) {
       console.error("Erreur lors du chargement :", err);
       toast.error("❌ Impossible de récupérer les disponibilités.");
@@ -49,7 +54,6 @@ function App() {
 
   const handleReservation = async (heure) => {
     if (!validateForm()) return;
-
     setSubmitting(true);
 
     try {
@@ -80,9 +84,17 @@ function App() {
   };
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "sans-serif", maxWidth: "600px", margin: "auto" }}>
+    <div
+      style={{
+        padding: "2rem",
+        fontFamily: "sans-serif",
+        maxWidth: "650px",
+        margin: "auto",
+      }}
+    >
       <h1 style={{ textAlign: "center", marginBottom: "1.5rem" }}>Réservations</h1>
 
+      {/* Sélecteur de date */}
       <div style={{ marginBottom: "1rem", textAlign: "center" }}>
         <label htmlFor="datePicker" style={{ display: "block", marginBottom: "0.5rem" }}>
           Choisissez une date :
@@ -97,7 +109,8 @@ function App() {
         />
       </div>
 
-      <div style={{ marginBottom: "1rem", textAlign: "center" }}>
+      {/* Formulaire utilisateur */}
+      <div style={{ marginBottom: "1.5rem", textAlign: "center" }}>
         <input
           type="text"
           placeholder="Votre nom"
@@ -105,7 +118,7 @@ function App() {
           onChange={(e) => setName(e.target.value)}
           style={{
             marginRight: "0.5rem",
-            padding: "0.5rem",
+            padding: "0.6rem",
             border: "1px solid #ccc",
             borderRadius: "6px",
           }}
@@ -116,43 +129,59 @@ function App() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           style={{
-            padding: "0.5rem",
+            padding: "0.6rem",
             border: "1px solid #ccc",
             borderRadius: "6px",
           }}
         />
       </div>
 
+      {/* Chargement */}
       {loading && <p style={{ textAlign: "center" }}>Chargement des disponibilités...</p>}
 
+      {/* Liste des disponibilités sous forme de boîtes */}
       {!loading && dispos.length > 0 && (
-        <ul style={{ listStyle: "none", padding: 0, textAlign: "center" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
+            gap: "1rem",
+            textAlign: "center",
+          }}
+        >
           {dispos.map((heure, i) => (
-            <li key={i} style={{ marginBottom: "0.8rem" }}>
-              <button
-                onClick={() => handleReservation(heure)}
-                disabled={submitting}
-                style={{
-                  backgroundColor: submitting ? "#ccc" : "#007bff",
-                  color: "white",
-                  border: "none",
-                  padding: "0.6rem 1.2rem",
-                  borderRadius: "8px",
-                  cursor: submitting ? "not-allowed" : "pointer",
-                  transition: "background-color 0.2s ease",
-                }}
-                onMouseEnter={(e) => {
-                  if (!submitting) e.target.style.backgroundColor = "#0056b3";
-                }}
-                onMouseLeave={(e) => {
-                  if (!submitting) e.target.style.backgroundColor = "#007bff";
-                }}
-              >
-                Réserver {heure}
-              </button>
-            </li>
+            <button
+              key={i}
+              onClick={() => handleReservation(heure)}
+              disabled={submitting}
+              style={{
+                backgroundColor: submitting ? "#ccc" : "#007bff",
+                color: "white",
+                border: "none",
+                borderRadius: "10px",
+                padding: "1rem",
+                cursor: submitting ? "not-allowed" : "pointer",
+                fontSize: "1rem",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                transition: "transform 0.2s ease, background-color 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                if (!submitting) {
+                  e.target.style.backgroundColor = "#0056b3";
+                  e.target.style.transform = "scale(1.05)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!submitting) {
+                  e.target.style.backgroundColor = "#007bff";
+                  e.target.style.transform = "scale(1)";
+                }
+              }}
+            >
+              {heure}
+            </button>
           ))}
-        </ul>
+        </div>
       )}
 
       {!loading && dispos.length === 0 && (
@@ -165,5 +194,6 @@ function App() {
 }
 
 export default App;
+
 
 
