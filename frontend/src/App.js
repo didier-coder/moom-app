@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Users, CalendarDays, Clock } from "lucide-react"; // ⬅️ icônes modernes
 
 function App() {
   const [step, setStep] = useState(1);
@@ -27,13 +28,11 @@ function App() {
   const heuresDiner = ["18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"];
   const [heuresDispo, setHeuresDispo] = useState([]);
 
-  // Détermination automatique Lunch/Dîner selon la date
   useEffect(() => {
     const hour = new Date().getHours();
     setHeuresDispo(hour < 16 ? heuresLunch : heuresDiner);
   }, []);
 
-  // Barre de progression dynamique
   const progress = (step / 3) * 100;
 
   const handleReservation = async () => {
@@ -137,36 +136,46 @@ function App() {
           Réservation
         </h1>
 
-        {/* --- Étape 1 --- */}
+        {/* Étape 1 */}
         {step === 1 && (
           <div style={{ textAlign: "center" }}>
-            <div style={{ marginBottom: "1rem" }}>
+            {/* Nombre de personnes */}
+            <div style={{ marginBottom: "1rem", position: "relative" }}>
               <label>Nombre de personnes :</label>
-              <br />
-              <input
-                type="number"
-                min="1"
-                max="12"
-                value={personnes}
-                onChange={(e) => setPersonnes(e.target.value)}
-                style={inputStyle}
-              />
+              <div style={inputBox}>
+                <Users style={iconStyle} />
+                <input
+                  type="number"
+                  min="1"
+                  max="12"
+                  value={personnes}
+                  onChange={(e) => setPersonnes(e.target.value)}
+                  style={fieldStyle}
+                />
+              </div>
             </div>
 
+            {/* Date */}
             <div style={{ marginBottom: "1rem" }}>
               <label>Date :</label>
-              <br />
-              <DatePicker
-                selected={selectedDate}
-                onChange={(date) => setSelectedDate(date)}
-                dateFormat="dd/MM/yyyy"
-                minDate={new Date()}
-                className="border p-2 rounded"
-              />
+              <div style={inputBox}>
+                <CalendarDays style={iconStyle} />
+                <DatePicker
+                  selected={selectedDate}
+                  onChange={(date) => setSelectedDate(date)}
+                  dateFormat="dd/MM/yyyy"
+                  minDate={new Date()}
+                  customInput={<input style={fieldStyle} />}
+                />
+              </div>
             </div>
 
+            {/* Heure */}
             <div style={{ marginBottom: "1rem" }}>
-              <label>Heure :</label>
+              <label style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }}>
+                <Clock size={18} />
+                Heures disponibles :
+              </label>
               <div
                 style={{
                   display: "grid",
@@ -207,7 +216,7 @@ function App() {
           </div>
         )}
 
-        {/* --- Étape 2 --- */}
+        {/* Étape 2 */}
         {step === 2 && (
           <div style={{ textAlign: "center" }}>
             <h3 style={{ marginBottom: "1rem", color: "#333" }}>Vous êtes :</h3>
@@ -237,7 +246,7 @@ function App() {
           </div>
         )}
 
-        {/* --- Étape 3 --- */}
+        {/* Étape 3 */}
         {step === 3 && (
           <div>
             {typeClient === "societe" && (
@@ -315,7 +324,30 @@ function App() {
   );
 }
 
-/* --- Styles communs --- */
+/* --- Styles --- */
+const inputBox = {
+  display: "flex",
+  alignItems: "center",
+  background: "#f8f9fa",
+  border: "1px solid #dee2e6",
+  borderRadius: "8px",
+  padding: "0.4rem 0.8rem",
+  marginTop: "0.4rem",
+};
+
+const iconStyle = {
+  color: "#007bff",
+  marginRight: "0.6rem",
+};
+
+const fieldStyle = {
+  border: "none",
+  outline: "none",
+  background: "transparent",
+  width: "100%",
+  fontSize: "1rem",
+};
+
 const inputStyle = {
   width: "100%",
   marginBottom: "0.8rem",
@@ -324,7 +356,6 @@ const inputStyle = {
   border: "1px solid #ced4da",
   fontSize: "1rem",
   boxSizing: "border-box",
-  transition: "border-color 0.2s",
 };
 
 const mainButton = {
@@ -348,6 +379,7 @@ const backLink = {
 };
 
 export default App;
+
 
 
 
