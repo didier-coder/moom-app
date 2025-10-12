@@ -8,7 +8,7 @@ function App() {
   useEffect(() => {
     const fetchDispos = async () => {
       try {
-        const date = "2025-10-14"; // tu pourras le rendre dynamique après
+        const date = "2025-10-14"; // tu pourras le rendre dynamique plus tard
         const restaurant_id = 1;
         const url = `${process.env.REACT_APP_API_URL}/api/disponibilites?restaurant_id=${restaurant_id}&date=${date}`;
         const response = await axios.get(url);
@@ -23,7 +23,10 @@ function App() {
     fetchDispos();
   }, []);
 
-  if (loading) return <p> Chargement des disponibilités... </p>;
+  if (loading)
+    return (
+      <p style={{ padding: "2rem" }}> Chargement des disponibilités... </p>
+    );
 
   return (
     <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
