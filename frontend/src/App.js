@@ -38,40 +38,47 @@ function App() {
   const progress = ((confirmed ? 4 : step) / 4) * 100;
 
   const handleReservation = async () => {
-    if (!selectedDate || !selectedHeure || !formData.prenom || !formData.nom || !formData.email) {
-      toast.warning("⚠️ Merci de compléter tous les champs obligatoires.");
-      return;
+  // ✅ Empêche les réservations dans le passé
+  if (selectedDate < new Date().setHours(0, 0, 0, 0)) {
+    toast.error("🚫 Vous ne pouvez pas réserver pour une date passée.");
+    return;
+  }
+
+  if (!selectedDate || !selectedHeure || !formData.prenom || !formData.nom || !formData.email) {
+    toast.warning("⚠️ Merci de compléter tous les champs obligatoires.");
+    return;
+  }
+
+  setSubmitting(true);
+  try {
+    const formattedDate = format(selectedDate, "yyyy-MM-dd");
+    const data = {
+      restaurant_id: 1,
+      personnes,
+      date: formattedDate,
+      heure: selectedHeure,
+      service,
+      type: typeClient,
+      ...formData,
+    };
+
+    const url = `${process.env.REACT_APP_API_URL}/api/reservations`;
+    const res = await axios.post(url, data);
+
+    if (res.data.success) {
+      toast.success("✅ Réservation confirmée !");
+      setConfirmed(true);
+    } else {
+      toast.error("❌ Une erreur est survenue.");
     }
+  } catch (error) {
+    console.error(error);
+    toast.error("❌ Erreur lors de la réservation.");
+  } finally {
+    setSubmitting(false);
+  }
+};
 
-    setSubmitting(true);
-    try {
-      const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      const data = {
-        restaurant_id: 1,
-        personnes,
-        date: formattedDate,
-        heure: selectedHeure,
-        service,
-        type: typeClient,
-        ...formData,
-      };
-
-      const url = `${process.env.REACT_APP_API_URL}/api/reservations`;
-      const res = await axios.post(url, data);
-
-      if (res.data.success) {
-        toast.success("✅ Réservation confirmée !");
-        setConfirmed(true);
-      } else {
-        toast.error("❌ Une erreur est survenue.");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("❌ Erreur lors de la réservation.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   return (
     <div
