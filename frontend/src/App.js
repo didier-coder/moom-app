@@ -3,22 +3,19 @@ import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [dispos, setDispos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [error, setError] = useState(null);
-  const [message, setMessage] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const fetchDispos = async (date) => {
     setLoading(true);
-    setError(null);
-    setMessage("");
-
     try {
       const formattedDate = format(date, "yyyy-MM-dd");
       const restaurant_id = 1;
@@ -27,7 +24,7 @@ function App() {
       setDispos(response.data.horaires || []);
     } catch (err) {
       console.error("Erreur lors du chargement :", err);
-      setError("Impossible de récupérer les disponibilités.");
+      toast.error("❌ Impossible de récupérer les disponibilités.");
     } finally {
       setLoading(false);
     }
@@ -39,12 +36,12 @@ function App() {
 
   const validateForm = () => {
     if (!name.trim() || !email.trim()) {
-      setMessage("❌ Veuillez renseigner votre nom et votre email.");
+      toast.warning("⚠️ Veuillez renseigner votre nom et votre email.");
       return false;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setMessage("❌ Adresse e-mail invalide.");
+      toast.warning("⚠️ Adresse e-mail invalide.");
       return false;
     }
     return true;
@@ -54,7 +51,6 @@ function App() {
     if (!validateForm()) return;
 
     setSubmitting(true);
-    setMessage("");
 
     try {
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
@@ -70,14 +66,14 @@ function App() {
       const res = await axios.post(url, data);
 
       if (res.data.success) {
-        setMessage(`✅ Réservation confirmée pour ${formattedDate} à ${heure}.`);
+        toast.success(`✅ Réservation confirmée pour ${formattedDate} à ${heure}.`);
         fetchDispos(selectedDate);
       } else {
-        setMessage("❌ Une erreur est survenue.");
+        toast.error("❌ Une erreur est survenue lors de la réservation.");
       }
     } catch (error) {
       console.error(error);
-      setMessage("❌ Erreur lors de la réservation.");
+      toast.error("❌ Erreur lors de la réservation.");
     } finally {
       setSubmitting(false);
     }
@@ -128,21 +124,8 @@ function App() {
       </div>
 
       {loading && <p style={{ textAlign: "center" }}>Chargement des disponibilités...</p>}
-      {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
-      {message && (
-        <p
-          style={{
-            textAlign: "center",
-            color: message.startsWith("✅") ? "green" : "red",
-            fontWeight: "bold",
-            marginBottom: "1rem",
-          }}
-        >
-          {message}
-        </p>
-      )}
 
-      {!loading && !error && dispos.length > 0 && (
+      {!loading && dispos.length > 0 && (
         <ul style={{ listStyle: "none", padding: 0, textAlign: "center" }}>
           {dispos.map((heure, i) => (
             <li key={i} style={{ marginBottom: "0.8rem" }}>
@@ -172,12 +155,15 @@ function App() {
         </ul>
       )}
 
-      {!loading && !error && dispos.length === 0 && (
+      {!loading && dispos.length === 0 && (
         <p style={{ textAlign: "center", color: "#777" }}>Aucune disponibilité ce jour-là.</p>
       )}
+
+      <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
     </div>
   );
 }
 
 export default App;
+
 
