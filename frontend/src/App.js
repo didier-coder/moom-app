@@ -2,11 +2,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
+import { format, getHours } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-// ✅ Icônes compatibles React 18/19
 import { FaUserFriends, FaCalendarAlt, FaClock } from "react-icons/fa";
 
 function App() {
@@ -25,15 +23,20 @@ function App() {
     remarque: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [heuresDispo, setHeuresDispo] = useState([]);
 
   const heuresLunch = ["12:00", "12:30", "13:00", "13:30", "14:00", "14:30"];
   const heuresDiner = ["18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"];
-  const [heuresDispo, setHeuresDispo] = useState([]);
 
+  // ✅ Correction : on affiche Lunch si la date choisie est midi–15h, sinon Dîner
   useEffect(() => {
-    const hour = new Date().getHours();
-    setHeuresDispo(hour < 16 ? heuresLunch : heuresDiner);
-  }, []);
+    const hour = getHours(selectedDate);
+    if (hour >= 10 && hour < 16) {
+      setHeuresDispo(heuresLunch);
+    } else {
+      setHeuresDispo(heuresDiner);
+    }
+  }, [selectedDate]);
 
   const progress = (step / 3) * 100;
 
@@ -103,7 +106,7 @@ function App() {
           boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
           padding: "2rem 2.5rem",
           position: "relative",
-          overflow: "hidden",
+          overflow: "visible",
         }}
       >
         {/* Barre de progression */}
@@ -127,14 +130,7 @@ function App() {
           />
         </div>
 
-        <h1
-          style={{
-            textAlign: "center",
-            color: "#222",
-            fontSize: "1.8rem",
-            marginBottom: "1.5rem",
-          }}
-        >
+        <h1 style={{ textAlign: "center", color: "#222", fontSize: "1.8rem", marginBottom: "1.5rem" }}>
           Réservation
         </h1>
 
@@ -158,7 +154,7 @@ function App() {
             </div>
 
             {/* Date */}
-            <div style={{ marginBottom: "1rem" }}>
+            <div style={{ marginBottom: "1rem", position: "relative" }}>
               <label>Date :</label>
               <div style={inputBox}>
                 <FaCalendarAlt style={iconStyle} />
@@ -167,7 +163,17 @@ function App() {
                   onChange={(date) => setSelectedDate(date)}
                   dateFormat="dd/MM/yyyy"
                   minDate={new Date()}
-                  customInput={<input style={fieldStyle} />}
+                  popperPlacement="top-start"
+                  popperModifiers={[
+                    {
+                      name: "offset",
+                      options: {
+                        offset: [0, 10],
+                      },
+                    },
+                  ]}
+                  className="datepicker-custom"
+                  calendarClassName="calendar-style"
                 />
               </div>
             </div>
@@ -225,108 +231,6 @@ function App() {
           </div>
         )}
 
-        {/* Étape 2 */}
-        {step === 2 && (
-          <div style={{ textAlign: "center" }}>
-            <h3 style={{ marginBottom: "1rem", color: "#333" }}>Vous êtes :</h3>
-            <div style={{ marginBottom: "1rem" }}>
-              <button
-                onClick={() => {
-                  setTypeClient("societe");
-                  setStep(3);
-                }}
-                style={{ ...mainButton, marginRight: "1rem", backgroundColor: "#007bff" }}
-              >
-                Société
-              </button>
-              <button
-                onClick={() => {
-                  setTypeClient("particulier");
-                  setStep(3);
-                }}
-                style={{ ...mainButton, backgroundColor: "#28a745" }}
-              >
-                Particulier
-              </button>
-            </div>
-            <button onClick={() => setStep(1)} style={backLink}>
-              ← Retour
-            </button>
-          </div>
-        )}
-
-        {/* Étape 3 */}
-        {step === 3 && (
-          <div>
-            {typeClient === "societe" && (
-              <>
-                <input
-                  placeholder="Nom de société"
-                  value={formData.societe}
-                  onChange={(e) => setFormData({ ...formData, societe: e.target.value })}
-                  style={inputStyle}
-                />
-                <input
-                  placeholder="N° TVA"
-                  value={formData.tva}
-                  onChange={(e) => setFormData({ ...formData, tva: e.target.value })}
-                  style={inputStyle}
-                />
-              </>
-            )}
-
-            <input
-              placeholder="Prénom"
-              value={formData.prenom}
-              onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
-              style={inputStyle}
-            />
-            <input
-              placeholder="Nom"
-              value={formData.nom}
-              onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
-              style={inputStyle}
-            />
-            <input
-              placeholder="Téléphone"
-              value={formData.tel}
-              onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
-              style={inputStyle}
-            />
-            <input
-              placeholder="Email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              style={inputStyle}
-            />
-            <textarea
-              placeholder="Remarque (facultatif)"
-              value={formData.remarque}
-              onChange={(e) => setFormData({ ...formData, remarque: e.target.value })}
-              style={{ ...inputStyle, height: "80px" }}
-            />
-
-            <div style={{ textAlign: "center", marginTop: "1rem" }}>
-              <button
-                onClick={handleReservation}
-                disabled={submitting}
-                style={{
-                  ...mainButton,
-                  opacity: submitting ? 0.6 : 1,
-                  cursor: submitting ? "not-allowed" : "pointer",
-                }}
-              >
-                Confirmer la réservation
-              </button>
-              <br />
-              <button onClick={() => setStep(2)} style={backLink}>
-                ← Retour
-              </button>
-            </div>
-          </div>
-        )}
-
         <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
       </div>
     </div>
@@ -342,6 +246,8 @@ const inputBox = {
   borderRadius: "8px",
   padding: "0.4rem 0.8rem",
   marginTop: "0.4rem",
+  position: "relative",
+  zIndex: 10,
 };
 
 const iconStyle = {
@@ -357,16 +263,6 @@ const fieldStyle = {
   fontSize: "1rem",
 };
 
-const inputStyle = {
-  width: "100%",
-  marginBottom: "0.8rem",
-  padding: "0.8rem",
-  borderRadius: "8px",
-  border: "1px solid #ced4da",
-  fontSize: "1rem",
-  boxSizing: "border-box",
-};
-
 const mainButton = {
   backgroundColor: "#007bff",
   color: "white",
@@ -378,16 +274,8 @@ const mainButton = {
   transition: "background-color 0.2s ease",
 };
 
-const backLink = {
-  border: "none",
-  background: "none",
-  color: "#6c757d",
-  marginTop: "0.5rem",
-  cursor: "pointer",
-  textDecoration: "underline",
-};
-
 export default App;
+
 
 
 
