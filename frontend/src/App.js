@@ -12,8 +12,8 @@ function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedHeure, setSelectedHeure] = useState("");
   const [personnes, setPersonnes] = useState(2);
+  const [service, setService] = useState("lunch");
   const [typeClient, setTypeClient] = useState("");
-  const [service, setService] = useState("lunch"); // ✅ Nouveau : lunch ou diner
   const [formData, setFormData] = useState({
     societe: "",
     tva: "",
@@ -29,7 +29,6 @@ function App() {
   const heuresLunch = ["12:00", "12:30", "13:00", "13:30", "14:00", "14:30"];
   const heuresDiner = ["18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"];
 
-  // ✅ Affiche automatiquement les heures selon le service choisi
   useEffect(() => {
     setHeuresDispo(service === "lunch" ? heuresLunch : heuresDiner);
   }, [service, selectedDate]);
@@ -132,11 +131,11 @@ function App() {
           Réservation
         </h1>
 
-        {/* Étape 1 */}
+        {/* --- Étape 1 : Infos de base --- */}
         {step === 1 && (
           <div style={{ textAlign: "center" }}>
             {/* Nombre de personnes */}
-            <div style={{ marginBottom: "1rem", position: "relative" }}>
+            <div style={{ marginBottom: "1rem" }}>
               <label>Nombre de personnes :</label>
               <div style={inputBox}>
                 <FaUserFriends style={iconStyle} />
@@ -152,7 +151,7 @@ function App() {
             </div>
 
             {/* Date */}
-            <div style={{ marginBottom: "1rem", position: "relative" }}>
+            <div style={{ marginBottom: "1rem" }}>
               <label>Date :</label>
               <div style={inputBox}>
                 <FaCalendarAlt style={iconStyle} />
@@ -165,9 +164,7 @@ function App() {
                   popperModifiers={[
                     {
                       name: "offset",
-                      options: {
-                        offset: [0, 10],
-                      },
+                      options: { offset: [0, 10] },
                     },
                   ]}
                   className="datepicker-custom"
@@ -176,7 +173,7 @@ function App() {
               </div>
             </div>
 
-            {/* ✅ Choix Lunch / Dîner */}
+            {/* Service Lunch / Dîner */}
             <div style={{ marginBottom: "1rem" }}>
               <label>Service :</label>
               <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "0.5rem" }}>
@@ -256,6 +253,108 @@ function App() {
           </div>
         )}
 
+        {/* --- Étape 2 : Type de client --- */}
+        {step === 2 && (
+          <div style={{ textAlign: "center" }}>
+            <h3>Vous êtes :</h3>
+            <div style={{ marginTop: "1rem" }}>
+              <button
+                onClick={() => {
+                  setTypeClient("societe");
+                  setStep(3);
+                }}
+                style={{ ...mainButton, marginRight: "1rem", backgroundColor: "#007bff" }}
+              >
+                Société
+              </button>
+              <button
+                onClick={() => {
+                  setTypeClient("particulier");
+                  setStep(3);
+                }}
+                style={{ ...mainButton, backgroundColor: "#28a745" }}
+              >
+                Particulier
+              </button>
+            </div>
+            <button onClick={() => setStep(1)} style={backLink}>
+              ← Retour
+            </button>
+          </div>
+        )}
+
+        {/* --- Étape 3 : Coordonnées --- */}
+        {step === 3 && (
+          <div>
+            {typeClient === "societe" && (
+              <>
+                <input
+                  placeholder="Nom de société"
+                  value={formData.societe}
+                  onChange={(e) => setFormData({ ...formData, societe: e.target.value })}
+                  style={inputStyle}
+                />
+                <input
+                  placeholder="N° TVA"
+                  value={formData.tva}
+                  onChange={(e) => setFormData({ ...formData, tva: e.target.value })}
+                  style={inputStyle}
+                />
+              </>
+            )}
+
+            <input
+              placeholder="Prénom"
+              value={formData.prenom}
+              onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
+              style={inputStyle}
+            />
+            <input
+              placeholder="Nom"
+              value={formData.nom}
+              onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
+              style={inputStyle}
+            />
+            <input
+              placeholder="Téléphone"
+              value={formData.tel}
+              onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
+              style={inputStyle}
+            />
+            <input
+              placeholder="Email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              style={inputStyle}
+            />
+            <textarea
+              placeholder="Remarque (facultatif)"
+              value={formData.remarque}
+              onChange={(e) => setFormData({ ...formData, remarque: e.target.value })}
+              style={{ ...inputStyle, height: "80px" }}
+            />
+
+            <div style={{ textAlign: "center", marginTop: "1rem" }}>
+              <button
+                onClick={handleReservation}
+                disabled={submitting}
+                style={{
+                  ...mainButton,
+                  opacity: submitting ? 0.6 : 1,
+                  cursor: submitting ? "not-allowed" : "pointer",
+                }}
+              >
+                Confirmer la réservation
+              </button>
+              <br />
+              <button onClick={() => setStep(2)} style={backLink}>
+                ← Retour
+              </button>
+            </div>
+          </div>
+        )}
+
         <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
       </div>
     </div>
@@ -271,10 +370,7 @@ const inputBox = {
   borderRadius: "8px",
   padding: "0.4rem 0.8rem",
   marginTop: "0.4rem",
-  position: "relative",
-  zIndex: 10,
 };
-
 const iconStyle = { color: "#007bff", marginRight: "0.6rem" };
 const fieldStyle = { border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "1rem" };
 const mainButton = {
@@ -295,5 +391,23 @@ const serviceButton = {
   cursor: "pointer",
   transition: "0.2s ease",
 };
+const inputStyle = {
+  width: "100%",
+  marginBottom: "0.8rem",
+  padding: "0.8rem",
+  borderRadius: "8px",
+  border: "1px solid #ced4da",
+  fontSize: "1rem",
+  boxSizing: "border-box",
+};
+const backLink = {
+  border: "none",
+  background: "none",
+  color: "#6c757d",
+  marginTop: "0.5rem",
+  cursor: "pointer",
+  textDecoration: "underline",
+};
 
 export default App;
+
