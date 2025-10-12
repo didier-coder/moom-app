@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format, getHours } from "date-fns";
+import { format } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaUserFriends, FaCalendarAlt, FaClock } from "react-icons/fa";
@@ -13,6 +13,7 @@ function App() {
   const [selectedHeure, setSelectedHeure] = useState("");
   const [personnes, setPersonnes] = useState(2);
   const [typeClient, setTypeClient] = useState("");
+  const [service, setService] = useState("lunch"); // ✅ Nouveau : lunch ou diner
   const [formData, setFormData] = useState({
     societe: "",
     tva: "",
@@ -28,15 +29,10 @@ function App() {
   const heuresLunch = ["12:00", "12:30", "13:00", "13:30", "14:00", "14:30"];
   const heuresDiner = ["18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"];
 
-  // ✅ Correction : on affiche Lunch si la date choisie est midi–15h, sinon Dîner
+  // ✅ Affiche automatiquement les heures selon le service choisi
   useEffect(() => {
-    const hour = getHours(selectedDate);
-    if (hour >= 10 && hour < 16) {
-      setHeuresDispo(heuresLunch);
-    } else {
-      setHeuresDispo(heuresDiner);
-    }
-  }, [selectedDate]);
+    setHeuresDispo(service === "lunch" ? heuresLunch : heuresDiner);
+  }, [service, selectedDate]);
 
   const progress = (step / 3) * 100;
 
@@ -54,6 +50,7 @@ function App() {
         personnes,
         date: formattedDate,
         heure: selectedHeure,
+        service,
         type: typeClient,
         ...formData,
       };
@@ -64,6 +61,9 @@ function App() {
       if (res.data.success) {
         toast.success(`✅ Réservation confirmée pour ${formattedDate} à ${selectedHeure}.`);
         setStep(1);
+        setSelectedHeure("");
+        setTypeClient("");
+        setService("lunch");
         setFormData({
           societe: "",
           tva: "",
@@ -73,8 +73,6 @@ function App() {
           email: "",
           remarque: "",
         });
-        setSelectedHeure("");
-        setTypeClient("");
       } else {
         toast.error("❌ Une erreur est survenue lors de la réservation.");
       }
@@ -178,7 +176,34 @@ function App() {
               </div>
             </div>
 
-            {/* Heure */}
+            {/* ✅ Choix Lunch / Dîner */}
+            <div style={{ marginBottom: "1rem" }}>
+              <label>Service :</label>
+              <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "0.5rem" }}>
+                <button
+                  onClick={() => setService("lunch")}
+                  style={{
+                    ...serviceButton,
+                    backgroundColor: service === "lunch" ? "#007bff" : "#f1f3f5",
+                    color: service === "lunch" ? "white" : "#333",
+                  }}
+                >
+                  🍽️ Midi
+                </button>
+                <button
+                  onClick={() => setService("diner")}
+                  style={{
+                    ...serviceButton,
+                    backgroundColor: service === "diner" ? "#007bff" : "#f1f3f5",
+                    color: service === "diner" ? "white" : "#333",
+                  }}
+                >
+                  🌙 Soir
+                </button>
+              </div>
+            </div>
+
+            {/* Heures disponibles */}
             <div style={{ marginBottom: "1rem" }}>
               <label
                 style={{
@@ -250,19 +275,8 @@ const inputBox = {
   zIndex: 10,
 };
 
-const iconStyle = {
-  color: "#007bff",
-  marginRight: "0.6rem",
-};
-
-const fieldStyle = {
-  border: "none",
-  outline: "none",
-  background: "transparent",
-  width: "100%",
-  fontSize: "1rem",
-};
-
+const iconStyle = { color: "#007bff", marginRight: "0.6rem" };
+const fieldStyle = { border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "1rem" };
 const mainButton = {
   backgroundColor: "#007bff",
   color: "white",
@@ -273,13 +287,13 @@ const mainButton = {
   cursor: "pointer",
   transition: "background-color 0.2s ease",
 };
+const serviceButton = {
+  border: "1px solid #ccc",
+  borderRadius: "8px",
+  padding: "0.6rem 1rem",
+  fontSize: "1rem",
+  cursor: "pointer",
+  transition: "0.2s ease",
+};
 
 export default App;
-
-
-
-
-
-
-
-
