@@ -32,8 +32,22 @@ function App() {
   const heuresDiner = ["18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"];
 
   useEffect(() => {
-    setHeuresDispo(service === "lunch" ? heuresLunch : heuresDiner);
-  }, [service, selectedDate]);
+  const now = new Date();
+  let heures = service === "lunch" ? [...heuresLunch] : [...heuresDiner];
+
+  // ✅ Si la date choisie est aujourd’hui, on filtre les heures déjà passées
+  if (selectedDate.toDateString() === now.toDateString()) {
+    const currentTime = now.getHours() + now.getMinutes() / 60;
+    heures = heures.filter((h) => {
+      const [hh, mm] = h.split(":").map(Number);
+      const timeValue = hh + mm / 60;
+      return timeValue > currentTime; // garde uniquement les heures futures
+    });
+  }
+
+  setHeuresDispo(heures);
+}, [service, selectedDate]);
+
 
   const progress = ((confirmed ? 4 : step) / 4) * 100;
 
