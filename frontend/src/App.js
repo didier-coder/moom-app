@@ -5,7 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Users, CalendarDays, Clock } from "lucide-react"; // ⬅️ icônes modernes
+import { FaUserFriends, FaCalendarAlt, FaClock } from "react-icons/fa";
 
 function App() {
   const [step, setStep] = useState(1);
