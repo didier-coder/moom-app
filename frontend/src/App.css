@@ -204,6 +204,11 @@ textarea:focus {
   background: linear-gradient(90deg, #007bff, #00b4d8) !important;
 }
 
+.Toastify__toast {
+  border-radius: 10px !important;
+}
+
+
 /* 🔘 Bouton de fermeture blanc et discret */
 .Toastify__close-button {
   color: #fff !important;
