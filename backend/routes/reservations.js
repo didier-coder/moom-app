@@ -8,7 +8,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const router = express.Router();
 
 async function sendConfirmationEmails({ email, name, date, heure, personnes, service }) {
-  const restaurantEmail = "contact@moom.be";
+  const restaurantEmail = "info@moom.be";
 
   const clientHtml = `
   <div style="font-family: 'Lato', sans-serif; background-color: #f9f9f9; padding: 40px;">
