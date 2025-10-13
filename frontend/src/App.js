@@ -335,107 +335,120 @@ function App() {
               )}
 
               {/* Étape 3 */}
-              {step === 3 && (
-                <div>
-                  {typeClient === "societe" && (
-                    <>
-                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-                      <input
-                        placeholder="Nom de société"
-                        value={formData.societe}
-                        onChange={(e) => setFormData({ ...formData, societe: e.target.value })}
-                        style={inputStyle}
-                      /></motion.div>
-                          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-                      <input
-                        placeholder="N° TVA"
-                        value={formData.tva}
-                        onChange={(e) => setFormData({ ...formData, tva: e.target.value })}
-                        style={inputStyle}
-                      /></motion.div>
-                    </>
-                  )}
-<motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-                  <input
-                    placeholder="Prénom"
-                    value={formData.prenom}
-                    onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
-                    style={inputStyle}
-                  /></motion.div>
-                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-                  <input
-                    placeholder="Nom"
-                    value={formData.nom}
-                    onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
-                    style={inputStyle}
-                  /></motion.div>
-                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-                  <input
-                    placeholder="Téléphone"
-                    value={formData.tel}
-                    onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
-                    style={inputStyle}
-                  /></motion.div>
-                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-                  <input
-                    placeholder="Email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    style={inputStyle}
-                  />
-                      </motion.div>
-                  <textarea
-                    placeholder="Remarque (facultatif)"
-                    value={formData.remarque}
-                    onChange={(e) => setFormData({ ...formData, remarque: e.target.value })}
-                    style={{ ...inputStyle, height: "80px" }}
-                  />
+{step === 3 && (
+  <div>
+    {typeClient === "societe" && (
+      <>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+          <input
+            placeholder="Nom de société"
+            value={formData.societe}
+            onChange={(e) => setFormData({ ...formData, societe: e.target.value })}
+            style={inputStyle}
+          />
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+          <input
+            placeholder="N° TVA"
+            value={formData.tva}
+            onChange={(e) => setFormData({ ...formData, tva: e.target.value })}
+            style={inputStyle}
+          />
+        </motion.div>
+      </>
+    )}
 
-                  <div style={{ textAlign: "center", marginTop: "1rem" }}>
-                    <div className="fadeIn" style={{ textAlign: "center" }}>
-                    <button onClick={handleReservation} disabled={submitting} style={mainButton}>
-                      {submitting ? "Envoi en cours..." : "Confirmer la réservation"}
-                    </button>
-                    <br />
-                    <button onClick={() => setStep(2)} style={backLink}>
-                      ← Retour
-                    </button>
-                  </div>
-                </div>
-              )}
-           
-          )}
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+      <input
+        placeholder="Prénom"
+        value={formData.prenom}
+        onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
+        style={inputStyle}
+      />
+    </motion.div>
 
-          {/* ✅ Écran final */}
-          {confirmed && (
-            <motion.div
-              key="confirmation"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.6 }}
-              style={{ textAlign: "center", padding: "2rem" }}
-            >
-              <h2>🎉 Merci pour votre réservation !</h2>
-              <p style={{ marginTop: "1rem" }}>
-                Nous avons bien enregistré votre demande pour le{" "}
-                <strong>{format(selectedDate, "dd/MM/yyyy")}</strong> à <strong>{selectedHeure}</strong>.
-              </p>
-              <p>Un e-mail de confirmation vous sera envoyé à {formData.email}.</p>
-              <button onClick={() => window.location.reload()} style={{ ...mainButton, marginTop: "1rem" }}>
-                Nouvelle réservation
-              </button>
-            </motion.div>
-          )}
-                </AnimatePresence>
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+      <input
+        placeholder="Nom"
+        value={formData.nom}
+        onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
+        style={inputStyle}
+      />
+    </motion.div>
 
-        <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
-      </motion.div>
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+      <input
+        placeholder="Téléphone"
+        value={formData.tel}
+        onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
+        style={inputStyle}
+      />
+    </motion.div>
+
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+      <input
+        placeholder="Email"
+        type="email"
+        value={formData.email}
+        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+        style={inputStyle}
+      />
+    </motion.div>
+
+    <textarea
+      placeholder="Remarque (facultatif)"
+      value={formData.remarque}
+      onChange={(e) => setFormData({ ...formData, remarque: e.target.value })}
+      style={{ ...inputStyle, height: "80px" }}
+    />
+
+    <div style={{ textAlign: "center", marginTop: "1rem" }}>
+      <div className="fadeIn" style={{ textAlign: "center" }}>
+        <button onClick={handleReservation} disabled={submitting} style={mainButton}>
+          {submitting ? "Envoi en cours..." : "Confirmer la réservation"}
+        </button>
+        <br />
+        <button onClick={() => setStep(2)} style={backLink}>
+          ← Retour
+        </button>
+      </div>
     </div>
-  </div> {/* ✅ fermeture du container principal */}
+  </div>
+)}
+
+{/* ✅ Écran final */}
+{confirmed && (
+  <motion.div
+    key="confirmation"
+    initial={{ opacity: 0, scale: 0.9 }}
+    animate={{ opacity: 1, scale: 1 }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 0.6 }}
+    style={{ textAlign: "center", padding: "2rem" }}
+  >
+    <h2>🎉 Merci pour votre réservation !</h2>
+    <p style={{ marginTop: "1rem" }}>
+      Nous avons bien enregistré votre demande pour le{" "}
+      <strong>{format(selectedDate, "dd/MM/yyyy")}</strong> à <strong>{selectedHeure}</strong>.
+    </p>
+    <p>Un e-mail de confirmation vous sera envoyé à {formData.email}.</p>
+    <button
+      onClick={() => window.location.reload()}
+      style={{ ...mainButton, marginTop: "1rem" }}
+    >
+      Nouvelle réservation
+    </button>
+  </motion.div>
+)}
+</AnimatePresence>
+
+<ToastContainer position="top-center" autoClose={2500} hideProgressBar />
+</motion.div>
+</div>
+</div> {/* ✅ fermeture finale équilibrée */}
   );
 }
+
 
 
 /* --- Styles --- */
