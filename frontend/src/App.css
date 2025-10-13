@@ -158,7 +158,7 @@ textarea:focus {
 
 /* --- Toast notifications --- */
 
-.Toastify__toast {
+/*.Toastify__toast {
   font-family: "Poppins", sans-serif;
   border-radius: 10px;
 }
@@ -174,7 +174,47 @@ textarea:focus {
 .Toastify__toast--warning {
   background-color: #ffc107 !important;
   color: #212529 !important;
+}*/
+
+/* --- Personnalisation react-toastify --- */
+
+/* Texte blanc pour toutes les notifications */
+.Toastify__toast {
+  color: #fff !important;
+  font-weight: 500;
 }
+
+/* ✅ Succès : fond vert élégant */
+.Toastify__toast--success {
+  background: linear-gradient(90deg, #28a745, #34d058) !important;
+}
+
+/* ⚠️ Avertissement : fond orange doux */
+.Toastify__toast--warning {
+  background: linear-gradient(90deg, #f0ad4e, #f7b733) !important;
+}
+
+/* ❌ Erreur : fond rouge vif */
+.Toastify__toast--error {
+  background: linear-gradient(90deg, #dc3545, #f45c67) !important;
+}
+
+/* ℹ️ Info : fond bleu clair */
+.Toastify__toast--info {
+  background: linear-gradient(90deg, #007bff, #00b4d8) !important;
+}
+
+/* 🔘 Bouton de fermeture blanc et discret */
+.Toastify__close-button {
+  color: #fff !important;
+  opacity: 0.9;
+}
+
+/* 🧭 Barre de progression translucide */
+.Toastify__progress-bar {
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+
 
 /* --- Animation transition entre étapes --- */
 
