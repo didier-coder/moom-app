@@ -1,5 +1,5 @@
 /* --- Mise en page principale --- */
-html, body {
+/*html, body {
   align-items: center;
   justify-content: center;
   height: 100%;
@@ -7,7 +7,7 @@ html, body {
   padding: 0;
   background: linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%);
   font-family: "Poppins", sans-serif;
-}
+}*/
 
 /*.container {
   min-height: 100vh;
