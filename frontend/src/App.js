@@ -123,7 +123,7 @@ function App() {
         overflow: "hidden",
       }}
     >
-      /*<div
+      <div
         style={{
           minHeight: "100vh",
           display: "flex",
@@ -132,7 +132,7 @@ function App() {
           background: "linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%)",
           padding: "2rem",
         }}
-      >*/
+      >
         <motion.div
           layout
           initial={{ opacity: 0, y: 40 }}
