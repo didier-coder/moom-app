@@ -193,10 +193,17 @@ function App() {
 
                   {/* Sélecteur de date stylé Bootstrap */}
 <div style={{ marginBottom: "1rem" }}>
-  <label className="form-label" style={{ fontWeight: 500, display: "block", marginBottom: "0.5rem" }}>
+  <label
+    className="form-label"
+    style={{ fontWeight: 500, display: "block", marginBottom: "0.5rem" }}
+  >
     Date :
   </label>
-  <div className="input-group" style={{ position: "relative", width: "100%" }}>
+
+  <div
+    className="input-group"
+    style={{ position: "relative", width: "100%", display: "flex" }}
+  >
     <span
       className="input-group-text"
       style={{
@@ -206,6 +213,7 @@ function App() {
         borderBottomLeftRadius: "0.5rem",
         display: "flex",
         alignItems: "center",
+        justifyContent: "center",
         padding: "0.6rem 0.9rem",
       }}
     >
@@ -222,14 +230,11 @@ function App() {
         className="form-control"
         popperPlacement="bottom-start"
         calendarClassName="datepicker-bootstrap"
-        style={{
-          borderTopLeftRadius: 0,
-          borderBottomLeftRadius: 0,
-        }}
       />
     </div>
   </div>
 </div>
+
 
                   <div style={{ marginBottom: "1rem" }}>
                     <label>Service :</label>
