@@ -1,9 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-const app = express(); // ✅ il faut d’abord créer app
-// ⚠️ Ne pas activer dotenv sur Render (optionnel si tu l’utilises localement)
-// dotenv.config();
+const app = express();
+
 app.use(cors());
 app.use(express.json());
 
