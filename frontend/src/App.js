@@ -109,22 +109,7 @@ function App() {
 
   return (
     <div
-    style={{
-      minHeight: "100vh",
-      width: "100%",
-      display: "flex",
-      justifyContent: "center", // ✅ centre horizontalement
-      alignItems: "center",     // ✅ centre verticalement
-      background: "linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%)",
-      padding: "2rem",
-      boxSizing: "border-box",
-    }}
-  >
-        <motion.div
-      layout
-      initial={{ opacity: 0, y: 40, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.6 }}
+      className="container"
       style={{
         width: "100%",
         maxWidth: "650px",
@@ -136,6 +121,32 @@ function App() {
         overflow: "hidden",
       }}
     >
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%)",
+          padding: "2rem",
+        }}
+      >
+        <motion.div
+          layout
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          style={{
+            width: "100%",
+            maxWidth: "650px",
+            background: "#fff",
+            borderRadius: "20px",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+            padding: "2rem 2.5rem",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
           {/* Barre de progression */}{" "}
           <div
             style={{
@@ -198,11 +209,9 @@ function App() {
                       <label
                         className="form-label"
                         style={{
-                           width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
+                          fontWeight: 500,
+                          display: "block",
+                          marginBottom: "0.5rem",
                         }}
                       >
                         Date:
