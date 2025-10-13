@@ -107,9 +107,24 @@ function App() {
     }
   };
 
-  return (
-    <div
-      className="container"
+return (
+  <div
+    style={{
+      minHeight: "100vh",
+      width: "100%",
+      display: "flex",
+      justifyContent: "center", // ✅ centrage horizontal
+      alignItems: "center", // ✅ centrage vertical
+      background: "linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%)",
+      padding: "2rem",
+      boxSizing: "border-box",
+    }}
+  >
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
       style={{
         width: "100%",
         maxWidth: "650px",
@@ -121,31 +136,7 @@ function App() {
         overflow: "hidden",
       }}
     >
-     <div
-  style={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-  }}
->
 
-        <motion.div
-          layout
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          style={{
-            width: "100%",
-            maxWidth: "650px",
-            background: "#fff",
-            borderRadius: "20px",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-            padding: "2rem 2.5rem",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
           {/* Barre de progression */}
           <div
             style={{
