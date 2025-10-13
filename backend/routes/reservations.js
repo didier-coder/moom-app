@@ -48,7 +48,7 @@ async function sendConfirmationEmails({ name, email, date, qrCodeBase64 }) {
         </div>
       `,
     });
-
+console.log("📧 [reservations.js] RESEND_API_KEY =", process.env.RESEND_API_KEY ? "✅ Présente" : "❌ Manquante");
     console.log("📧 Emails envoyés avec succès !");
   } catch (err) {
     console.error("❌ Erreur lors de l'envoi des e-mails :", err);
