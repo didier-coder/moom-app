@@ -113,6 +113,8 @@ function App() {
       style={{
         width: "100%",
         maxWidth: "650px",
+        justifyContent: "center",
+        alignItems: "center",
         background: "#fff",
         borderRadius: "20px",
         boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
