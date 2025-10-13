@@ -191,21 +191,45 @@ function App() {
                     </div>
                   </div>
 
-                  <div style={{ marginBottom: "1rem" }}>
-                    <label>Date :</label>
-                    <div style={inputBox}>
-                      <FaCalendarAlt style={iconStyle} />
-                      <DatePicker
-                      selected={selectedDate}
-                      onChange={(date) => setSelectedDate(date)}
-                      dateFormat="dd/MM/yyyy"
-                      minDate={new Date()}
-                      filterDate={(date) => date >= new Date()} // ✅ bloque les dates antérieures
-                      popperPlacement="top-start"
-                      />
+                  {/* Sélecteur de date stylé Bootstrap */}
+<div style={{ marginBottom: "1rem" }}>
+  <label className="form-label" style={{ fontWeight: 500, display: "block", marginBottom: "0.5rem" }}>
+    Date :
+  </label>
+  <div className="input-group" style={{ position: "relative", width: "100%" }}>
+    <span
+      className="input-group-text"
+      style={{
+        backgroundColor: "#f8f9fa",
+        border: "1px solid #ced4da",
+        borderTopLeftRadius: "0.5rem",
+        borderBottomLeftRadius: "0.5rem",
+        display: "flex",
+        alignItems: "center",
+        padding: "0.6rem 0.9rem",
+      }}
+    >
+      <FaCalendarAlt color="#007bff" />
+    </span>
 
-                    </div>
-                  </div>
+    <div style={{ flex: 1 }}>
+      <DatePicker
+        selected={selectedDate}
+        onChange={(date) => setSelectedDate(date)}
+        dateFormat="dd/MM/yyyy"
+        minDate={new Date()}
+        filterDate={(date) => date >= new Date()}
+        className="form-control"
+        popperPlacement="bottom-start"
+        calendarClassName="datepicker-bootstrap"
+        style={{
+          borderTopLeftRadius: 0,
+          borderBottomLeftRadius: 0,
+        }}
+      />
+    </div>
+  </div>
+</div>
 
                   <div style={{ marginBottom: "1rem" }}>
                     <label>Service :</label>
