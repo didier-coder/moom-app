@@ -53,11 +53,11 @@ textarea:focus {
 }
 
 /* --- Responsive Layout --- */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .container {
     padding: 1.5rem;
     border-radius: 12px;
-  }
+  }*/
 
   h1 {
     font-size: 1.4rem;
@@ -165,10 +165,10 @@ motion.div {
 }
 
 /* --- Ajustement mobile du calendrier --- */
-@media (max-width: 576px) {
+/*@media (max-width: 576px) {
   .react-datepicker {
     width: 100%;
     font-size: 0.9rem;
-  }
+  }*/
 }
 
