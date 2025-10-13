@@ -1,9 +1,11 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-
+const app = express(); // ✅ il faut d’abord créer app
 // ⚠️ Ne pas activer dotenv sur Render (optionnel si tu l’utilises localement)
 // dotenv.config();
+app.use(cors());
+app.use(express.json());
 
 import reservations from "./routes/reservations.js";
 import disponibilites from "./routes/disponibilites.js";
@@ -12,13 +14,6 @@ app.get("/api/ping", (req, res) => {
   res.status(200).send("pong");
 });
 
-// --- Création du serveur Express ---
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-// --- Routes ---
 app.use("/api/reservations", reservations);
 app.use("/api/disponibilites", disponibilites);
 
