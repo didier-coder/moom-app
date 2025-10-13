@@ -182,55 +182,31 @@ function App() {
                     </div>
                   </div>
 
-                  {/* Date (look Bootstrap) */}
                   <div style={{ marginBottom: "1rem" }}>
-                    <label
-                      className="form-label"
-                      style={{ fontWeight: 500, display: "block", marginBottom: "0.5rem" }}
-                    >
-                      Date :
-                    </label>
-                    <div
-                      className="input-group"
-                      style={{
-                        position: "relative",
-                        width: "100%",
-                        display: "flex",
-                        alignItems: "center", // ✅ centrage vertical
-                        justifyContent: "center", // ✅ centrage horizontal
-                      }}
-                    >
-                      <span
-                        className="input-group-text"
+                    <label>Date :</label>
+                      <div style={inputBox}>
+                      <FaCalendarAlt style={iconStyle} />
+                      <DatePicker
+                        selected={selectedDate}
+                        onChange={(date) => setSelectedDate(date)}
+                        dateFormat="dd/MM/yyyy"
+                        minDate={new Date()}
+                        filterDate={(date) => date >= new Date()}
+                        className="form-control"
+                        popperPlacement="bottom-start"
+                        calendarClassName="datepicker-bootstrap"
+                        placeholderText="Sélectionnez une date"
                         style={{
-                          backgroundColor: "#f8f9fa",
-                          border: "1px solid #ced4da",
-                          borderTopLeftRadius: "0.5rem",
-                          borderBottomLeftRadius: "0.5rem",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          padding: "0.6rem 0.9rem",
-                          height: "42px", // ✅ ajout important pour aligner l'icône verticalement
+                          border: "none",
+                          outline: "none",
+                          background: "transparent",
+                          width: "100%",
+                          fontSize: "1rem",
                         }}
-                      >  
-                        <FaCalendarAlt color="#007bff" />
-                      </span>
-                        
-                      <div style={{ flex: 1 }}>
-                        <DatePicker                  
-                          selected={selectedDate}
-                          onChange={(date) => setSelectedDate(date)}
-                          dateFormat="dd/MM/yyyy"
-                          minDate={new Date()}
-                          filterDate={(date) => date >= new Date()}
-                          className="form-control"
-                          popperPlacement="bottom-start"
-                          calendarClassName="datepicker-bootstrap"
-                        />
-                      </div>
+                      />
                     </div>
                   </div>
+                </div>
 
                   {/* Service */}
                   <div style={{ marginBottom: "1rem" }}>
