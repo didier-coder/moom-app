@@ -206,7 +206,7 @@ function App() {
                       />
                     </div>
                   </div>
-                </div>
+           
 
                   {/* Service */}
                   <div style={{ marginBottom: "1rem" }}>
