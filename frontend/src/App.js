@@ -225,7 +225,6 @@ function App() {
                           minDate={new Date()}
                           filterDate={(date) => date >= new Date()}
                           className="form-control"
-                          style={{ height: "42px" }} // ✅ même hauteur que l’icône
                           popperPlacement="bottom-start"
                           calendarClassName="datepicker-bootstrap"
                         />
