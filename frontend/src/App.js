@@ -470,9 +470,6 @@ function App() {
   );
 }
 
-export default App;
-
-
 /* --- Styles --- */
 const inputBox = {
   display: "flex",
