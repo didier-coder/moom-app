@@ -187,7 +187,7 @@ function App() {
                         onChange={(e) => setPersonnes(e.target.value)}
                         style={fieldStyle}
                       /></motion.div>
-                      </motion.div>
+                     
                     </div>
                   </div>
 
