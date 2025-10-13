@@ -8,6 +8,10 @@ import dotenv from "dotenv";
 import reservations from "./routes/reservations.js";
 import disponibilites from "./routes/disponibilites.js";
 
+app.get("/api/ping", (req, res) => {
+  res.status(200).send("pong");
+});
+
 // --- Création du serveur Express ---
 const app = express();
 
