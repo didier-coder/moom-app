@@ -33,7 +33,7 @@ async function sendConfirmationEmails({ name, email, date, qrCodeBase64 }) {
     // ✉️ Email au restaurateur
     await resend.emails.send({
       from: "Moom Réservations <no-reply@moom.be>",
-      to: "contact@moom.be", // <-- adresse du resto
+      to: "info@moom.be", // <-- adresse du resto
       subject: "📩 Nouvelle réservation reçue",
       html: `
         <div style="font-family: Arial, sans-serif; color: #333;">
