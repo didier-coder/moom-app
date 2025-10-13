@@ -178,6 +178,7 @@ function App() {
                     <label>Nombre de personnes :</label>
                     <div style={inputBox}>
                       <FaUserFriends style={iconStyle} />
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                       <input
                         type="number"
                         min="1"
@@ -185,7 +186,8 @@ function App() {
                         value={personnes}
                         onChange={(e) => setPersonnes(e.target.value)}
                         style={fieldStyle}
-                      />
+                      /></motion.div>
+                      </motion.div>
                     </div>
                   </div>
 
@@ -308,39 +310,44 @@ function App() {
                 <div>
                   {typeClient === "societe" && (
                     <>
+                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                       <input
                         placeholder="Nom de société"
                         value={formData.societe}
                         onChange={(e) => setFormData({ ...formData, societe: e.target.value })}
                         style={inputStyle}
-                      />
+                      /></motion.div>
+                          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                       <input
                         placeholder="N° TVA"
                         value={formData.tva}
                         onChange={(e) => setFormData({ ...formData, tva: e.target.value })}
                         style={inputStyle}
-                      />
+                      /></motion.div>
                     </>
                   )}
-
+<motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <input
                     placeholder="Prénom"
                     value={formData.prenom}
                     onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
                     style={inputStyle}
-                  />
+                  /></motion.div>
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <input
                     placeholder="Nom"
                     value={formData.nom}
                     onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
                     style={inputStyle}
-                  />
+                  /></motion.div>
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <input
                     placeholder="Téléphone"
                     value={formData.tel}
                     onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
                     style={inputStyle}
-                  />
+                  /></motion.div>
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <input
                     placeholder="Email"
                     type="email"
@@ -348,6 +355,7 @@ function App() {
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     style={inputStyle}
                   />
+                      </motion.div>
                   <textarea
                     placeholder="Remarque (facultatif)"
                     value={formData.remarque}
