@@ -3,6 +3,8 @@ import supabase from "../db.js";
 import { v4 as uuidv4 } from "uuid";
 import QRCode from "qrcode";
 import { Resend } from "resend";
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 
 const router = express.Router();
 
