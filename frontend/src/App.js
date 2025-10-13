@@ -126,7 +126,7 @@ function App() {
       <div
         style={{
           minHeight: "100vh",
-          display: "flex",
+          /*display: "flex",*/
           justifyContent: "center",
           alignItems: "center",
           background: "linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%)",
