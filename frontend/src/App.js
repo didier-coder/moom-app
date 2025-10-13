@@ -121,17 +121,15 @@ function App() {
         overflow: "hidden",
       }}
     >
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          background:
-            "linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%)",
-          padding: "2rem",
-        }}
-      >
+     <div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  }}
+>
+
         <motion.div
           layout
           initial={{ opacity: 0, y: 40 }}
