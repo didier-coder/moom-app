@@ -35,6 +35,17 @@ button:disabled {
 
 /* --- Champs de saisie --- */
 
+/* Supprime la bordure du champ de saisie du DatePicker */
+.react-datepicker__input-container input {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  width: 100%;
+  font-size: 1rem;
+  color: #333;
+}
+
 input,
 textarea {
   font-family: "Poppins", sans-serif;
