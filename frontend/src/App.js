@@ -211,18 +211,21 @@ function App() {
                           alignItems: "center",
                           justifyContent: "center",
                           padding: "0.6rem 0.9rem",
+                          height: "42px", // ✅ ajout important pour aligner l'icône verticalement
                         }}
-                      >
+                      >  
                         <FaCalendarAlt color="#007bff" />
                       </span>
+                        
                       <div style={{ flex: 1 }}>
-                        <DatePicker
+                        <DatePicker                  
                           selected={selectedDate}
                           onChange={(date) => setSelectedDate(date)}
                           dateFormat="dd/MM/yyyy"
                           minDate={new Date()}
                           filterDate={(date) => date >= new Date()}
                           className="form-control"
+                          style={{ height: "42px" }} // ✅ même hauteur que l’icône
                           popperPlacement="bottom-start"
                           calendarClassName="datepicker-bootstrap"
                         />
