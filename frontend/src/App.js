@@ -404,7 +404,7 @@ function App() {
                   </div>
                 </div>
               )}
-            </motion.div>
+           
           )}
 
           {/* ✅ Écran final */}
