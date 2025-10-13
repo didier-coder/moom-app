@@ -107,24 +107,9 @@ function App() {
     }
   };
 
-return (
-  <div
-    style={{
-      minHeight: "100vh",
-      width: "100%",
-      display: "flex",
-      justifyContent: "center", // ✅ centrage horizontal
-      alignItems: "center", // ✅ centrage vertical
-      background: "linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%)",
-      padding: "2rem",
-      boxSizing: "border-box",
-    }}
-  >
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
+  return (
+    <div
+      className="container"
       style={{
         width: "100%",
         maxWidth: "650px",
@@ -136,8 +121,33 @@ return (
         overflow: "hidden",
       }}
     >
-
-          {/* Barre de progression */}
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%)",
+          padding: "2rem",
+        }}
+      >
+        <motion.div
+          layout
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          style={{
+            width: "100%",
+            maxWidth: "650px",
+            background: "#fff",
+            borderRadius: "20px",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+            padding: "2rem 2.5rem",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          {/* Barre de progression */}{" "}
           <div
             style={{
               height: "6px",
@@ -155,9 +165,8 @@ return (
                 background: "linear-gradient(90deg, #007bff, #00b4d8)",
                 borderRadius: "3px",
               }}
-            />
+            />{" "}
           </div>
-
           <h1
             style={{
               textAlign: "center",
@@ -166,10 +175,10 @@ return (
               marginBottom: "1.5rem",
             }}
           >
-            Réservation
+            Réservation{" "}
           </h1>
-
           <AnimatePresence mode="wait">
+            {" "}
             {!confirmed && (
               <motion.div
                 key={step}
@@ -178,13 +187,13 @@ return (
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.4 }}
               >
-                {/* Étape 1 */}
+                {/* Étape 1 */}{" "}
                 {step === 1 && (
                   <div className="fadeIn" style={{ textAlign: "center" }}>
                     <div style={{ marginBottom: "1rem" }}>
-                      <label>Nombre de personnes :</label>
+                      <label> Nombre de personnes: </label>{" "}
                       <div style={inputBox}>
-                        <FaUserFriends style={iconStyle} />
+                        <FaUserFriends style={iconStyle} />{" "}
                         <input
                           type="number"
                           min="1"
@@ -192,11 +201,10 @@ return (
                           value={personnes}
                           onChange={(e) => setPersonnes(e.target.value)}
                           style={fieldStyle}
-                        />
-                      </div>
+                        />{" "}
+                      </div>{" "}
                     </div>
-
-                    {/* Sélecteur de date stylé Bootstrap */}
+                    {/* Sélecteur de date stylé Bootstrap */}{" "}
                     <div style={{ marginBottom: "1rem" }}>
                       <label
                         className="form-label"
@@ -206,9 +214,8 @@ return (
                           marginBottom: "0.5rem",
                         }}
                       >
-                        Date :
+                        Date:
                       </label>
-
                       <div
                         className="input-group"
                         style={{
@@ -232,7 +239,6 @@ return (
                         >
                           <FaCalendarAlt color="#007bff" />
                         </span>
-
                         <div style={{ flex: 1 }}>
                           <DatePicker
                             selected={selectedDate}
@@ -244,13 +250,12 @@ return (
                             popperPlacement="bottom-start"
                             calendarClassName="datepicker-bootstrap"
                           />
-                        </div>
-                      </div>
+                        </div>{" "}
+                      </div>{" "}
                     </div>
-
-                    {/* Sélection service */}
+                    {/* Sélection service */}{" "}
                     <div style={{ marginBottom: "1rem" }}>
-                      <label>Service :</label>
+                      <label> Service: </label>{" "}
                       <div
                         style={{
                           display: "flex",
@@ -265,35 +270,30 @@ return (
                             ...serviceButton,
                             backgroundColor:
                               service === "lunch" ? "#007bff" : "#f1f3f5",
-                            color:
-                              service === "lunch" ? "white" : "#333",
+                            color: service === "lunch" ? "white" : "#333",
                           }}
                         >
-                          🍽️ Midi
-                        </button>
+                          🍽️Midi{" "}
+                        </button>{" "}
                         <button
                           onClick={() => setService("diner")}
                           style={{
                             ...serviceButton,
                             backgroundColor:
                               service === "diner" ? "#007bff" : "#f1f3f5",
-                            color:
-                              service === "diner" ? "white" : "#333",
+                            color: service === "diner" ? "white" : "#333",
                           }}
                         >
-                          🌙 Soir
-                        </button>
-                      </div>
+                          🌙Soir{" "}
+                        </button>{" "}
+                      </div>{" "}
                     </div>
-
-                    {/* Heures disponibles */}
+                    {/* Heures disponibles */}{" "}
                     <div style={{ marginBottom: "1rem" }}>
                       <label>
-                        <FaClock
-                          style={{ marginRight: "0.3rem" }}
-                        />{" "}
-                        Heures disponibles :
-                      </label>
+                        <FaClock style={{ marginRight: "0.3rem" }} /> Heures
+                        disponibles:
+                      </label>{" "}
                       <div
                         style={{
                           display: "grid",
@@ -309,11 +309,8 @@ return (
                             onClick={() => setSelectedHeure(h)}
                             style={{
                               backgroundColor:
-                                selectedHeure === h
-                                  ? "#007bff"
-                                  : "#f1f3f5",
-                              color:
-                                selectedHeure === h ? "#fff" : "#333",
+                                selectedHeure === h ? "#007bff" : "#f1f3f5",
+                              color: selectedHeure === h ? "#fff" : "#333",
                               border: "1px solid #dee2e6",
                               borderRadius: "8px",
                               padding: "0.6rem 0",
@@ -321,12 +318,11 @@ return (
                               transition: "0.2s ease",
                             }}
                           >
-                            {h}
+                            {h}{" "}
                           </button>
-                        ))}
-                      </div>
+                        ))}{" "}
+                      </div>{" "}
                     </div>
-
                     <button
                       onClick={() =>
                         selectedHeure
@@ -335,15 +331,14 @@ return (
                       }
                       style={mainButton}
                     >
-                      Suivant →
-                    </button>
+                      Suivant→{" "}
+                    </button>{" "}
                   </div>
                 )}
-
-                {/* Étape 2 */}
+                {/* Étape 2 */}{" "}
                 {step === 2 && (
                   <div className="fadeIn" style={{ textAlign: "center" }}>
-                    <h3>Vous êtes :</h3>
+                    <h3> Vous êtes: </h3>{" "}
                     <div style={{ marginTop: "1rem" }}>
                       <button
                         onClick={() => {
@@ -356,8 +351,8 @@ return (
                           backgroundColor: "#007bff",
                         }}
                       >
-                        Société
-                      </button>
+                        Société{" "}
+                      </button>{" "}
                       <button
                         onClick={() => {
                           setTypeClient("particulier");
@@ -368,18 +363,19 @@ return (
                           backgroundColor: "#28a745",
                         }}
                       >
-                        Particulier
-                      </button>
-                    </div>
+                        Particulier{" "}
+                      </button>{" "}
+                    </div>{" "}
                     <button onClick={() => setStep(1)} style={backLink}>
-                      ← Retour
-                    </button>
+                      {" "}
+                      ←Retour{" "}
+                    </button>{" "}
                   </div>
                 )}
-
-                {/* Étape 3 */}
+                {/* Étape 3 */}{" "}
                 {step === 3 && (
                   <div>
+                    {" "}
                     {typeClient === "societe" && (
                       <>
                         <input
@@ -392,7 +388,7 @@ return (
                             })
                           }
                           style={inputStyle}
-                        />
+                        />{" "}
                         <input
                           placeholder="N° TVA"
                           value={formData.tva}
@@ -403,10 +399,9 @@ return (
                             })
                           }
                           style={inputStyle}
-                        />
+                        />{" "}
                       </>
                     )}
-
                     <input
                       placeholder="Prénom"
                       value={formData.prenom}
@@ -417,7 +412,7 @@ return (
                         })
                       }
                       style={inputStyle}
-                    />
+                    />{" "}
                     <input
                       placeholder="Nom"
                       value={formData.nom}
@@ -428,7 +423,7 @@ return (
                         })
                       }
                       style={inputStyle}
-                    />
+                    />{" "}
                     <input
                       placeholder="Téléphone"
                       value={formData.tel}
@@ -439,7 +434,7 @@ return (
                         })
                       }
                       style={inputStyle}
-                    />
+                    />{" "}
                     <input
                       placeholder="Email"
                       type="email"
@@ -451,7 +446,7 @@ return (
                         })
                       }
                       style={inputStyle}
-                    />
+                    />{" "}
                     <textarea
                       placeholder="Remarque (facultatif)"
                       value={formData.remarque}
@@ -463,7 +458,6 @@ return (
                       }
                       style={{ ...inputStyle, height: "80px" }}
                     />
-
                     <div
                       style={{
                         textAlign: "center",
@@ -477,22 +471,18 @@ return (
                       >
                         {submitting
                           ? "Envoi en cours..."
-                          : "Confirmer la réservation"}
-                      </button>
+                          : "Confirmer la réservation"}{" "}
+                      </button>{" "}
                       <br />
-                      <button
-                        onClick={() => setStep(2)}
-                        style={backLink}
-                      >
-                        ← Retour
-                      </button>
-                    </div>
+                      <button onClick={() => setStep(2)} style={backLink}>
+                        ←Retour{" "}
+                      </button>{" "}
+                    </div>{" "}
                   </div>
-                )}
+                )}{" "}
               </motion.div>
             )}
-
-            {/* Écran final */}
+            {/* Écran final */}{" "}
             {confirmed && (
               <motion.div
                 key="confirmation"
@@ -502,33 +492,32 @@ return (
                 transition={{ duration: 0.6 }}
                 style={{ textAlign: "center", padding: "2rem" }}
               >
-                <h2>🎉 Merci pour votre réservation !</h2>
+                <h2> 🎉Merci pour votre réservation! </h2>{" "}
                 <p style={{ marginTop: "1rem" }}>
                   Nous avons bien enregistré votre demande pour le{" "}
-                  <strong>{format(selectedDate, "dd/MM/yyyy")}</strong> à{" "}
-                  <strong>{selectedHeure}</strong>.
-                </p>
+                  <strong> {format(selectedDate, "dd/MM/yyyy")} </strong> à{" "}
+                  <strong> {selectedHeure} </strong>.{" "}
+                </p>{" "}
                 <p>
-                  Un e-mail de confirmation vous sera envoyé à{" "}
-                  {formData.email}.
-                </p>
+                  Un e - mail de confirmation vous sera envoyé à{" "}
+                  {formData.email}.{" "}
+                </p>{" "}
                 <button
                   onClick={() => window.location.reload()}
                   style={{ ...mainButton, marginTop: "1rem" }}
                 >
-                  Nouvelle réservation
-                </button>
+                  Nouvelle réservation{" "}
+                </button>{" "}
               </motion.div>
-            )}
+            )}{" "}
           </AnimatePresence>
-
           <ToastContainer
             position="top-center"
             autoClose={2500}
             hideProgressBar
           />
-        </motion.div>
-      </div>
+        </motion.div>{" "}
+      </div>{" "}
     </div>
   );
 }
