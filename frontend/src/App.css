@@ -1,11 +1,13 @@
 /* --- Styles globaux --- */
 
-body {
-  font-family: "Poppins", sans-serif;
-  background-color: #f8f9fa;
+html, body, #root {
+  height: 100%;
   margin: 0;
   padding: 0;
-  color: #212529;
+  background: linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 h1,
