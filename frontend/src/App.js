@@ -117,9 +117,9 @@ function App() {
         alignItems: "center",
         background: "#fff",
         borderRadius: "20px",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+        /*boxShadow: "0 10px 30px rgba(0,0,0,0.1)",*/
         padding: "2rem 2.5rem",
-        //position: "relative",
+        position: "relative",
         overflow: "hidden",
       }}
     >
