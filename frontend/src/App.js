@@ -428,13 +428,15 @@ function App() {
               </button>
             </motion.div>
           )}
-        </AnimatePresence>
+                </AnimatePresence>
 
         <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
       </motion.div>
     </div>
+  </div> {/* ✅ fermeture du container principal */}
   );
 }
+
 
 /* --- Styles --- */
 const inputBox = {
