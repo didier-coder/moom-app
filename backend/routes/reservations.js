@@ -81,7 +81,8 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
 // 🚀 Route POST — nouvelle réservation
 router.post("/", async (req, res) => {
   try {
-    const { name, email, date } = req.body;
+    const { prenom, nom, email, date, heure, personnes, service } = req.body;
+    const name = `${prenom} ${nom}`.trim();
 
     const id = uuidv4();
     const qrData = `Réservation #${id} - ${name} - ${date}`;
