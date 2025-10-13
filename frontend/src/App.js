@@ -193,12 +193,18 @@ function App() {
                       dateFormat="dd/MM/yyyy"
                       minDate={new Date()}
                       filterDate={(date) => date >= new Date()}
-                      className="form-control"
                       popperPlacement="bottom-start"
                       calendarClassName="datepicker-bootstrap"
                       placeholderText="Sélectionnez une date"
-                      style={fieldStyle}
-                    />
+                      style={{
+                        flex: 1,
+                        border: "none",
+                        outline: "none",
+                        background: "transparent",
+                        fontSize: "1rem",
+                        padding: "0.4rem 0.2rem", // garde une respiration sans débordement
+                    }}
+                />
                   </div>
                 </div>
 
@@ -473,6 +479,8 @@ const inputBox = {
   borderRadius: "8px",
   padding: "0.4rem 0.8rem",
   marginTop: "0.4rem",
+  width: "100%",
+  boxSizing: "border-box", // ✅ empêche tout débordement
 };
 const iconStyle = { color: "#007bff", marginRight: "0.6rem" };
 const fieldStyle = {
