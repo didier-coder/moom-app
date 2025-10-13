@@ -99,3 +99,56 @@ input:focus, textarea:focus {
     transform: rotate(360deg);
   }
 }
+/* -------- DatePicker Bootstrap-like -------- */
+.react-datepicker__input-container input.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 0 0.5rem 0.5rem 0;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background-color: #fff;
+}
+
+.react-datepicker__input-container input.form-control:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  outline: none;
+}
+
+/* -------- Calendrier popup -------- */
+.datepicker-bootstrap {
+  font-family: "Poppins", sans-serif;
+  border-radius: 0.75rem;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.react-datepicker__header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  padding-top: 0.5rem;
+}
+
+.react-datepicker__current-month {
+  font-weight: 600;
+  color: #212529;
+}
+
+.react-datepicker__day {
+  border-radius: 0.5rem;
+  margin: 0.1rem;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #0d6efd !important;
+  color: white !important;
+}
+
+.react-datepicker__day:hover {
+  background-color: #e7f1ff !important;
+  border-radius: 0.5rem;
+}
+
