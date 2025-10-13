@@ -35,6 +35,11 @@ button:disabled {
 
 /* --- Champs de saisie --- */
 
+.react-datepicker__input-container input::placeholder {
+  color: #999;
+  opacity: 0.8;
+}
+
 /* Supprime la bordure du champ de saisie du DatePicker */
 .react-datepicker__input-container input {
   border: none !important;
