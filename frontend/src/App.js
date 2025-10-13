@@ -465,9 +465,12 @@ function App() {
       </AnimatePresence>
 
       <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
-    </motion.div>
-  </div>
-);
+        </motion.div>
+    </div>
+  );
+}
+
+export default App;
 
 
 /* --- Styles --- */
