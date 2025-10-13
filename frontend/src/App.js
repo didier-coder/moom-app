@@ -192,7 +192,13 @@ function App() {
                     </label>
                     <div
                       className="input-group"
-                      style={{ position: "relative", width: "100%", display: "flex" }}
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center", // ✅ centrage vertical
+                        justifyContent: "center", // ✅ centrage horizontal
+                      }}
                     >
                       <span
                         className="input-group-text"
