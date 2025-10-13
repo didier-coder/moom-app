@@ -9,6 +9,9 @@ import { FaUserFriends, FaCalendarAlt, FaClock } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import "./App.css";
 
+const heuresLunch = ["12:00", "12:30", "13:00", "13:30", "14:00", "14:30"];
+const heuresDiner = ["18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"];
+
 function App() {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -29,8 +32,6 @@ function App() {
   const [confirmed, setConfirmed] = useState(false);
   const [heuresDispo, setHeuresDispo] = useState([]);
 
-  const heuresLunch = ["12:00", "12:30", "13:00", "13:30", "14:00", "14:30"];
-  const heuresDiner = ["18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"];
 
   useEffect(() => {
     const now = new Date();
