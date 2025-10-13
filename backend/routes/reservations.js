@@ -7,52 +7,75 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 const router = express.Router();
 
-// 🧠 Fonction d'envoi d'e-mails
-async function sendConfirmationEmails({ name, email, date, qrCodeBase64 }) {
-  try {
-    // ✉️ Email au client
-    await resend.emails.send({
-      from: "Moom <no-reply@moom.be>",
-      to: email,
-      subject: "✅ Confirmation de votre réservation chez Moom",
-      html: `
-        <div style="font-family: Arial, sans-serif; color: #333;">
-          <h2>Merci ${name},</h2>
-          <p>Votre réservation chez <strong>Moom</strong> a bien été enregistrée :</p>
-          <ul>
-            <li><strong>Date :</strong> ${date}</li>
-          </ul>
-          <p>Voici votre QR Code de confirmation :</p>
-          <img src="${qrCodeBase64}" alt="QR Code" width="120" height="120" />
-          <p>Nous avons hâte de vous accueillir 🍽️</p>
-          <p style="font-size:12px;color:#999;">Cet email est automatique, merci de ne pas y répondre.</p>
-        </div>
-      `,
-    });
+async function sendConfirmationEmails({ email, name, date, heure, personnes, service }) {
+  const restaurantEmail = "contact@moom.be";
 
-    // ✉️ Email au restaurateur
-    await resend.emails.send({
-      from: "Moom Réservations <no-reply@moom.be>",
-      to: "info@moom.be", // <-- adresse du resto
-      subject: "📩 Nouvelle réservation reçue",
-      html: `
-        <div style="font-family: Arial, sans-serif; color: #333;">
-          <h3>Nouvelle réservation :</h3>
-          <ul>
-            <li><strong>Nom :</strong> ${name}</li>
-            <li><strong>Email :</strong> ${email}</li>
-            <li><strong>Date :</strong> ${date}</li>
-          </ul>
-          <p>QR Code associé :</p>
-          <img src="${qrCodeBase64}" alt="QR Code" width="120" height="120" />
+  const clientHtml = `
+  <div style="font-family: 'Lato', sans-serif; background-color: #f9f9f9; padding: 40px;">
+    <div style="max-width: 600px; margin: auto; background: white; border-radius: 14px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); overflow: hidden;">
+      <div style="background-color: #fff7ef; padding: 20px 30px; border-bottom: 1px solid #f0e0d0;">
+        <img src="https://res.cloudinary.com/dv3z6wo7v/image/upload/v1739397352/moom-logo.png" alt="Moom" style="width:120px; display:block; margin:auto;" />
+      </div>
+      <div style="padding: 35px;">
+        <h2 style="color: #222; text-align:center;">Merci pour votre réservation !</h2>
+        <p style="font-size:16px; color:#555; text-align:center;">
+          Bonjour <strong>${name}</strong>, nous avons bien enregistré votre réservation au restaurant <strong>Moom</strong>.
+        </p>
+        <div style="margin:30px 0; border:1px solid #eee; border-radius:10px; padding:20px; background:#fafafa;">
+          <p><strong>📅 Date :</strong> ${date}</p>
+          <p><strong>🕒 Heure :</strong> ${heure}</p>
+          <p><strong>👥 Nombre de personnes :</strong> ${personnes}</p>
+          <p><strong>🍽️ Service :</strong> ${service === "lunch" ? "Midi" : "Soir"}</p>
         </div>
-      `,
-    });
-console.log("📧 [reservations.js] RESEND_API_KEY =", process.env.RESEND_API_KEY ? "✅ Présente" : "❌ Manquante");
-    console.log("📧 Emails envoyés avec succès !");
-  } catch (err) {
-    console.error("❌ Erreur lors de l'envoi des e-mails :", err);
-  }
+        <p style="text-align:center; color:#777; font-size:15px;">
+          Un email de confirmation vous sera envoyé avec toutes les informations utiles. <br/>
+          Nous avons hâte de vous accueillir.
+        </p>
+        <div style="text-align:center; margin-top:25px;">
+          <a href="https://moom.be" style="background-color:#d6ad60; color:white; text-decoration:none; padding:12px 24px; border-radius:8px; display:inline-block; font-weight:bold;">Visiter notre site</a>
+        </div>
+      </div>
+      <div style="background:#fff7ef; padding:15px; text-align:center; font-size:13px; color:#888;">
+        © ${new Date().getFullYear()} Moom Restaurant — Tous droits réservés
+      </div>
+    </div>
+  </div>`;
+
+  const restoHtml = `
+  <div style="font-family: 'Lato', sans-serif; background-color: #f9f9f9; padding: 40px;">
+    <div style="max-width: 600px; margin: auto; background: white; border-radius: 14px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); overflow: hidden;">
+      <div style="background-color: #fff7ef; padding: 20px 30px; border-bottom: 1px solid #f0e0d0;">
+        <h2 style="color:#333; text-align:center;">Nouvelle réservation reçue</h2>
+      </div>
+      <div style="padding: 35px;">
+        <p><strong>Nom :</strong> ${name}</p>
+        <p><strong>Email :</strong> ${email}</p>
+        <p><strong>Date :</strong> ${date}</p>
+        <p><strong>Heure :</strong> ${heure}</p>
+        <p><strong>Personnes :</strong> ${personnes}</p>
+        <p><strong>Service :</strong> ${service}</p>
+      </div>
+      <div style="background:#fff7ef; padding:15px; text-align:center; font-size:13px; color:#888;">
+        ⚡ Notification automatique du site Moom.be
+      </div>
+    </div>
+  </div>`;
+
+  await resend.emails.send({
+    from: "Moom <noreply@moom.be>",
+    to: [email],
+    subject: "✅ Confirmation de votre réservation - Moom",
+    html: clientHtml,
+  });
+
+  await resend.emails.send({
+    from: "Moom <noreply@moom.be>",
+    to: [restaurantEmail],
+    subject: "📩 Nouvelle réservation reçue",
+    html: restoHtml,
+  });
+
+  console.log("📧 Emails envoyés avec succès !");
 }
 
 // 🚀 Route POST — nouvelle réservation
