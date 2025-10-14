@@ -3,6 +3,7 @@ import supabase from "../db.js";
 import { v4 as uuidv4 } from "uuid";
 import QRCode from "qrcode";
 import { Resend } from "resend";
+import { format } from "date-fns";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const router = express.Router();
@@ -12,7 +13,7 @@ const router = express.Router();
  */
 async function sendConfirmationEmails({ email, name, date, heure, personnes, service, comment, tel }) {
   console.log("📧 Envoi des mails pro...");
-
+const formattedDate = format(new Date(date), "dd-MM-yyyy");
   // --- Mail client (style ZenChef) ---
   const htmlClient = `
     <div style="font-family:'Helvetica Neue',Arial,sans-serif;background-color:#f9f9f9;padding:40px 0;color:#333;">
@@ -25,7 +26,7 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
           <p>Bonjour <strong>${name}</strong>,</p>
           <p>Nous avons le plaisir de confirmer votre réservation au restaurant <strong>Moom</strong>.</p>
           <table style="width:100%;margin:20px 0;border-collapse:collapse;">
-            <tr><td><strong>Date</strong></td><td>${date}</td></tr>
+            <tr><td><strong>Date</strong></td><td>${formattedDate}</td></tr>
             <tr><td><strong>Heure</strong></td><td>${heure}</td></tr>
             <tr><td><strong>Personnes</strong></td><td>${personnes}</td></tr>
             <tr><td><strong>Service</strong></td><td>${service}</td></tr>
@@ -55,7 +56,7 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
       <p><strong>Nom :</strong> ${name}</p>
       <p><strong>Email :</strong> ${email}</p>
       <p><strong>Téléphone :</strong> ${tel || "—"}</p>
-      <p><strong>Date :</strong> ${date}</p>
+      <p><strong>Date :</strong> ${formattedDate}</p>
       <p><strong>Heure :</strong> ${heure}</p>
       <p><strong>Personnes :</strong> ${personnes}</p>
       <p><strong>Service :</strong> ${service}</p>
@@ -94,7 +95,7 @@ router.post("/", async (req, res) => {
     const id = uuidv4();
 
     // Génération du QR code
-    const qrData = `Réservation #${id} - ${name} - ${date} à ${heure}`;
+    const qrData = `Réservation #${id} - ${name} - ${formattedDate} à ${heure}`;
     const qrCodeBase64 = await QRCode.toDataURL(qrData);
 
     // Insertion dans Supabase
