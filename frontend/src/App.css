@@ -184,17 +184,17 @@ textarea:focus {
   font-weight: 500;
 }
 
-/* ✅ Succès : fond vert élégant */
+/* Succès : fond vert élégant */
 .Toastify__toast--success {
   background: linear-gradient(90deg, #28a745, #34d058) !important;
 }
 
-/* ⚠️ Avertissement : fond orange doux */
+/* Avertissement : fond orange doux */
 .Toastify__toast--warning {
   background: linear-gradient(90deg, #f0ad4e, #f7b733) !important;
 }
 
-/* ❌ Erreur : fond rouge vif */
+/* Erreur : fond rouge vif */
 .Toastify__toast--error {
   background: linear-gradient(90deg, #dc3545, #f45c67) !important;
 }
