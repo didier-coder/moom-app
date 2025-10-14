@@ -55,12 +55,12 @@ function App() {
   const handleReservation = async () => {
     // Interdit les dates passées (sécurité)
     if (selectedDate < new Date().setHours(0, 0, 0, 0)) {
-      toast.error("🚫 Vous ne pouvez pas réserver pour une date passée.");
+      toast.error("Vous ne pouvez pas réserver pour une date passée.");
       return;
     }
 
     if (!selectedDate || !selectedHeure || !formData.prenom || !formData.nom || !formData.email) {
-      toast.warning("⚠️ Merci de compléter tous les champs obligatoires.");
+      toast.warning("Merci de compléter tous les champs obligatoires.");
       return;
     }
 
@@ -81,14 +81,14 @@ function App() {
       const res = await axios.post(url, data);
 
       if (res?.data?.success) {
-        toast.success("✅ Réservation confirmée !");
+        toast.success("Réservation confirmée !");
         setConfirmed(true);
       } else {
-        toast.error("❌ Une erreur est survenue.");
+        toast.error("Une erreur est survenue.");
       }
     } catch (error) {
       console.error(error);
-      toast.error("❌ Erreur lors de la réservation.");
+      toast.error("Erreur lors de la réservation.");
     } finally {
       setSubmitting(false);
     }
@@ -228,7 +228,7 @@ function App() {
                         color: service === "lunch" ? "white" : "#333",
                       }}
                     >
-                      🍽️ Midi
+                      Midi
                     </button>
                     <button
                       onClick={() => setService("diner")}
@@ -239,7 +239,7 @@ function App() {
                         color: service === "diner" ? "white" : "#333",
                       }}
                     >
-                      🌙 Soir
+                      Soir
                     </button>
                   </div>
                 </div>
