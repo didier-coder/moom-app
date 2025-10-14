@@ -67,15 +67,15 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
 
   // --- Envoi des emails ---
   await resend.emails.send({
-    from: "Restaurant Moom <no-reply@restaurantmoom.be>",
+    from: "Restaurant Moom <no-reply@moom.be>",
     to: [email],
     subject: "✅ Confirmation de votre réservation - Moom",
     html: htmlClient,
   });
 
   await resend.emails.send({
-    from: "Restaurant Moom <no-reply@restaurantmoom.be>",
-    to: ["info@restaurantmoom.be"],
+    from: "Restaurant Moom <no-reply@moom.be>",
+    to: ["business@moom.be"],
     subject: `📥 Nouvelle réservation - ${name}`,
     html: htmlRestaurant,
   });
