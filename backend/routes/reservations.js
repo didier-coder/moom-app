@@ -50,9 +50,8 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
           <p style="margin-top:40px;">À très bientôt,</p>
           <p style="font-weight:bold;">L’équipe du restaurant Moom</p>
         </div>
-        <div style="background:#b3cdb0;text-align:center;padding:15px;border-radius:12px;font-size:11px;color:#fff;">
-          Restaurant Moom • Oostende<br/>
-          <a href="mailto:info@moom.be" style="color:#555;">info@moom.be</a>
+        <div style="background:#b3cdb0;text-align:center;padding:15px;border-radius:12px;font-size:11px;color:#000000;">
+          Restaurant Moom • Ossel  |  <a href="mailto:info@moom.be" style="color:#555;">info@moom.be</a>
         </div>
       </div>
     </div>
