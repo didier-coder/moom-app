@@ -98,23 +98,21 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
  */
 router.post("/", async (req, res) => {
   try {
-    const { prenom, nom, email, date, heure, personnes, service, remarque, societe, tel, tva, particulier } = req.body;
-    const name = `${prenom} ${nom}`.trim();
-    const comment = remarque;
+    const { name, email, date, heure, personnes, service, comment, tel } = req.body;
     const id = uuidv4();
 
-    // Génération du QR code
+    // ✅ Formatage avant usage dans QR code
+    const formattedDate = format(new Date(date), "dd-MM-yyyy");
     const qrData = `Réservation #${id} - ${name} - ${formattedDate} à ${heure}`;
     const qrCodeBase64 = await QRCode.toDataURL(qrData);
 
-    // Insertion dans Supabase
     const { error } = await supabase
       .from("reservations")
-      .insert([{ id, name, email, date, heure, personnes, service, comment, societe, tel, tva, particulier, qrcode: qrCodeBase64 }]);
+      .insert([{ id, name, email, date, heure, personnes, service, comment, tel, qrcode: qrCodeBase64 }]);
 
     if (error) throw error;
 
-    // Envoi des emails
+    // ✅ Envoi des e-mails après insertion
     await sendConfirmationEmails({ email, name, date, heure, personnes, service, comment, tel });
 
     res.status(201).json({ success: true, qrCode: qrCodeBase64 });
@@ -123,6 +121,7 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 /**
  * 🧾 ROUTE GET — Liste des réservations
