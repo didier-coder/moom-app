@@ -12,7 +12,7 @@ const sendConfirmationEmails = async ({ email, name, date, heure, personnes, ser
   try {
     // --- Email client ---
     await resend.emails.send({
-      from: "Moom <no-reply@tondomaine.com>",
+      from: "Moom <no-reply@moom.be>",
       to: email,
       subject: "Confirmation de votre réservation",
       html: `
@@ -33,8 +33,8 @@ const sendConfirmationEmails = async ({ email, name, date, heure, personnes, ser
 
     // --- Email restaurateur ---
     await resend.emails.send({
-      from: "Moom <no-reply@tondomaine.com>",
-      to: "restaurateur@tondomaine.com",
+      from: "Moom <no-reply@moom.be>",
+      to: "business@moom.be",
       subject: "📥 Nouvelle réservation reçue",
       html: `
         <h3>Nouvelle réservation :</h3>
