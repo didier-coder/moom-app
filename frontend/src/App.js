@@ -253,10 +253,14 @@ function App() {
                   <div
                     style={{
                       display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fit, minmax(90px, 1fr))",
-                      gap: "0.7rem",
+                      gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
+                      gap: "0.8rem",
+                      justifyContent: "center",
+                      alignItems: "center",
                       marginTop: "0.7rem",
+                      maxWidth: "400px",
+                      marginLeft: "auto",
+                      marginRight: "auto",
                     }}
                   >
                     {heuresDispo.map((h) => (
