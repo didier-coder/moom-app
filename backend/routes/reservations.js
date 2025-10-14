@@ -54,7 +54,6 @@ const sendConfirmationEmails = async ({ email, name, date, heure, personnes, ser
   }
 };
 
-// --- Route principale : création de réservation ---
 router.post("/", async (req, res) => {
   try {
     const {
@@ -68,21 +67,20 @@ router.post("/", async (req, res) => {
       heure,
       personnes,
       service,
-      type, // société ou particulier
-      remarque, // du front-end
+      type,       // ← reçu du front, mais on ne l’insère pas en DB
+      remarque,   // ← mappé vers la colonne 'comment'
     } = req.body;
 
-    // Nom affiché selon le type de client
     const name =
       type === "societe"
-        ? `${societe || "Société"} (${prenom || ""} ${nom || ""})`.trim()
-        : `${prenom || ""} ${nom || ""}`.trim();
+        ? `${societe || "Société"} (${(prenom || "").trim()} ${(nom || "").trim()})`.trim()
+        : `${(prenom || "").trim()} ${(nom || "").trim()}`.trim();
 
     const id = uuidv4();
     const qrData = `Réservation #${id} - ${name} - ${date} - ${heure}`;
     const qrCodeBase64 = await QRCode.toDataURL(qrData);
 
-    // --- Insertion dans Supabase ---
+    // ❗️NE PAS inclure 'type' dans l'objet inséré
     const { error } = await supabase.from("reservations").insert([
       {
         id,
@@ -90,20 +88,19 @@ router.post("/", async (req, res) => {
         email,
         date,
         qrcode: qrCodeBase64,
-        comment: remarque, // correspond à ta colonne "comment"
+        comment: remarque,                 // table = 'comment'
         heure,
         personnes,
         service,
         societe,
         tel,
         tva,
-        particulier: type === "particulier" ? "oui" : null, // remplissage conditionnel
+        particulier: type === "particulier" ? "oui" : null, // table = 'particulier'
       },
     ]);
 
     if (error) throw error;
 
-    // --- Envoi des e-mails ---
     await sendConfirmationEmails({
       email,
       name,
@@ -131,7 +128,5 @@ router.get("/", async (req, res) => {
 export default router;
 
 
-// ✅ Export du routeur pour Express
-export default router;
 
 
