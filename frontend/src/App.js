@@ -117,17 +117,14 @@ const heuresDiner = genererHeures("18:00", "22:00", 15);
   };
 
   return (
-  <div
-    style={{
-      minHeight: "100vh",
-      width: "100%",
-      display: "flex",
-      justifyContent: "center", // centrage horizontal
-      alignItems: "center", // centrage vertical
-      background: "linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%)",
-      padding: "2rem",
-      boxSizing: "border-box",
-    }}
+  <div style={responsiveContainer}>
+  <motion.div
+    layout
+    initial={{ opacity: 0, y: 40, scale: 0.98 }}
+    animate={{ opacity: 1, y: 0, scale: 1 }}
+    transition={{ duration: 0.6 }}
+    style={cardStyle}
+    className="reservation-card"
   >
     <motion.div
       layout
