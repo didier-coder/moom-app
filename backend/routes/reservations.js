@@ -7,11 +7,12 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 const router = express.Router();
 
+// --- Fonction d'envoi d'e-mails ---
 const sendConfirmationEmails = async ({ email, name, date, heure, personnes, service, comment }) => {
   try {
-    // --- Mail client ---
+    // --- Email client ---
     await resend.emails.send({
-      from: "Moom <no-reply@moom.be>",
+      from: "Moom <no-reply@tondomaine.com>",
       to: email,
       subject: "Confirmation de votre réservation",
       html: `
@@ -30,10 +31,10 @@ const sendConfirmationEmails = async ({ email, name, date, heure, personnes, ser
       `,
     });
 
-    // --- Mail restaurateur ---
+    // --- Email restaurateur ---
     await resend.emails.send({
-      from: "Moom <no-reply@moom.be>",
-      to: "business@moom.be",
+      from: "Moom <no-reply@tondomaine.com>",
+      to: "restaurateur@tondomaine.com",
       subject: "📥 Nouvelle réservation reçue",
       html: `
         <h3>Nouvelle réservation :</h3>
@@ -43,11 +44,7 @@ const sendConfirmationEmails = async ({ email, name, date, heure, personnes, ser
         <p><strong>Heure :</strong> ${heure}</p>
         <p><strong>Personnes :</strong> ${personnes}</p>
         <p><strong>Service :</strong> ${service}</p>
-        ${
-          comment
-            ? `<p><strong>Remarque client :</strong> ${comment}</p>`
-            : ""
-        }
+        ${comment ? `<p><strong>Remarque client :</strong> ${comment}</p>` : ""}
       `,
     });
 
@@ -57,7 +54,7 @@ const sendConfirmationEmails = async ({ email, name, date, heure, personnes, ser
   }
 };
 
-
+// --- Route principale : création de réservation ---
 router.post("/", async (req, res) => {
   try {
     const {
@@ -65,49 +62,48 @@ router.post("/", async (req, res) => {
       nom,
       societe,
       tva,
-      email,
       tel,
-      comment,
+      email,
       date,
       heure,
       personnes,
       service,
-      type,
+      type, // société ou particulier
+      remarque, // du front-end
     } = req.body;
 
-    // 🧠 Nom d'affichage intelligent
+    // Nom affiché selon le type de client
     const name =
       type === "societe"
         ? `${societe || "Société"} (${prenom || ""} ${nom || ""})`.trim()
         : `${prenom || ""} ${nom || ""}`.trim();
 
-    // 🧩 Identifiant + QR
     const id = uuidv4();
     const qrData = `Réservation #${id} - ${name} - ${date} - ${heure}`;
     const qrCodeBase64 = await QRCode.toDataURL(qrData);
 
-    // 💾 Enregistrement en base
+    // --- Insertion dans Supabase ---
     const { error } = await supabase.from("reservations").insert([
       {
         id,
         name,
         email,
-        tel,
-        societe,
-        tva,
         date,
+        qrcode: qrCodeBase64,
+        comment: remarque, // correspond à ta colonne "comment"
         heure,
         personnes,
         service,
-        comment,
-        type,
-        qrcode: qrCodeBase64,
+        societe,
+        tel,
+        tva,
+        particulier: type === "particulier" ? "oui" : null, // remplissage conditionnel
       },
     ]);
 
     if (error) throw error;
 
-    // ✉️ Envoi mail
+    // --- Envoi des e-mails ---
     await sendConfirmationEmails({
       email,
       name,
@@ -115,7 +111,7 @@ router.post("/", async (req, res) => {
       heure,
       personnes,
       service,
-      comment,
+      comment: remarque,
     });
 
     res.status(201).json({ success: true, qrCode: qrCodeBase64 });
@@ -124,6 +120,16 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// --- Route GET : liste des réservations ---
+router.get("/", async (req, res) => {
+  const { data, error } = await supabase.from("reservations").select("*");
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
+});
+
+export default router;
+
 
 // ✅ Export du routeur pour Express
 export default router;
