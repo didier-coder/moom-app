@@ -58,36 +58,71 @@ const sendConfirmationEmails = async ({ email, name, date, heure, personnes, ser
 };
 
 
-// ✅ Route principale de création de réservation
 router.post("/", async (req, res) => {
   try {
-    const { prenom, nom, email, date, heure, personnes, service } = req.body;
-    const name = `${prenom} ${nom}`.trim();
-    const id = uuidv4();
+    const {
+      prenom,
+      nom,
+      societe,
+      tva,
+      email,
+      tel,
+      remarque,
+      date,
+      heure,
+      personnes,
+      service,
+      type,
+    } = req.body;
 
+    // 🧠 Nom d'affichage intelligent
+    const name =
+      type === "societe"
+        ? `${societe || "Société"} (${prenom || ""} ${nom || ""})`.trim()
+        : `${prenom || ""} ${nom || ""}`.trim();
+
+    // 🧩 Identifiant + QR
+    const id = uuidv4();
     const qrData = `Réservation #${id} - ${name} - ${date} - ${heure}`;
     const qrCodeBase64 = await QRCode.toDataURL(qrData);
 
-    const { error } = await supabase
-      .from("reservations")
-      .insert([{ id, name, email, date, heure, personnes, service, qrcode: qrCodeBase64 }]);
+    // 💾 Enregistrement en base
+    const { error } = await supabase.from("reservations").insert([
+      {
+        id,
+        name,
+        email,
+        tel,
+        societe,
+        tva,
+        date,
+        heure,
+        personnes,
+        service,
+        remarque,
+        type,
+        qrcode: qrCodeBase64,
+      },
+    ]);
 
     if (error) throw error;
 
-    await sendConfirmationEmails({ email, name, date, heure, personnes, service, remarque: req.body.remarque });
+    // ✉️ Envoi mail
+    await sendConfirmationEmails({
+      email,
+      name,
+      date,
+      heure,
+      personnes,
+      service,
+      remarque,
+    });
 
     res.status(201).json({ success: true, qrCode: qrCodeBase64 });
   } catch (err) {
     console.error("❌ Erreur POST /api/reservations :", err);
     res.status(500).json({ error: err.message });
   }
-});
-
-// ✅ Route de lecture (GET)
-router.get("/", async (req, res) => {
-  const { data, error } = await supabase.from("reservations").select("*");
-  if (error) return res.status(500).json({ error: error.message });
-  res.json(data);
 });
 
 // ✅ Export du routeur pour Express
