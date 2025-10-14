@@ -88,7 +88,9 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
  */
 router.post("/", async (req, res) => {
   try {
-    const { name, email, date, heure, personnes, service, comment, societe, tel, tva, particulier } = req.body;
+    const { prenom, nom, email, date, heure, personnes, service, remarque, societe, tel, tva, particulier } = req.body;
+    const name = `${prenom} ${nom}`.trim();
+    const comment = remarque;
     const id = uuidv4();
 
     // Génération du QR code
