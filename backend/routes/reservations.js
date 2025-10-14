@@ -7,12 +7,11 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 const router = express.Router();
 
-// ✅ Fonction d’envoi d’emails
-const sendConfirmationEmails = async ({ email, name, date, heure, personnes, service }) => {
+const sendConfirmationEmails = async ({ email, name, date, heure, personnes, service, remarque }) => {
   try {
     // --- Mail client ---
     await resend.emails.send({
-      from: "Moom <no-reply@moom.be>",
+      from: "Moom <no-reply@tondomaine.com>",
       to: email,
       subject: "Confirmation de votre réservation",
       html: `
@@ -22,14 +21,19 @@ const sendConfirmationEmails = async ({ email, name, date, heure, personnes, ser
            🕒 Heure : <strong>${heure}</strong><br/>
            👥 Nombre de personnes : <strong>${personnes}</strong><br/>
            🍽️ Service : <strong>${service}</strong></p>
+        ${
+          remarque
+            ? `<p>💬 Votre remarque : <em>${remarque}</em></p>`
+            : ""
+        }
         <p>À très bientôt,<br>L’équipe du restaurant Moom</p>
       `,
     });
 
     // --- Mail restaurateur ---
     await resend.emails.send({
-      from: "Moom <no-reply@moom.be>",
-      to: "business@moom.be",
+      from: "Moom <no-reply@tondomaine.com>",
+      to: "restaurateur@tondomaine.com",
       subject: "📥 Nouvelle réservation reçue",
       html: `
         <h3>Nouvelle réservation :</h3>
@@ -39,6 +43,11 @@ const sendConfirmationEmails = async ({ email, name, date, heure, personnes, ser
         <p><strong>Heure :</strong> ${heure}</p>
         <p><strong>Personnes :</strong> ${personnes}</p>
         <p><strong>Service :</strong> ${service}</p>
+        ${
+          remarque
+            ? `<p><strong>Remarque client :</strong> ${remarque}</p>`
+            : ""
+        }
       `,
     });
 
@@ -47,6 +56,7 @@ const sendConfirmationEmails = async ({ email, name, date, heure, personnes, ser
     console.error("❌ Erreur lors de l’envoi d’e-mails :", err);
   }
 };
+
 
 // ✅ Route principale de création de réservation
 router.post("/", async (req, res) => {
@@ -64,7 +74,7 @@ router.post("/", async (req, res) => {
 
     if (error) throw error;
 
-    await sendConfirmationEmails({ email, name, date, heure, personnes, service });
+    await sendConfirmationEmails({ email, name, date, heure, personnes, service, remarque: req.body.remarque });
 
     res.status(201).json({ success: true, qrCode: qrCodeBase64 });
   } catch (err) {
