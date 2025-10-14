@@ -13,7 +13,16 @@ const router = express.Router();
  */
 async function sendConfirmationEmails({ email, name, date, heure, personnes, service, comment, tel }) {
   console.log("📧 Envoi des mails pro...");
-const formattedDate = format(new Date(date), "dd-MM-yyyy");
+
+  // ✅ Formatage européen de la date
+  let formattedDate = date;
+  try {
+    const { format } = await import("date-fns");
+    formattedDate = format(new Date(date), "dd-MM-yyyy");
+  } catch (err) {
+    console.warn("⚠️ Erreur formatage date:", err.message);
+  }
+
   // --- Mail client (style ZenChef) ---
   const htmlClient = `
     <div style="font-family:'Helvetica Neue',Arial,sans-serif;background-color:#f9f9f9;padding:40px 0;color:#333;">
