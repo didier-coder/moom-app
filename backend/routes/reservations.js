@@ -9,6 +9,7 @@ const router = express.Router();
 
 async function sendConfirmationEmails({ email, name, date, heure, personnes, service }) {
   const restaurantEmail = "info@moom.be";
+console.log("📦 Données reçues du front :", req.body);
 
   const clientHtml = `
   <div style="font-family: 'Lato', sans-serif; background-color: #f9f9f9; padding: 40px;">
