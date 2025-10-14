@@ -560,5 +560,73 @@ const backLink = {
   textDecoration: "underline",
 };
 
+/* --- Responsive Mobile Enhancements --- */
+const responsiveContainer = {
+  padding: "1rem",
+  width: "100%",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  background: "linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%)",
+  minHeight: "100vh",
+  boxSizing: "border-box",
+};
+
+const cardStyle = {
+  width: "100%",
+  maxWidth: "650px",
+  background: "#fff",
+  borderRadius: "20px",
+  boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+  padding: "2rem 2.5rem",
+  position: "relative",
+  overflow: "hidden",
+};
+
+const inputStyleMobile = {
+  ...inputStyle,
+  fontSize: "1rem",
+  padding: "0.8rem 1rem",
+};
+
+/* --- Responsive media queries --- */
+const mobileStyles = `
+@media (max-width: 768px) {
+  body {
+    background: linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%);
+  }
+
+  .reservation-card {
+    max-width: 90% !important;
+    padding: 1.5rem !important;
+  }
+
+  h1 {
+    font-size: 1.4rem !important;
+  }
+
+  button {
+    width: 100% !important;
+    margin-bottom: 0.8rem !important;
+  }
+
+  input, textarea, select {
+    font-size: 1rem !important;
+  }
+
+  .date-picker input {
+    width: 100% !important;
+  }
+}
+`;
+
+// Injecte le CSS responsive directement
+if (typeof document !== "undefined") {
+  const styleEl = document.createElement("style");
+  styleEl.innerHTML = mobileStyles;
+  document.head.appendChild(styleEl);
+}
+
+
 export default App;
 
