@@ -21,10 +21,9 @@ const sendConfirmationEmails = async ({ email, name, date, heure, personnes, ser
            🕒 Heure : <strong>${heure}</strong><br/>
            👥 Nombre de personnes : <strong>${personnes}</strong><br/>
            🍽️ Service : <strong>${service}</strong></p>
-           🍽️ Comment : <strong>${comment}</strong></p>
         ${
-          remarque
-            ? `<p>💬 Votre remarque : <em>${remarque}</em></p>`
+          comment
+            ? `<p>💬 Votre remarque : <em>${comment}</em></p>`
             : ""
         }
         <p>À très bientôt,<br>L’équipe du restaurant Moom</p>
@@ -44,10 +43,9 @@ const sendConfirmationEmails = async ({ email, name, date, heure, personnes, ser
         <p><strong>Heure :</strong> ${heure}</p>
         <p><strong>Personnes :</strong> ${personnes}</p>
         <p><strong>Service :</strong> ${service}</p>
-         <p><strong>Comment :</strong> ${comment}</p>
         ${
-          remarque
-            ? `<p><strong>Remarque client :</strong> ${remarque}</p>`
+          comment
+            ? `<p><strong>Remarque client :</strong> ${comment}</p>`
             : ""
         }
       `,
