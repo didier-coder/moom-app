@@ -40,7 +40,7 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
           <p style="margin-top:40px;">À très bientôt,</p>
           <p style="font-weight:bold;">L’équipe du restaurant Moom</p>
         </div>
-        <div style="background:#f0f0f0;text-align:center;padding:15px;font-size:13px;color:#888;">
+        <div style="background:#b3cdb0;text-align:center;padding:15px;border-radius:12px;font-size:13px;color:#888;">
           Restaurant Moom • Oostende<br/>
           <a href="mailto:info@moom.be" style="color:#555;">info@moom.be</a>
         </div>
