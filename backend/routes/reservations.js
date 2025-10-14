@@ -25,10 +25,10 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
           <p>Bonjour <strong>${name}</strong>,</p>
           <p>Nous avons le plaisir de confirmer votre réservation au restaurant <strong>Moom</strong>.</p>
           <table style="width:100%;margin:20px 0;border-collapse:collapse;">
-            <tr><td>📅 <strong>Date</strong></td><td>${date}</td></tr>
-            <tr><td>⏰ <strong>Heure</strong></td><td>${heure}</td></tr>
-            <tr><td>👥 <strong>Personnes</strong></td><td>${personnes}</td></tr>
-            <tr><td>🍽️ <strong>Service</strong></td><td>${service}</td></tr>
+            <tr><td><strong>Date</strong></td><td>${date}</td></tr>
+            <tr><td><strong>Heure</strong></td><td>${heure}</td></tr>
+            <tr><td><strong>Personnes</strong></td><td>${personnes}</td></tr>
+            <tr><td><strong>Service</strong></td><td>${service}</td></tr>
           </table>
           ${comment ? `<p><em>Remarque :</em> ${comment}</p>` : ""}
           <div style="text-align:center;margin-top:30px;">
