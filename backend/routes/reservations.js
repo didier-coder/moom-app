@@ -33,7 +33,7 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
           ${comment ? `<p><em>Remarque :</em> ${comment}</p>` : ""}
           <div style="text-align:center;margin-top:30px;">
             <a href="https://moom-app.onrender.com"
-              style="display:inline-block;background:#007bff;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">
+              style="display:inline-block;background:#b3cdb0;color:#a1a1a1;padding:12px 24px;border-radius:6px;text-decoration:none;">
               Voir ma réservation
             </a>
           </div>
