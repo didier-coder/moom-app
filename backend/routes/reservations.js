@@ -7,7 +7,7 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 const router = express.Router();
 
-const sendConfirmationEmails = async ({ email, name, date, heure, personnes, service, remarque }) => {
+const sendConfirmationEmails = async ({ email, name, date, heure, personnes, service, comment }) => {
   try {
     // --- Mail client ---
     await resend.emails.send({
@@ -21,6 +21,7 @@ const sendConfirmationEmails = async ({ email, name, date, heure, personnes, ser
            🕒 Heure : <strong>${heure}</strong><br/>
            👥 Nombre de personnes : <strong>${personnes}</strong><br/>
            🍽️ Service : <strong>${service}</strong></p>
+           🍽️ Comment : <strong>${comment}</strong></p>
         ${
           remarque
             ? `<p>💬 Votre remarque : <em>${remarque}</em></p>`
@@ -43,6 +44,7 @@ const sendConfirmationEmails = async ({ email, name, date, heure, personnes, ser
         <p><strong>Heure :</strong> ${heure}</p>
         <p><strong>Personnes :</strong> ${personnes}</p>
         <p><strong>Service :</strong> ${service}</p>
+         <p><strong>Comment :</strong> ${comment}</p>
         ${
           remarque
             ? `<p><strong>Remarque client :</strong> ${remarque}</p>`
@@ -67,7 +69,7 @@ router.post("/", async (req, res) => {
       tva,
       email,
       tel,
-      remarque,
+      comment,
       date,
       heure,
       personnes,
@@ -99,7 +101,7 @@ router.post("/", async (req, res) => {
         heure,
         personnes,
         service,
-        remarque,
+        comment,
         type,
         qrcode: qrCodeBase64,
       },
@@ -115,7 +117,7 @@ router.post("/", async (req, res) => {
       heure,
       personnes,
       service,
-      remarque,
+      comment,
     });
 
     res.status(201).json({ success: true, qrCode: qrCodeBase64 });
