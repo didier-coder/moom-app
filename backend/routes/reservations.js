@@ -16,7 +16,7 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
   // --- Mail client (style ZenChef) ---
   const htmlClient = `
     <div style="font-family:'Helvetica Neue',Arial,sans-serif;background-color:#f9f9f9;padding:40px 0;color:#333;">
-      <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);overflow:hidden;">
+      <div style="max-width:600px;margin:0 auto;background:#ffffff;b3cdb0-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);overflow:hidden;">
         <div style="background:#b3cdb0;color:#000000;text-align:center;padding:25px;">
           <img src="https://moom.be/assets/imgs/logo/logo-dark.png" alt="Restaurant Moom" style="width:100px;margin-bottom:10px;">
           <h2 style="margin:0;">Confirmation de réservation</h2>
@@ -33,7 +33,7 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
           ${comment ? `<p><em>Remarque :</em> ${comment}</p>` : ""}
           <div style="text-align:center;margin-top:30px;">
             <a href="https://moom-app.onrender.com"
-              style="display:inline-block;background:#b3cdb0;color:#000000;padding:12px 24px;border-radius:6px;text-decoration:none;">
+              style="display:inline-block;background:#000000;color:#ffffff;padding:12px 24px;border-radius:24px;text-decoration:none;">
               Voir ma réservation
             </a>
           </div>
