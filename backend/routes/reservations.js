@@ -9,18 +9,18 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const router = express.Router();
 
 /**
- * 💌 Fonction d'envoi des emails
+ * Fonction d'envoi des emails
  */
 async function sendConfirmationEmails({ email, name, date, heure, personnes, service, comment, tel }) {
   console.log("📧 Envoi des mails pro...");
 
-  // ✅ Formatage européen de la date
+  // Formatage européen de la date
   let formattedDate = date;
   try {
     const { format } = await import("date-fns");
     formattedDate = format(new Date(date), "dd-MM-yyyy");
   } catch (err) {
-    console.warn("⚠️ Erreur formatage date:", err.message);
+    console.warn("Erreur formatage date:", err.message);
   }
 
   // --- Mail client (style ZenChef) ---
@@ -94,7 +94,7 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
 }
 
 /**
- * 🧾 ROUTE POST — Création de réservation
+ *  ROUTE POST — Création de réservation
  */
 router.post("/", async (req, res) => {
   try {
