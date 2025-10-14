@@ -42,7 +42,7 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
         </div>
         <div style="background:#f0f0f0;text-align:center;padding:15px;font-size:13px;color:#888;">
           Restaurant Moom • Oostende<br/>
-          <a href="mailto:info@restaurantmoom.be" style="color:#555;">info@restaurantmoom.be</a>
+          <a href="mailto:info@moom.be" style="color:#555;">info@moom.be</a>
         </div>
       </div>
     </div>
