@@ -97,7 +97,22 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
  */
 router.post("/", async (req, res) => {
   try {
-    const { name, email, date, heure, personnes, service, comment, tel } = req.body;
+    const {
+  prenom,
+  nom,
+  email,
+  date,
+  heure,
+  personnes,
+  service,
+  comment,
+  tel,
+  societe
+} = req.body;
+
+// ✅ Construit le nom complet
+const name = `${prenom || ""} ${nom || ""}`.trim();
+
     const id = uuidv4();
 
     // ✅ Formatage avant usage dans QR code
