@@ -5,18 +5,21 @@ import compression from "compression";
 import morgan from "morgan";
 import reservations from "./routes/reservations.js";
 import disponibilites from "./routes/disponibilites.js";
+import fermetures from "./routes/fermetures.js";
 import logger from "./utils/logger.js";
 import { Resend } from "resend";
-const resend = new Resend(process.env.RESEND_API_KEY);
-import fermetures from "./routes/fermetures.js";
-
-app.use("/api/fermetures", fermetures);
-app.use("/api/disponibilites", disponibilites);
 
 dotenv.config();
 
+// 🧱 Initialisation du serveur Express
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// 🌐 Middlewares essentiels
+app.use(cors());
+app.use(express.json());
+app.use(compression());
+app.use(morgan("tiny"));
 
 // 🧱 Désactive complètement le cache HTTP
 app.use((req, res, next) => {
@@ -27,11 +30,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// 🌐 Middlewares essentiels
-app.use(cors());
-app.use(express.json());
-app.use(compression());
-app.use(morgan("tiny"));
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // ✅ Test Render
 app.get("/api/ping", (req, res) => {
@@ -41,24 +40,21 @@ app.get("/api/ping", (req, res) => {
 // 📅 Routes principales
 app.use("/api/reservations", reservations);
 app.use("/api/disponibilites", disponibilites);
+app.use("/api/fermetures", fermetures);
 
-// 🧩 Route test d’erreur totalement masquée (accessible uniquement via paramètre secret)
+// 🧩 Route test d’erreur (protégée)
 app.get("/api/test-error", (req, res, next) => {
   const key = req.query.key;
 
-  // Vérifie que la clé est correcte
   if (key !== process.env.ADMIN_KEY) {
-    // Ne révèle rien de sensible (même le nom de la route reste anodin)
     return res.status(404).json({
       success: false,
       message: "Ressource non trouvée 🕵️‍♂️",
     });
   }
 
-  // Déclenche une erreur volontaire (test)
   next(new Error("Ceci est un test d’erreur volontaire 💥"));
 });
-
 
 // 🚨 Middleware global d’erreur avec envoi d’alerte HTML
 app.use(async (err, req, res, next) => {
@@ -74,14 +70,12 @@ app.use(async (err, req, res, next) => {
     ${err.stack}
   `;
 
-  // 🧾 Log local + Render console
   logger.error(errorMessage);
   console.error(err.stack);
 
-  // 📧 Envoi de l’alerte email
   try {
     await resend.emails.send({
-      from: "Moom <info@moom.be>", // ✅ tu peux remplacer plus tard par noreply@moom.be
+      from: "Moom <info@moom.be>",
       to: "info@moom.be",
       subject: "🚨 Erreur serveur Moom",
       html: `
@@ -107,13 +101,11 @@ ${err.stack}
     logger.error("❌ Échec de l’envoi de l’alerte email :", mailError);
   }
 
-  // 🔙 Réponse au client
   res.status(500).json({
     success: false,
     message: "Erreur interne du serveur",
   });
 });
-
 
 // 🔍 Vérification Supabase
 logger.info("🔑 SUPABASE URL: " + (process.env.SUPABASE_URL ? "✅ Présente" : "❌ Manquante"));
@@ -123,5 +115,3 @@ logger.info("🔑 SUPABASE KEY: " + (process.env.SUPABASE_ANON_KEY ? "✅ Prése
 app.listen(PORT, () => {
   logger.info(`✅ Serveur actif sur le port ${PORT}`);
 });
-
-
