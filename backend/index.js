@@ -8,7 +8,10 @@ import disponibilites from "./routes/disponibilites.js";
 import logger from "./utils/logger.js";
 import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
+import fermetures from "./routes/fermetures.js";
 
+app.use("/api/fermetures", fermetures);
+app.use("/api/disponibilites", disponibilites);
 
 dotenv.config();
 
