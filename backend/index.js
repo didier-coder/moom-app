@@ -69,7 +69,7 @@ app.use(async (err, req, res, next) => {
   // 📧 Envoi de l’alerte email
   try {
     await resend.emails.send({
-      from: "Moom <didierlalmand@gmail.com>", // ✅ tu peux remplacer plus tard par noreply@moom.be
+      from: "Moom <info@moom.be>", // ✅ tu peux remplacer plus tard par noreply@moom.be
       to: "info@moom.be",
       subject: "🚨 Erreur serveur Moom",
       html: `
