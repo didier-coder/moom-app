@@ -6,6 +6,9 @@ import morgan from "morgan";
 import reservations from "./routes/reservations.js";
 import disponibilites from "./routes/disponibilites.js";
 import logger from "./utils/logger.js";
+import { Resend } from "resend";
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 
 dotenv.config();
 
@@ -45,15 +48,40 @@ app.get("/api/test-error", (req, res, next) => {
   }
 });
 
-// 🚨 Middleware global d’erreur
-app.use((err, req, res, next) => {
-  logger.error(`🔥 Erreur serveur : ${err.message}`);
+// 🚨 Middleware global d’erreur avec alerte mail
+app.use(async (err, req, res, next) => {
+  const errorMessage = `
+    🔥 Une erreur est survenue sur le serveur Moom :
+
+    🧩 Route : ${req.originalUrl}
+    🕒 Heure : ${new Date().toLocaleString("fr-BE")}
+    💬 Message : ${err.message}
+
+    Stack :
+    ${err.stack}
+  `;
+
+  logger.error(errorMessage);
   console.error(err.stack);
+
+  try {
+    await resend.emails.send({
+      from: "Moom <noreply@moom.be>",
+      to: "info@moom.be",
+      subject: "🚨 Erreur serveur Moom",
+      text: errorMessage,
+    });
+    logger.info("📧 Alerte d’erreur envoyée à info@moom.be");
+  } catch (mailError) {
+    logger.error("❌ Échec de l’envoi de l’alerte email :", mailError);
+  }
+
   res.status(500).json({
     success: false,
     message: "Erreur interne du serveur",
   });
 });
+
 
 // 🔍 Vérification Supabase
 logger.info("🔑 SUPABASE URL: " + (process.env.SUPABASE_URL ? "✅ Présente" : "❌ Manquante"));
