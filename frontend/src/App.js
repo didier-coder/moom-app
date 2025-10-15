@@ -7,7 +7,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
 
-  // 🔐 Mot de passe admin — à personnaliser
+  // 🔐 Mot de passe admin — tu peux le modifier ici
   const ADMIN_PASSWORD = "moom2025";
 
   const handleLogin = () => {
@@ -25,8 +25,8 @@ function App() {
   };
 
   return (
-    <div style={{ fontFamily: "sans-serif" }}>
-      {/* Barre de navigation */}
+    <div style={{ fontFamily: "sans-serif", position: "relative" }}>
+      {/* ✅ Barre supérieure */}
       <div
         style={{
           display: "flex",
@@ -50,6 +50,7 @@ function App() {
             borderRadius: "6px",
             padding: "0.6rem 1rem",
             cursor: "pointer",
+            fontWeight: "500",
           }}
         >
           🪑 Réservations
@@ -64,12 +65,13 @@ function App() {
             borderRadius: "6px",
             padding: "0.6rem 1rem",
             cursor: "pointer",
+            fontWeight: "500",
           }}
         >
           ⚙️ Admin Fermetures
         </button>
 
-        {/* Bouton de déconnexion (visible uniquement en mode admin connecté) */}
+        {/* 🚪 Déconnexion visible uniquement si connecté */}
         {isAuthenticated && view === "admin" && (
           <button
             onClick={handleLogout}
@@ -80,6 +82,7 @@ function App() {
               borderRadius: "6px",
               padding: "0.6rem 1rem",
               cursor: "pointer",
+              fontWeight: "500",
             }}
           >
             🚪 Déconnexion
@@ -87,7 +90,28 @@ function App() {
         )}
       </div>
 
-      {/* Contenu dynamique */}
+      {/* ✅ Indicateur Admin connecté */}
+      {isAuthenticated && view === "admin" && (
+        <div
+          style={{
+            position: "fixed",
+            top: "10px",
+            right: "15px",
+            background: "#198754",
+            color: "white",
+            padding: "0.4rem 0.8rem",
+            borderRadius: "8px",
+            fontSize: "0.9rem",
+            fontWeight: "500",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+            zIndex: 20,
+          }}
+        >
+          ✅ Admin connecté
+        </div>
+      )}
+
+      {/* ✅ Contenu dynamique */}
       <div style={{ marginTop: "2rem" }}>
         {view === "reservation" ? (
           <Reservation />
@@ -120,6 +144,7 @@ function App() {
                 padding: "0.6rem 1.2rem",
                 cursor: "pointer",
                 marginTop: "1rem",
+                fontWeight: "500",
               }}
             >
               Se connecter
