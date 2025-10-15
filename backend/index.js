@@ -12,7 +12,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 🧱 Désactive complètement le cache HTTP (anti-cache total : navigateur + proxy + CDN)
+// 🧱 Désactive complètement le cache HTTP
 app.use((req, res, next) => {
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
   res.setHeader("Pragma", "no-cache");
@@ -21,17 +21,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// ⚡ Compression GZIP pour améliorer les performances mobiles
-app.use(compression());
-
-// 🧾 Journalisation des requêtes simplifiée
-app.use(morgan("tiny"));
-
 // 🌐 Middlewares essentiels
 app.use(cors());
 app.use(express.json());
+app.use(compression());
+app.use(morgan("tiny"));
 
-// ✅ Route de test Render (health check)
+// ✅ Test Render
 app.get("/api/ping", (req, res) => {
   res.status(200).send("pong");
 });
@@ -40,7 +36,7 @@ app.get("/api/ping", (req, res) => {
 app.use("/api/reservations", reservations);
 app.use("/api/disponibilites", disponibilites);
 
-// 🧪 Route de test du middleware d’erreur
+// 🧪 Test du middleware d’erreur (doit être AVANT celui-ci)
 app.get("/api/test-error", (req, res, next) => {
   try {
     throw new Error("Ceci est un test d’erreur volontaire 💥");
@@ -49,7 +45,7 @@ app.get("/api/test-error", (req, res, next) => {
   }
 });
 
-// 🚨 Middleware global de gestion des erreurs
+// 🚨 Middleware global d’erreur
 app.use((err, req, res, next) => {
   logger.error(`🔥 Erreur serveur : ${err.message}`);
   console.error(err.stack);
@@ -59,7 +55,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 🔍 Vérification des variables Supabase
+// 🔍 Vérification Supabase
 logger.info("🔑 SUPABASE URL: " + (process.env.SUPABASE_URL ? "✅ Présente" : "❌ Manquante"));
 logger.info("🔑 SUPABASE KEY: " + (process.env.SUPABASE_ANON_KEY ? "✅ Présente" : "❌ Manquante"));
 
@@ -67,4 +63,5 @@ logger.info("🔑 SUPABASE KEY: " + (process.env.SUPABASE_ANON_KEY ? "✅ Prése
 app.listen(PORT, () => {
   logger.info(`✅ Serveur actif sur le port ${PORT}`);
 });
+
 
