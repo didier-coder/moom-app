@@ -495,13 +495,12 @@ const heuresDiner = genererHeures("18:00", "22:00", 15);
             </button>
           </motion.div>
         )}
-      </AnimatePresence>
-
+           </AnimatePresence>
       <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
-        </motion.div>
     </div>
   );
 }
+
 
 /* --- Styles --- */
 const inputBox = {
