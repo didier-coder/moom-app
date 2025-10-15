@@ -497,7 +497,9 @@ const heuresDiner = genererHeures("18:00", "22:00", 15);
         )}
            </AnimatePresence>
       <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
-    </div>
+    </motion.div> {/* ✅ fermeture du 2e motion.div */}
+  </motion.div>   {/* ✅ fermeture du 1er motion.div */}
+</div>
   );
 }
 
