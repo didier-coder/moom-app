@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import FermeturesAdmin from "./FermeturesAdmin";
 import Reservation from "./Reservation";
 
@@ -32,7 +33,7 @@ function App() {
         minHeight: "100vh",
       }}
     >
-      {/* ✅ Barre de navigation adaptative */}
+      {/* ✅ Barre de navigation */}
       <div
         style={{
           display: "flex",
@@ -61,6 +62,7 @@ function App() {
             fontWeight: "500",
             cursor: "pointer",
             flex: "1 1 140px",
+            transition: "0.2s",
           }}
         >
           🪑 Réservations
@@ -78,6 +80,7 @@ function App() {
             fontWeight: "500",
             cursor: "pointer",
             flex: "1 1 160px",
+            transition: "0.2s",
           }}
         >
           ⚙️ Admin Fermetures
@@ -96,6 +99,7 @@ function App() {
               fontWeight: "500",
               cursor: "pointer",
               flex: "1 1 150px",
+              transition: "0.2s",
             }}
           >
             🚪 Déconnexion
@@ -124,62 +128,73 @@ function App() {
         </div>
       )}
 
-      {/* ✅ Contenu principal */}
+      {/* ✅ Contenu animé */}
       <div style={{ marginTop: "2rem", padding: "1rem" }}>
-        {view === "reservation" ? (
-          <Reservation />
-        ) : isAuthenticated ? (
-          <FermeturesAdmin />
-        ) : (
-          <div
-            style={{
-              textAlign: "center",
-              marginTop: "3rem",
-              background: "#fff",
-              maxWidth: "400px",
-              margin: "3rem auto",
-              padding: "2rem",
-              borderRadius: "12px",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-            }}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={view + (isAuthenticated ? "-auth" : "-guest")}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
-            <h2>🔒 Accès réservé à l’administration</h2>
-            <input
-              type="password"
-              value={passwordInput}
-              onChange={(e) => setPasswordInput(e.target.value)}
-              placeholder="Entrez le mot de passe"
-              style={{
-                padding: "0.8rem",
-                borderRadius: "8px",
-                border: "1px solid #ccc",
-                marginTop: "1rem",
-                width: "100%",
-                fontSize: "1rem",
-              }}
-            />
-            <button
-              onClick={handleLogin}
-              style={{
-                backgroundColor: "#28a745",
-                color: "#fff",
-                border: "none",
-                borderRadius: "8px",
-                padding: "0.8rem 1.4rem",
-                cursor: "pointer",
-                marginTop: "1rem",
-                fontWeight: "500",
-                width: "100%",
-                fontSize: "1rem",
-              }}
-            >
-              Se connecter
-            </button>
-          </div>
-        )}
+            {view === "reservation" ? (
+              <Reservation />
+            ) : isAuthenticated ? (
+              <FermeturesAdmin />
+            ) : (
+              <div
+                style={{
+                  textAlign: "center",
+                  marginTop: "3rem",
+                  background: "#fff",
+                  maxWidth: "400px",
+                  margin: "3rem auto",
+                  padding: "2rem",
+                  borderRadius: "12px",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                }}
+              >
+                <h2>🔒 Accès réservé à l’administration</h2>
+                <input
+                  type="password"
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  placeholder="Entrez le mot de passe"
+                  style={{
+                    padding: "0.8rem",
+                    borderRadius: "8px",
+                    border: "1px solid #ccc",
+                    marginTop: "1rem",
+                    width: "100%",
+                    fontSize: "1rem",
+                  }}
+                />
+                <button
+                  onClick={handleLogin}
+                  style={{
+                    backgroundColor: "#28a745",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    padding: "0.8rem 1.4rem",
+                    cursor: "pointer",
+                    marginTop: "1rem",
+                    fontWeight: "500",
+                    width: "100%",
+                    fontSize: "1rem",
+                  }}
+                >
+                  Se connecter
+                </button>
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );
 }
 
 export default App;
+
