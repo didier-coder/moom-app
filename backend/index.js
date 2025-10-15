@@ -48,34 +48,54 @@ app.get("/api/test-error", (req, res, next) => {
   }
 });
 
-// 🚨 Middleware global d’erreur avec alerte mail
+// 🚨 Middleware global d’erreur avec envoi d’alerte HTML
 app.use(async (err, req, res, next) => {
+  const errorDate = new Date().toLocaleString("fr-BE");
   const errorMessage = `
     🔥 Une erreur est survenue sur le serveur Moom :
 
     🧩 Route : ${req.originalUrl}
-    🕒 Heure : ${new Date().toLocaleString("fr-BE")}
+    🕒 Heure : ${errorDate}
     💬 Message : ${err.message}
 
     Stack :
     ${err.stack}
   `;
 
+  // 🧾 Log local + Render console
   logger.error(errorMessage);
   console.error(err.stack);
 
+  // 📧 Envoi de l’alerte email
   try {
     await resend.emails.send({
-      from: "Moom <noreply@moom.be>",
+      from: "Moom <onboarding@resend.dev>", // ✅ tu peux remplacer plus tard par noreply@moom.be
       to: "info@moom.be",
       subject: "🚨 Erreur serveur Moom",
-      text: errorMessage,
+      html: `
+        <div style="font-family: Arial, sans-serif; background: #f7f9fc; padding: 20px;">
+          <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 10px; padding: 20px; border: 1px solid #e0e0e0;">
+            <h2 style="color: #e63946;">🔥 Une erreur est survenue sur le serveur Moom</h2>
+            <p><strong>🧩 Route :</strong> ${req.originalUrl}</p>
+            <p><strong>🕒 Heure :</strong> ${errorDate}</p>
+            <p><strong>💬 Message :</strong> ${err.message}</p>
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;" />
+            <pre style="background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #ddd; white-space: pre-wrap; font-size: 13px;">
+${err.stack}
+            </pre>
+          </div>
+          <p style="text-align: center; color: #666; margin-top: 15px; font-size: 12px;">
+            © ${new Date().getFullYear()} Restaurant Moom - Notification automatique
+          </p>
+        </div>
+      `,
     });
-    logger.info("📧 Alerte d’erreur envoyée à info@moom.be");
+    logger.info("📧 Alerte d’erreur envoyée à info@moom.be ✅");
   } catch (mailError) {
     logger.error("❌ Échec de l’envoi de l’alerte email :", mailError);
   }
 
+  // 🔙 Réponse au client
   res.status(500).json({
     success: false,
     message: "Erreur interne du serveur",
