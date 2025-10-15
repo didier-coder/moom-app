@@ -5,6 +5,8 @@ import compression from "compression";
 import morgan from "morgan";
 import reservations from "./routes/reservations.js";
 import disponibilites from "./routes/disponibilites.js";
+import logger from "./utils/logger.js";
+
 
 dotenv.config();
 
@@ -40,11 +42,11 @@ app.use("/api/reservations", reservations);
 app.use("/api/disponibilites", disponibilites);
 
 // 🔍 Vérification des variables Supabase
-console.log("🔑 SUPABASE URL:", process.env.SUPABASE_URL ? "✅ Présente" : "❌ Manquante");
-console.log("🔑 SUPABASE KEY:", process.env.SUPABASE_ANON_KEY ? "✅ Présente" : "❌ Manquante");
+logger.log("🔑 SUPABASE URL:", process.env.SUPABASE_URL ? "✅ Présente" : "❌ Manquante");
+logger.log("🔑 SUPABASE KEY:", process.env.SUPABASE_ANON_KEY ? "✅ Présente" : "❌ Manquante");
 
 // 🚀 Lancement du serveur
 app.listen(PORT, () => {
-  console.log(`✅ Serveur actif sur le port ${PORT}`);
+  logger.log(`✅ Serveur actif sur le port ${PORT}`);
 });
 
