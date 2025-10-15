@@ -40,6 +40,15 @@ app.get("/api/ping", (req, res) => {
 app.use("/api/reservations", reservations);
 app.use("/api/disponibilites", disponibilites);
 
+// 🧪 Route de test du middleware d’erreur
+app.get("/api/test-error", (req, res, next) => {
+  try {
+    throw new Error("Ceci est un test d’erreur volontaire 💥");
+  } catch (err) {
+    next(err);
+  }
+});
+
 // 🚨 Middleware global de gestion des erreurs
 app.use((err, req, res, next) => {
   logger.error(`🔥 Erreur serveur : ${err.message}`);
