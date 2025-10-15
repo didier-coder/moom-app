@@ -7,7 +7,6 @@ import reservations from "./routes/reservations.js";
 import disponibilites from "./routes/disponibilites.js";
 import logger from "./utils/logger.js";
 
-
 dotenv.config();
 
 const app = express();
@@ -41,12 +40,22 @@ app.get("/api/ping", (req, res) => {
 app.use("/api/reservations", reservations);
 app.use("/api/disponibilites", disponibilites);
 
+// 🚨 Middleware global de gestion des erreurs
+app.use((err, req, res, next) => {
+  logger.error(`🔥 Erreur serveur : ${err.message}`);
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: "Erreur interne du serveur",
+  });
+});
+
 // 🔍 Vérification des variables Supabase
-logger.log("🔑 SUPABASE URL:", process.env.SUPABASE_URL ? "✅ Présente" : "❌ Manquante");
-logger.log("🔑 SUPABASE KEY:", process.env.SUPABASE_ANON_KEY ? "✅ Présente" : "❌ Manquante");
+logger.info("🔑 SUPABASE URL: " + (process.env.SUPABASE_URL ? "✅ Présente" : "❌ Manquante"));
+logger.info("🔑 SUPABASE KEY: " + (process.env.SUPABASE_ANON_KEY ? "✅ Présente" : "❌ Manquante"));
 
 // 🚀 Lancement du serveur
 app.listen(PORT, () => {
-  logger.log(`✅ Serveur actif sur le port ${PORT}`);
+  logger.info(`✅ Serveur actif sur le port ${PORT}`);
 });
 
