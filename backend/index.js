@@ -39,13 +39,19 @@ app.get("/api/ping", (req, res) => {
 app.use("/api/reservations", reservations);
 app.use("/api/disponibilites", disponibilites);
 
-// 🧪 Test du middleware d’erreur (doit être AVANT celui-ci)
+// 🧩 Route sécurisée pour test d’erreur (accessible uniquement via clé admin)
 app.get("/api/test-error", (req, res, next) => {
-  try {
-    throw new Error("Ceci est un test d’erreur volontaire 💥");
-  } catch (err) {
-    next(err);
+  const adminKey = req.headers["x-admin-key"];
+  
+  if (adminKey !== process.env.ADMIN_KEY) {
+    return res.status(403).json({
+      success: false,
+      message: "⛔ Accès refusé. Clé administrateur invalide.",
+    });
   }
+
+  // Si la clé est correcte, déclenche une erreur de test
+  next(new Error("Ceci est un test d’erreur volontaire 💥"));
 });
 
 // 🚨 Middleware global d’erreur avec envoi d’alerte HTML
