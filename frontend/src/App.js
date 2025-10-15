@@ -7,7 +7,6 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
 
-  // 🔐 Mot de passe admin — tu peux le modifier ici
   const ADMIN_PASSWORD = "moom2025";
 
   const handleLogin = () => {
@@ -25,20 +24,29 @@ function App() {
   };
 
   return (
-    <div style={{ fontFamily: "sans-serif", position: "relative" }}>
-      {/* ✅ Barre supérieure */}
+    <div
+      style={{
+        fontFamily: "system-ui, sans-serif",
+        position: "relative",
+        backgroundColor: "#f8f9fa",
+        minHeight: "100vh",
+      }}
+    >
+      {/* ✅ Barre de navigation adaptative */}
       <div
         style={{
           display: "flex",
+          flexWrap: "wrap",
           justifyContent: "center",
           alignItems: "center",
-          gap: "1rem",
-          background: "#f8f9fa",
+          gap: "0.8rem",
+          background: "#fff",
           padding: "1rem",
           borderBottom: "1px solid #dee2e6",
           position: "sticky",
           top: 0,
           zIndex: 10,
+          boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
         }}
       >
         <button
@@ -47,10 +55,12 @@ function App() {
             background: view === "reservation" ? "#007bff" : "#e9ecef",
             color: view === "reservation" ? "#fff" : "#333",
             border: "none",
-            borderRadius: "6px",
-            padding: "0.6rem 1rem",
-            cursor: "pointer",
+            borderRadius: "8px",
+            padding: "0.8rem 1.4rem",
+            fontSize: "1rem",
             fontWeight: "500",
+            cursor: "pointer",
+            flex: "1 1 140px",
           }}
         >
           🪑 Réservations
@@ -62,16 +72,17 @@ function App() {
             background: view === "admin" ? "#28a745" : "#e9ecef",
             color: view === "admin" ? "#fff" : "#333",
             border: "none",
-            borderRadius: "6px",
-            padding: "0.6rem 1rem",
-            cursor: "pointer",
+            borderRadius: "8px",
+            padding: "0.8rem 1.4rem",
+            fontSize: "1rem",
             fontWeight: "500",
+            cursor: "pointer",
+            flex: "1 1 160px",
           }}
         >
           ⚙️ Admin Fermetures
         </button>
 
-        {/* 🚪 Déconnexion visible uniquement si connecté */}
         {isAuthenticated && view === "admin" && (
           <button
             onClick={handleLogout}
@@ -79,10 +90,12 @@ function App() {
               background: "#dc3545",
               color: "#fff",
               border: "none",
-              borderRadius: "6px",
-              padding: "0.6rem 1rem",
-              cursor: "pointer",
+              borderRadius: "8px",
+              padding: "0.8rem 1.4rem",
+              fontSize: "1rem",
               fontWeight: "500",
+              cursor: "pointer",
+              flex: "1 1 150px",
             }}
           >
             🚪 Déconnexion
@@ -90,16 +103,16 @@ function App() {
         )}
       </div>
 
-      {/* ✅ Indicateur Admin connecté */}
+      {/* ✅ Badge “Admin connecté” */}
       {isAuthenticated && view === "admin" && (
         <div
           style={{
             position: "fixed",
-            top: "10px",
+            top: "12px",
             right: "15px",
             background: "#198754",
             color: "white",
-            padding: "0.4rem 0.8rem",
+            padding: "0.5rem 0.8rem",
             borderRadius: "8px",
             fontSize: "0.9rem",
             fontWeight: "500",
@@ -111,14 +124,25 @@ function App() {
         </div>
       )}
 
-      {/* ✅ Contenu dynamique */}
-      <div style={{ marginTop: "2rem" }}>
+      {/* ✅ Contenu principal */}
+      <div style={{ marginTop: "2rem", padding: "1rem" }}>
         {view === "reservation" ? (
           <Reservation />
         ) : isAuthenticated ? (
           <FermeturesAdmin />
         ) : (
-          <div style={{ textAlign: "center", marginTop: "3rem" }}>
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "3rem",
+              background: "#fff",
+              maxWidth: "400px",
+              margin: "3rem auto",
+              padding: "2rem",
+              borderRadius: "12px",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+            }}
+          >
             <h2>🔒 Accès réservé à l’administration</h2>
             <input
               type="password"
@@ -126,25 +150,27 @@ function App() {
               onChange={(e) => setPasswordInput(e.target.value)}
               placeholder="Entrez le mot de passe"
               style={{
-                padding: "0.6rem",
+                padding: "0.8rem",
                 borderRadius: "8px",
                 border: "1px solid #ccc",
                 marginTop: "1rem",
-                width: "220px",
+                width: "100%",
+                fontSize: "1rem",
               }}
             />
-            <br />
             <button
               onClick={handleLogin}
               style={{
                 backgroundColor: "#28a745",
                 color: "#fff",
                 border: "none",
-                borderRadius: "6px",
-                padding: "0.6rem 1.2rem",
+                borderRadius: "8px",
+                padding: "0.8rem 1.4rem",
                 cursor: "pointer",
                 marginTop: "1rem",
                 fontWeight: "500",
+                width: "100%",
+                fontSize: "1rem",
               }}
             >
               Se connecter
