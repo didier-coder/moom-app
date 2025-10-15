@@ -317,49 +317,51 @@ const heuresDiner = genererHeures("18:00", "22:00", 15);
             )}
 
             {/* Étape 2 */}
-            {step === 2 && (
-              <div className="fadeIn" style={{ textAlign: "center" }}>
-                <h3>Vous êtes :</h3>
-                <div
-                  style={{
-                    marginTop: "1rem",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "1rem",
-                    flexWrap: "wrap", // ✅ permet de passer sur deux lignes si écran étroit
-              }}
-            >
-            <button
-                onClick={() => {
-                setTypeClient("societe");
-                setStep(3);
-            }}
-              style={{
-                ...mainButton,
-                    backgroundColor: "#007bff",
-                    minWidth: "140px",
-              }}
-            >
-              Société
-              </button>
+{step === 2 && (
+  <div className="fadeIn" style={{ textAlign: "center" }}>
+    <h3>Vous êtes :</h3>
+    <div
+      style={{
+        marginTop: "1rem",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "1rem",
+        flexWrap: "wrap",
+      }}
+    >
+      <button
+        onClick={() => {
+          setTypeClient("societe");
+          setStep(3);
+        }}
+        style={{
+          ...mainButton,
+          backgroundColor: "#007bff",
+          minWidth: "140px",
+        }}
+      >
+        Société
+      </button>
 
-              <button
-                  onClick={() => {
-                    setTypeClient("particulier");
-                    setStep(3);
-              }}
-                style={{
-                ...mainButton,
-                      backgroundColor: "#28a745",
-                      minWidth: "140px",
-              }}
-            >
-                Particulier
-                </button>
-              </div>
-            )}
+      <button
+        onClick={() => {
+          setTypeClient("particulier");
+          setStep(3);
+        }}
+        style={{
+          ...mainButton,
+          backgroundColor: "#28a745",
+          minWidth: "140px",
+        }}
+      >
+        Particulier
+      </button>
+    </div> {/* ✅ ← FERMETURE MANQUANTE ICI */}
+  </div>
+)}
+
 
             {/* Étape 3 */}
             {step === 3 && (
