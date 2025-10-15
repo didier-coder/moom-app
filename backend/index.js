@@ -39,20 +39,23 @@ app.get("/api/ping", (req, res) => {
 app.use("/api/reservations", reservations);
 app.use("/api/disponibilites", disponibilites);
 
-// 🧩 Route sécurisée pour test d’erreur (accessible uniquement via clé admin)
+// 🧩 Route test d’erreur totalement masquée (accessible uniquement via paramètre secret)
 app.get("/api/test-error", (req, res, next) => {
-  const adminKey = req.headers["x-admin-key"];
-  
-  if (adminKey !== process.env.ADMIN_KEY) {
-    return res.status(403).json({
+  const key = req.query.key;
+
+  // Vérifie que la clé est correcte
+  if (key !== process.env.ADMIN_KEY) {
+    // Ne révèle rien de sensible (même le nom de la route reste anodin)
+    return res.status(404).json({
       success: false,
-      message: "⛔ Accès refusé. Clé administrateur invalide.",
+      message: "Ressource non trouvée 🕵️‍♂️",
     });
   }
 
-  // Si la clé est correcte, déclenche une erreur de test
+  // Déclenche une erreur volontaire (test)
   next(new Error("Ceci est un test d’erreur volontaire 💥"));
 });
+
 
 // 🚨 Middleware global d’erreur avec envoi d’alerte HTML
 app.use(async (err, req, res, next) => {
