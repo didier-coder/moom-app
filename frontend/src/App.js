@@ -7,14 +7,21 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
 
-  const ADMIN_PASSWORD = "moom2025"; // 🔐 change ce mot de passe comme tu veux !
+  // 🔐 Mot de passe admin — à personnaliser
+  const ADMIN_PASSWORD = "moom2025";
 
   const handleLogin = () => {
     if (passwordInput === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
+      setPasswordInput("");
     } else {
       alert("❌ Mot de passe incorrect");
     }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setView("reservation");
   };
 
   return (
@@ -24,6 +31,7 @@ function App() {
         style={{
           display: "flex",
           justifyContent: "center",
+          alignItems: "center",
           gap: "1rem",
           background: "#f8f9fa",
           padding: "1rem",
@@ -60,6 +68,23 @@ function App() {
         >
           ⚙️ Admin Fermetures
         </button>
+
+        {/* Bouton de déconnexion (visible uniquement en mode admin connecté) */}
+        {isAuthenticated && view === "admin" && (
+          <button
+            onClick={handleLogout}
+            style={{
+              background: "#dc3545",
+              color: "#fff",
+              border: "none",
+              borderRadius: "6px",
+              padding: "0.6rem 1rem",
+              cursor: "pointer",
+            }}
+          >
+            🚪 Déconnexion
+          </button>
+        )}
       </div>
 
       {/* Contenu dynamique */}
@@ -69,12 +94,7 @@ function App() {
         ) : isAuthenticated ? (
           <FermeturesAdmin />
         ) : (
-          <div
-            style={{
-              textAlign: "center",
-              marginTop: "3rem",
-            }}
-          >
+          <div style={{ textAlign: "center", marginTop: "3rem" }}>
             <h2>🔒 Accès réservé à l’administration</h2>
             <input
               type="password"
