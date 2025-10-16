@@ -12,10 +12,6 @@ import "./App.css";
 import { useEffect } from "react";
 import { supabase } from "./supabaseClient";
 
-
-import { useEffect } from "react";
-import { supabase } from "./supabaseClient";
-
 function Reservation() {
   useEffect(() => {
     async function testSupabase() {
