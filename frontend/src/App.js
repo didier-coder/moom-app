@@ -15,6 +15,7 @@ function App() {
         }}
       >
         <AnimatePresence mode="wait">
+          {/* ✅ Routes React */}
           <Routes>
             <Route
               path="/"
@@ -52,6 +53,7 @@ function App() {
 }
 
 export default App;
+
 
   );
 }
