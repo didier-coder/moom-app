@@ -1,3 +1,13 @@
+import { supabase } from "./supabaseClient";
+useEffect(() => {
+  async function checkConnection() {
+    const { data, error } = await supabase.from("reservations").select("*").limit(1);
+    console.log("🧩 Test Supabase :", data, error);
+  }
+  checkConnection();
+}, []);
+
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
