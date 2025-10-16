@@ -586,7 +586,7 @@ const cardStyle = {
   position: "relative",
   overflow: "hidden",
 };
-
+// eslint-disable-next-line no-unused-vars
 const inputStyleMobile = {
   ...inputStyle,
   fontSize: "1rem",
