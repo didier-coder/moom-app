@@ -13,15 +13,30 @@ import { useEffect } from "react";
 import { supabase } from "./supabaseClient";
 
 
+import { useEffect } from "react";
 import { supabase } from "./supabaseClient";
-useEffect(() => {
-  async function checkConnection() {
-    const { data, error } = await supabase.from("reservations").select("*").limit(1);
-    console.log("🧩 Test Supabase :", data, error);
-  }
-  checkConnection();
-}, []);
 
+function Reservation() {
+  useEffect(() => {
+    async function testSupabase() {
+      console.log("🚀 Test Supabase démarré"); // <-- ligne de debug
+      const { data, error } = await supabase.from("reservations").select("*").limit(1);
+      if (error) {
+        console.error("❌ Erreur Supabase :", error.message);
+      } else {
+        console.log("✅ Connexion Supabase OK :", data);
+      }
+    }
+    testSupabase();
+  }, []);
+
+  return (
+    <div>
+      {/* ... le reste de ton code */}
+    </div>
+  );
+}
+console.log("🚀 Test Supabase démarré");
 
 function App() {
   const [step, setStep] = useState(1);
