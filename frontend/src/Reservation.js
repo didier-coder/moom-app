@@ -11,26 +11,31 @@ import "./App.css";
 import { useEffect } from "react";
 import { supabase } from "./supabaseClient";
 
-function Reservation() {
-  useEffect(() => {
-    async function testSupabase() {
-      console.log("🚀 Test Supabase démarré"); // <-- ligne de debug
+// 🧩 Test rapide de connexion Supabase
+import { supabase } from "./supabaseClient";
+
+const [supabaseStatus, setSupabaseStatus] = useState("pending");
+
+useEffect(() => {
+  async function testSupabase() {
+    console.log("🚀 Test Supabase démarré");
+    try {
       const { data, error } = await supabase.from("reservations").select("*").limit(1);
       if (error) {
         console.error("❌ Erreur Supabase :", error.message);
+        setSupabaseStatus("error");
       } else {
         console.log("✅ Connexion Supabase OK :", data);
+        setSupabaseStatus("success");
       }
+    } catch (err) {
+      console.error("⚠️ Erreur inattendue :", err);
+      setSupabaseStatus("error");
     }
-    testSupabase();
-  }, []);
+  }
+  testSupabase();
+}, []);
 
-  return (
-    <div>
-      {/* ... le reste de ton code */}
-    </div>
-  );
-}
 console.log("🚀 Test Supabase démarré");
 
 function App() {
