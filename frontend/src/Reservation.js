@@ -55,22 +55,26 @@ const heuresDiner = genererHeures("18:00", "22:00", 15);
 
 
 
-  useEffect(() => {
-    const now = new Date();
-    let heures = service === "lunch" ? [...heuresLunch] : [...heuresDiner];
+  // 🕒 Met à jour les heures disponibles selon le service et la date choisie
+useEffect(() => {
+  const maintenant = new Date();
+  const heures = service === "lunch" ? heuresLunch : heuresDiner;
 
-    // Filtrer les heures déjà passées si la date sélectionnée = aujourd'hui
-    if (selectedDate.toDateString() === now.toDateString()) {
-      const currentTime = now.getHours() + now.getMinutes() / 60;
-      heures = heures.filter((h) => {
-        const [hh, mm] = h.split(":").map(Number);
-        const timeValue = hh + mm / 60;
-        return timeValue > currentTime;
-      });
-    }
-
+  if (selectedDate && isToday(selectedDate)) {
+    // Si la date est aujourd'hui → on retire les heures déjà passées
+    const heuresFiltrees = heures.filter((h) => {
+      const [heure, minute] = h.split(":");
+      const heureDate = new Date();
+      heureDate.setHours(heure, minute);
+      return heureDate > maintenant;
+    });
+    setHeuresDispo(heuresFiltrees);
+  } else {
+    // Sinon → on garde toutes les heures
     setHeuresDispo(heures);
-  }, [service, selectedDate]);
+  }
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, [selectedDate, service]);
 
   const progress = ((confirmed ? 4 : step) / 4) * 100;
 
