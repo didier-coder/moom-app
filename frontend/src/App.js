@@ -7,15 +7,19 @@ import Admin from "./Admin";
 function App() {
   return (
     <Router>
-      <div
-        style={{
-          fontFamily: "system-ui, sans-serif",
-          backgroundColor: "#f8f9fa",
-          minHeight: "100vh",
-        }}
-      >
-        <AnimatePresence mode="wait">
-          {/* ✅ Routes React */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key="app"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
+          style={{
+            fontFamily: "system-ui, sans-serif",
+            backgroundColor: "#f8f9fa",
+            minHeight: "100vh",
+          }}
+        >
           <Routes>
             <Route
               path="/"
@@ -46,15 +50,9 @@ function App() {
               }
             />
           </Routes>
-        </AnimatePresence>
-      </div>
+        </motion.div>
+      </AnimatePresence>
     </Router>
-  );
-}
-
-export default App;
-
-
   );
 }
 
