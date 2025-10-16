@@ -9,6 +9,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { FaUserFriends, FaCalendarAlt, FaClock } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import "./App.css";
+import { useEffect } from "react";
+import { supabase } from "./supabaseClient";
+
 
 import { supabase } from "./supabaseClient";
 useEffect(() => {
