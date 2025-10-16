@@ -9,8 +9,6 @@ import { FaUserFriends, FaCalendarAlt, FaClock } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import "./App.css";
 import { useEffect } from "react";
-
-
 import { supabase } from "./supabaseClient"; // ⚠️ à placer tout en haut du fichier avec les autres imports
 
 // … ensuite dans ton composant Reservation() :
