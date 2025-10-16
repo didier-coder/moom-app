@@ -1,12 +1,3 @@
-import { supabase } from "./supabaseClient";
-useEffect(() => {
-  async function checkConnection() {
-    const { data, error } = await supabase.from("reservations").select("*").limit(1);
-    console.log("🧩 Test Supabase :", data, error);
-  }
-  checkConnection();
-}, []);
-
 
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -18,6 +9,16 @@ import "react-toastify/dist/ReactToastify.css";
 import { FaUserFriends, FaCalendarAlt, FaClock } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import "./App.css";
+
+import { supabase } from "./supabaseClient";
+useEffect(() => {
+  async function checkConnection() {
+    const { data, error } = await supabase.from("reservations").select("*").limit(1);
+    console.log("🧩 Test Supabase :", data, error);
+  }
+  checkConnection();
+}, []);
+
 
 function App() {
   const [step, setStep] = useState(1);
