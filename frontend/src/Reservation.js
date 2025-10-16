@@ -9,13 +9,14 @@ import { FaUserFriends, FaCalendarAlt, FaClock } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import "./App.css";
 import { useEffect } from "react";
-import { supabase } from "./supabaseClient";
 
-// 🧩 Test rapide de connexion Supabase
-import { supabase } from "./supabaseClient";
 
+import { supabase } from "./supabaseClient"; // ⚠️ à placer tout en haut du fichier avec les autres imports
+
+// … ensuite dans ton composant Reservation() :
 const [supabaseStatus, setSupabaseStatus] = useState("pending");
 
+// ✅ Nouveau useEffect indépendant du tien
 useEffect(() => {
   async function testSupabase() {
     console.log("🚀 Test Supabase démarré");
@@ -34,9 +35,9 @@ useEffect(() => {
     }
   }
   testSupabase();
-}, []);
+}, []); // <-- ne dépend de rien, donc ne s'exécute qu'une fois
 
-console.log("🚀 Test Supabase démarré");
+
 
 function App() {
   const [step, setStep] = useState(1);
@@ -150,6 +151,18 @@ useEffect(() => {
   };
 
   return (
+    {/* ✅ Statut Supabase */}
+<div style={{ textAlign: "center", marginBottom: "1rem" }}>
+  {supabaseStatus === "pending" && (
+    <p style={{ color: "#6c757d" }}>⏳ Vérification de la connexion à Supabase...</p>
+  )}
+  {supabaseStatus === "success" && (
+    <p style={{ color: "#28a745" }}>✅ Connexion Supabase OK</p>
+  )}
+  {supabaseStatus === "error" && (
+    <p style={{ color: "#dc3545" }}>❌ Erreur de connexion à Supabase</p>
+  )}
+</div>
   <div style={responsiveContainer}>
   <motion.div
     layout
