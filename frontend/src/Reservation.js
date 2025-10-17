@@ -1,4 +1,5 @@
 
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -8,32 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { FaUserFriends, FaCalendarAlt, FaClock } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import "./App.css";
-import { useEffect } from "react";
-import { supabase } from "./supabaseClient"; // ⚠️ à placer tout en haut du fichier avec les autres imports
+import { supabase } from "./supabaseClient";
 
-// … ensuite dans ton composant Reservation() :
-const [supabaseStatus, setSupabaseStatus] = useState("pending");
-
-// ✅ Nouveau useEffect indépendant du tien
-useEffect(() => {
-  async function testSupabase() {
-    console.log("🚀 Test Supabase démarré");
-    try {
-      const { data, error } = await supabase.from("reservations").select("*").limit(1);
-      if (error) {
-        console.error("❌ Erreur Supabase :", error.message);
-        setSupabaseStatus("error");
-      } else {
-        console.log("✅ Connexion Supabase OK :", data);
-        setSupabaseStatus("success");
-      }
-    } catch (err) {
-      console.error("⚠️ Erreur inattendue :", err);
-      setSupabaseStatus("error");
-    }
-  }
-  testSupabase();
-}, []); // <-- ne dépend de rien, donc ne s'exécute qu'une fois
 
 
 
@@ -57,6 +34,34 @@ function App() {
   const [submitting, setSubmitting] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [heuresDispo, setHeuresDispo] = useState([]);
+
+  // ✅ Test connexion Supabase
+const [supabaseStatus, setSupabaseStatus] = useState("pending");
+
+useEffect(() => {
+  async function testSupabase() {
+    console.log("🚀 Test Supabase démarré");
+    try {
+      const { data, error } = await supabase
+        .from("reservations")
+        .select("*")
+        .limit(1);
+
+      if (error) {
+        console.error("❌ Erreur Supabase :", error.message);
+        setSupabaseStatus("error");
+      } else {
+        console.log("✅ Connexion Supabase OK :", data);
+        setSupabaseStatus("success");
+      }
+    } catch (err) {
+      console.error("⚠️ Erreur inattendue :", err);
+      setSupabaseStatus("error");
+    }
+  }
+  testSupabase();
+}, []);
+
 
   // ✅ Génère dynamiquement les créneaux horaires
 function genererHeures(debut, fin, intervalleMinutes) {
@@ -403,7 +408,7 @@ const heuresDiner = genererHeures("18:00", "22:00", 15);
       >
         Particulier
       </button>
-    </div> {/* ✅ ← FERMETURE MANQUANTE ICI */}
+    </div> 
   </div>
 )}
 
