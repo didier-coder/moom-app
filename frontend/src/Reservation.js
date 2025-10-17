@@ -503,6 +503,69 @@ const cardStyle = {
   position: "relative",
   overflow: "hidden",
 };
+/* --- Responsive media queries --- */
+const mobileStyles = `
+@media (max-width: 768px) {
+  body {
+    background: linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .reservation-card {
+    max-width: 90% !important;
+    padding: 1.5rem !important;
+    border-radius: 16px !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08) !important;
+  }
+
+  h1 {
+    font-size: 1.4rem !important;
+    text-align: center !important;
+  }
+
+  button {
+    width: 100% !important;
+    margin-bottom: 0.8rem !important;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 1rem !important;
+    width: 100% !important;
+  }
+
+  .date-picker input {
+    width: 100% !important;
+  }
+
+  .Toastify__toast-container {
+    width: 95% !important;
+    left: 2.5% !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .reservation-card {
+    max-width: 80% !important;
+    padding: 2rem !important;
+  }
+
+  h1 {
+    font-size: 1.6rem !important;
+  }
+}
+`;
+
+// ✅ Injecte le CSS responsive dans la page si le document est disponible
+if (typeof document !== "undefined") {
+  const styleEl = document.createElement("style");
+  styleEl.innerHTML = mobileStyles;
+  document.head.appendChild(styleEl);
+}
+
 
 export default Reservation;
 
