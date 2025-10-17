@@ -149,6 +149,7 @@ const heuresDiner = genererHeures("18:00", "22:00", 15);
   };
 
   return (
+    <>
     {/* ✅ Statut Supabase */}
 <div style={{ textAlign: "center", marginBottom: "1rem" }}>
   {supabaseStatus === "pending" && (
