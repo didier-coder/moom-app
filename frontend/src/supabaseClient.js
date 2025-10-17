@@ -1,9 +1,7 @@
-// frontend/src/supabaseClient.js
 import { createClient } from "@supabase/supabase-js";
 
-// ⚙️ Ces variables seront injectées par Vercel (ou ton .env.local en local)
-const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
-const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
+const supabaseUrl = "https://gssxvuhzvoxbatbqanaz.supabase.co"; // ton URL Supabase
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdzc3h2dWh6dm94YmF0YnFhbmF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAwNTQzMzAsImV4cCI6MjA3NTYzMDMzMH0.CnpRx5cZyRcKGCLvx-8tOtAXwx9nEc2NJLzK2yNAg9E"; // ta clé publique (ANON KEY)
 
-// 🧩 Création du client Supabase
-export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+export const supabase = createClient(supabaseUrl, supabaseKey);
+
