@@ -116,14 +116,6 @@ function Reservation() {
 
   return (
     <div style={responsiveContainer}>
-      <motion.div
-        layout
-        initial={{ opacity: 0, y: 40, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.6 }}
-        style={cardStyle}
-        className="reservation-card"
-      >
         <motion.div
           layout
           initial={{ opacity: 0, y: 40, scale: 0.98 }}
