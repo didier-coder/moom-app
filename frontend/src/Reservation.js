@@ -116,22 +116,14 @@ function Reservation() {
 
   return (
     <div style={responsiveContainer}>
-        <motion.div
-          layout
-          initial={{ opacity: 0, y: 40, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          style={{
-            width: "100%",
-            maxWidth: "650px",
-            background: "#fff",
-            borderRadius: "20px",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-            padding: "2rem 2.5rem",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 40, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.6 }}
+      style={cardStyle}
+      className="reservation-card"
+    >
           {/* Barre de progression */}
           <div
             style={{
