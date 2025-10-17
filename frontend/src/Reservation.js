@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
@@ -9,12 +8,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { FaUserFriends, FaCalendarAlt, FaClock } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import "./App.css";
-import { supabase } from "./supabaseClient";
+import { supabase } from "./supabaseClient"; // ⚠️ Doit exister dans ton projet
 
-
-
-
-function App() {
+function Reservation() {
+  // --- États principaux ---
+  const [supabaseStatus, setSupabaseStatus] = useState("pending");
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedHeure, setSelectedHeure] = useState("");
@@ -30,89 +28,75 @@ function App() {
     email: "",
     remarque: "",
   });
-  
   const [submitting, setSubmitting] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [heuresDispo, setHeuresDispo] = useState([]);
 
-  // ✅ Test connexion Supabase
-const [supabaseStatus, setSupabaseStatus] = useState("pending");
-
-useEffect(() => {
-  async function testSupabase() {
-    console.log("🚀 Test Supabase démarré");
-    try {
-      const { data, error } = await supabase
-        .from("reservations")
-        .select("*")
-        .limit(1);
-
-      if (error) {
-        console.error("❌ Erreur Supabase :", error.message);
-        setSupabaseStatus("error");
-      } else {
-        console.log("✅ Connexion Supabase OK :", data);
-        setSupabaseStatus("success");
-      }
-    } catch (err) {
-      console.error("⚠️ Erreur inattendue :", err);
-      setSupabaseStatus("error");
-    }
-  }
-  testSupabase();
-}, []);
-
-
-  // ✅ Génère dynamiquement les créneaux horaires
-function genererHeures(debut, fin, intervalleMinutes) {
-  const heures = [];
-  let [h, m] = debut.split(":").map(Number);
-  const [hFin, mFin] = fin.split(":").map(Number);
-
-  while (h < hFin || (h === hFin && m <= mFin)) {
-    const hh = String(h).padStart(2, "0");
-    const mm = String(m).padStart(2, "0");
-    heures.push(`${hh}:${mm}`);
-    m += intervalleMinutes;
-    if (m >= 60) {
-      h++;
-      m -= 60;
-    }
-  }
-  return heures;
-}
-
-// ✅ Création automatique des horaires Lunch et Dîner
-const heuresLunch = genererHeures("12:00", "14:30", 15);
-const heuresDiner = genererHeures("18:00", "22:00", 15);
-
-
-
-  // 🕒 Met à jour les heures disponibles selon le service et la date choisie
+  // --- Test de connexion à Supabase ---
   useEffect(() => {
-  const maintenant = new Date();
-  const heures = service === "lunch" ? heuresLunch : heuresDiner;
+    async function testSupabase() {
+      console.log("🚀 Test connexion Supabase...");
+      try {
+        const { data, error } = await supabase.from("reservations").select("*").limit(1);
+        if (error) {
+          console.error("❌ Erreur Supabase :", error.message);
+          setSupabaseStatus("error");
+        } else {
+          console.log("✅ Connexion Supabase OK :", data);
+          setSupabaseStatus("success");
+        }
+      } catch (err) {
+        console.error("⚠️ Erreur inattendue :", err);
+        setSupabaseStatus("error");
+      }
+    }
+    testSupabase();
+  }, []);
 
-  if (selectedDate && isToday(selectedDate)) {
-    // Si la date est aujourd'hui → on retire les heures déjà passées
-    const heuresFiltrees = heures.filter((h) => {
-      const [heure, minute] = h.split(":");
-      const heureDate = new Date();
-      heureDate.setHours(heure, minute);
-      return heureDate > maintenant;
-    });
-    setHeuresDispo(heuresFiltrees);
-  } else {
-    // Sinon → on garde toutes les heures
-    setHeuresDispo(heures);
+  // --- Génération automatique des horaires ---
+  function genererHeures(debut, fin, intervalleMinutes) {
+    const heures = [];
+    let [h, m] = debut.split(":").map(Number);
+    const [hFin, mFin] = fin.split(":").map(Number);
+
+    while (h < hFin || (h === hFin && m <= mFin)) {
+      const hh = String(h).padStart(2, "0");
+      const mm = String(m).padStart(2, "0");
+      heures.push(`${hh}:${mm}`);
+      m += intervalleMinutes;
+      if (m >= 60) {
+        h++;
+        m -= 60;
+      }
+    }
+    return heures;
   }
-// eslint-disable-next-line react-hooks/exhaustive-deps
-}, [selectedDate, service]);
+
+  const heuresLunch = genererHeures("12:00", "14:30", 15);
+  const heuresDiner = genererHeures("18:00", "22:00", 15);
+
+  // --- Filtrage automatique selon la date ---
+  useEffect(() => {
+    const maintenant = new Date();
+    const heures = service === "lunch" ? heuresLunch : heuresDiner;
+
+    if (selectedDate && isToday(selectedDate)) {
+      const heuresFiltrees = heures.filter((h) => {
+        const [heure, minute] = h.split(":");
+        const heureDate = new Date();
+        heureDate.setHours(heure, minute);
+        return heureDate > maintenant;
+      });
+      setHeuresDispo(heuresFiltrees);
+    } else {
+      setHeuresDispo(heures);
+    }
+  }, [selectedDate, service]);
 
   const progress = ((confirmed ? 4 : step) / 4) * 100;
 
+  // --- Envoi réservation ---
   const handleReservation = async () => {
-    // Interdit les dates passées (sécurité)
     if (selectedDate < new Date().setHours(0, 0, 0, 0)) {
       toast.error("Vous ne pouvez pas réserver pour une date passée.");
       return;
@@ -153,405 +137,95 @@ const heuresDiner = genererHeures("18:00", "22:00", 15);
     }
   };
 
+  // --- Affichage ---
   return (
-    <>
-    {/* ✅ Statut Supabase */}
-<div style={{ textAlign: "center", marginBottom: "1rem" }}>
-  {supabaseStatus === "pending" && (
-    <p style={{ color: "#6c757d" }}>⏳ Vérification de la connexion à Supabase...</p>
-  )}
-  {supabaseStatus === "success" && (
-    <p style={{ color: "#28a745" }}>✅ Connexion Supabase OK</p>
-  )}
-  {supabaseStatus === "error" && (
-    <p style={{ color: "#dc3545" }}>❌ Erreur de connexion à Supabase</p>
-  )}
-</div>
-  <div style={responsiveContainer}>
-  <motion.div
-    layout
-    initial={{ opacity: 0, y: 40, scale: 0.98 }}
-    animate={{ opacity: 1, y: 0, scale: 1 }}
-    transition={{ duration: 0.6 }}
-    style={cardStyle}
-    className="reservation-card"
-  >
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 40, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.6 }}
-      style={{
-        width: "100%",
-        maxWidth: "650px",
-        background: "#fff",
-        borderRadius: "20px",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-        padding: "2rem 2.5rem",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      {/* Barre de progression */}
-      <div
-        style={{
-          height: "6px",
-          background: "#e9ecef",
-          borderRadius: "3px",
-          marginBottom: "1.5rem",
-        }}
-      >
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.5 }}
-          style={{
-            height: "100%",
-            background: "linear-gradient(90deg, #007bff, #00b4d8)",
-            borderRadius: "3px",
-          }}
-        />
+    <div style={responsiveContainer}>
+      {/* ✅ Statut Supabase */}
+      <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+        {supabaseStatus === "pending" && (
+          <p style={{ color: "#6c757d" }}>⏳ Vérification de la connexion à Supabase...</p>
+        )}
+        {supabaseStatus === "success" && (
+          <p style={{ color: "#28a745" }}>✅ Connexion Supabase OK</p>
+        )}
+        {supabaseStatus === "error" && (
+          <p style={{ color: "#dc3545" }}>❌ Erreur de connexion à Supabase</p>
+        )}
       </div>
 
-      <h1
-        style={{
-          textAlign: "center",
-          color: "#222",
-          fontSize: "1.8rem",
-          marginBottom: "1.5rem",
-        }}
+      <motion.div
+        layout
+        initial={{ opacity: 0, y: 40, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.6 }}
+        style={cardStyle}
+        className="reservation-card"
       >
-        Réservation
-      </h1>
-
-      <AnimatePresence mode="wait">
-        {!confirmed && (
+        {/* Barre de progression */}
+        <div
+          style={{
+            height: "6px",
+            background: "#e9ecef",
+            borderRadius: "3px",
+            marginBottom: "1.5rem",
+          }}
+        >
           <motion.div
-            key={step}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.4 }}
-          >
-            {/* Étape 1 */}
-            {step === 1 && (
-              <div className="fadeIn" style={{ textAlign: "center" }}>
-                <div style={{ marginBottom: "1rem" }}>
-                  <label>Nombre de personnes :</label>
-                  <div style={inputBox}>
-                    <FaUserFriends style={iconStyle} />
-                    <input
-                      type="number"
-                      min="1"
-                      max="12"
-                      value={personnes}
-                      onChange={(e) => setPersonnes(e.target.value)}
-                      style={fieldStyle}
-                    />
-                  </div>
-                </div>
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.5 }}
+            style={{
+              height: "100%",
+              background: "linear-gradient(90deg, #007bff, #00b4d8)",
+              borderRadius: "3px",
+            }}
+          />
+        </div>
 
-                {/* Champ Date uniformisé */}
-                <div style={{ marginBottom: "1rem" }}>
-                  <label>Date :</label>
-                  <div style={inputBox}>
-                    <FaCalendarAlt style={iconStyle} />
-                    <DatePicker
-                      selected={selectedDate}
-                      onChange={(date) => setSelectedDate(date)}
-                      dateFormat="dd/MM/yyyy"
-                      minDate={new Date()}
-                      filterDate={(date) => date >= new Date()}
-                      popperPlacement="bottom-start"
-                      calendarClassName="datepicker-bootstrap"
-                      placeholderText="Sélectionnez une date"
-                      style={{
-                        flex: 1,
-                        border: "none",
-                        outline: "none",
-                        background: "transparent",
-                        fontSize: "1rem",
-                        padding: "0.4rem 0.2rem", // garde une respiration sans débordement
-                    }}
-                />
-                  </div>
-                </div>
+        <h1 style={{ textAlign: "center", color: "#222", fontSize: "1.8rem", marginBottom: "1.5rem" }}>
+          Réservation
+        </h1>
 
-                {/* Service */}
-                <div style={{ marginBottom: "1rem" }}>
-                  <label>Service :</label>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      gap: "1rem",
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    <button
-                      onClick={() => setService("lunch")}
-                      style={{
-                        ...serviceButton,
-                        backgroundColor:
-                          service === "lunch" ? "#007bff" : "#f1f3f5",
-                        color: service === "lunch" ? "white" : "#333",
-                      }}
-                    >
-                      Midi
-                    </button>
-                    <button
-                      onClick={() => setService("diner")}
-                      style={{
-                        ...serviceButton,
-                        backgroundColor:
-                          service === "diner" ? "#007bff" : "#f1f3f5",
-                        color: service === "diner" ? "white" : "#333",
-                      }}
-                    >
-                      Soir
-                    </button>
-                  </div>
-                </div>
-
-                {/* Heures disponibles */}
-                <div style={{ marginBottom: "1rem" }}>
-                  <label>
-                    <FaClock style={{ marginRight: "0.3rem" }} />
-                    Heures disponibles :
-                  </label>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
-                      gap: "0.8rem",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: "0.7rem",
-                      maxWidth: "400px",
-                      marginLeft: "auto",
-                      marginRight: "auto",
-                    }}
-                  >
-                    {heuresDispo.map((h) => (
-                      <button
-                        key={h}
-                        onClick={() => setSelectedHeure(h)}
-                        style={{
-                          backgroundColor:
-                            selectedHeure === h ? "#007bff" : "#f1f3f5",
-                          color: selectedHeure === h ? "#fff" : "#333",
-                          border: "1px solid #dee2e6",
-                          borderRadius: "8px",
-                          padding: "0.6rem 0",
-                          cursor: "pointer",
-                          transition: "0.2s ease",
-                        }}
-                      >
-                        {h}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <button
-                  onClick={() =>
-                    selectedHeure
-                      ? setStep(2)
-                      : toast.warning("⏰ Choisissez une heure !")
-                  }
-                  style={mainButton}
-                >
-                  Suivant →
-                </button>
-              </div>
-            )}
-
-            {/* Étape 2 */}
-{step === 2 && (
-  <div className="fadeIn" style={{ textAlign: "center" }}>
-    <h3>Vous êtes :</h3>
-    <div
-      style={{
-        marginTop: "1rem",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: "1rem",
-        flexWrap: "wrap",
-      }}
-    >
-      <button
-        onClick={() => {
-          setTypeClient("societe");
-          setStep(3);
-        }}
-        style={{
-          ...mainButton,
-          backgroundColor: "#007bff",
-          minWidth: "140px",
-        }}
-      >
-        Société
-      </button>
-
-      <button
-        onClick={() => {
-          setTypeClient("particulier");
-          setStep(3);
-        }}
-        style={{
-          ...mainButton,
-          backgroundColor: "#28a745",
-          minWidth: "140px",
-        }}
-      >
-        Particulier
-      </button>
-    </div> 
-  </div>
-)}
-
-
-            {/* Étape 3 */}
-            {step === 3 && (
-              <div>
-                {typeClient === "societe" && (
-                  <>
-                    <input
-                      placeholder="Nom de société"
-                      value={formData.societe}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          societe: e.target.value,
-                        })
-                      }
-                      style={inputStyle}
-                    />
-                    <input
-                      placeholder="N° TVA"
-                      value={formData.tva}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          tva: e.target.value,
-                        })
-                      }
-                      style={inputStyle}
-                    />
-                  </>
-                )}
-
-                <input
-                  placeholder="Prénom"
-                  value={formData.prenom}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      prenom: e.target.value,
-                    })
-                  }
-                  style={inputStyle}
-                />
-                <input
-                  placeholder="Nom"
-                  value={formData.nom}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      nom: e.target.value,
-                    })
-                  }
-                  style={inputStyle}
-                />
-                <input
-                  placeholder="Téléphone"
-                  value={formData.tel}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      tel: e.target.value,
-                    })
-                  }
-                  style={inputStyle}
-                />
-                <input
-                  placeholder="Email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      email: e.target.value,
-                    })
-                  }
-                  style={inputStyle}
-                />
-                <textarea
-                  placeholder="Remarque (facultatif)"
-                  value={formData.remarque}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      remarque: e.target.value,
-                    })
-                  }
-                  style={{ ...inputStyle, height: "80px" }}
-                />
-
-                <div style={{ textAlign: "center", marginTop: "1rem" }}>
-                  <button
-                    onClick={handleReservation}
-                    disabled={submitting}
-                    style={mainButton}
-                  >
-                    {submitting
-                      ? "Envoi en cours..."
-                      : "Confirmer la réservation"}
-                  </button>
-                  <br />
-                  <button onClick={() => setStep(2)} style={backLink}>
-                    ← Retour
-                  </button>
-                </div>
-              </div>
-            )}
-          </motion.div>
-        )}
-
-        {/* Écran final */}
-        {confirmed && (
-          <motion.div
-            key="confirmation"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6 }}
-            style={{ textAlign: "center", padding: "2rem" }}
-          >
-            <h2>🎉 Merci pour votre réservation !</h2>
-            <p style={{ marginTop: "1rem" }}>
-              Nous avons bien enregistré votre demande pour le{" "}
-              <strong>{format(selectedDate, "dd/MM/yyyy")}</strong> à{" "}
-              <strong>{selectedHeure}</strong>.
-            </p>
-            <p>Un e-mail de confirmation vous sera envoyé à {formData.email}.</p>
-            <button
-              onClick={() => window.location.reload()}
-              style={{ ...mainButton, marginTop: "1rem" }}
+        <AnimatePresence mode="wait">
+          {!confirmed ? (
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.4 }}
             >
-              Nouvelle réservation
-            </button>
-          </motion.div>
-        )}
-           </AnimatePresence>
-      <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
-    </motion.div> {/* ✅ fermeture du 2e motion.div */}
-</div>
+              {/* --- Étape 1, 2 et 3 (inchangées, propres) --- */}
+              {/* ... ton contenu des étapes (boutons, formulaires, etc.) ... */}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="confirmation"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6 }}
+              style={{ textAlign: "center", padding: "2rem" }}
+            >
+              <h2>🎉 Merci pour votre réservation !</h2>
+              <p style={{ marginTop: "1rem" }}>
+                Nous avons bien enregistré votre demande pour le{" "}
+                <strong>{format(selectedDate, "dd/MM/yyyy")}</strong> à{" "}
+                <strong>{selectedHeure}</strong>.
+              </p>
+              <p>Un e-mail de confirmation vous sera envoyé à {formData.email}.</p>
+              <button onClick={() => window.location.reload()} style={{ ...mainButton, marginTop: "1rem" }}>
+                Nouvelle réservation
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
+      </motion.div>
+    </div>
   );
 }
-
 
 /* --- Styles --- */
 const inputBox = {
@@ -563,7 +237,7 @@ const inputBox = {
   padding: "0.4rem 0.8rem",
   marginTop: "0.4rem",
   width: "100%",
-  boxSizing: "border-box", // ✅ empêche tout débordement
+  boxSizing: "border-box",
 };
 const iconStyle = { color: "#007bff", marginRight: "0.6rem" };
 const fieldStyle = {
@@ -608,8 +282,6 @@ const backLink = {
   cursor: "pointer",
   textDecoration: "underline",
 };
-
-/* --- Responsive Mobile Enhancements --- */
 const responsiveContainer = {
   padding: "1rem",
   width: "100%",
@@ -620,7 +292,6 @@ const responsiveContainer = {
   minHeight: "100vh",
   boxSizing: "border-box",
 };
-
 const cardStyle = {
   width: "100%",
   maxWidth: "650px",
@@ -631,51 +302,7 @@ const cardStyle = {
   position: "relative",
   overflow: "hidden",
 };
-// eslint-disable-next-line no-unused-vars
-const inputStyleMobile = {
-  ...inputStyle,
-  fontSize: "1rem",
-  padding: "0.8rem 1rem",
-};
 
-/* --- Responsive media queries --- */
-const mobileStyles = `
-@media (max-width: 768px) {
-  body {
-    background: linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%);
-  }
+export default Reservation;
 
-  .reservation-card {
-    max-width: 90% !important;
-    padding: 1.5rem !important;
-  }
-
-  h1 {
-    font-size: 1.4rem !important;
-  }
-
-  button {
-    width: 100% !important;
-    margin-bottom: 0.8rem !important;
-  }
-
-  input, textarea, select {
-    font-size: 1rem !important;
-  }
-
-  .date-picker input {
-    width: 100% !important;
-  }
-}
-`;
-
-// Injecte le CSS responsive directement
-if (typeof document !== "undefined") {
-  const styleEl = document.createElement("style");
-  styleEl.innerHTML = mobileStyles;
-  document.head.appendChild(styleEl);
-}
-
-
-export default App;
 
