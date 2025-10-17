@@ -483,12 +483,15 @@ const backLink = {
   textDecoration: "underline",
 };
 const responsiveContainer = {
-  padding: "1rem",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
   minHeight: "100vh",
+  width: "100%",
+  padding: "2rem",
   background: "linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%)",
+  boxSizing: "border-box",
+  overflowX: "hidden",
 };
 const cardStyle = {
   width: "100%",
@@ -496,9 +499,9 @@ const cardStyle = {
   background: "#fff",
   borderRadius: "20px",
   boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-  padding: "0", // ⛔ pas de padding ici, il est dans le div interne
-  overflow: "hidden",
+  padding: "2rem 2.5rem",
   position: "relative",
+  overflow: "hidden",
 };
 
 export default Reservation;
