@@ -12,6 +12,16 @@ import "./App.css";
 
 console.log("✅ Reservation.js chargé !");
 
+useEffect(() => {
+  const style = document.createElement("style");
+  style.innerHTML = globalButtonStyle;
+  document.head.appendChild(style);
+  return () => {
+    document.head.removeChild(style);
+  };
+}, []);
+
+
 // 🎨 Palette
 const themeColor = "#bad5b7";
 const themeHover = "#a8c9a3";
@@ -502,5 +512,23 @@ const backLink = {
   cursor: "pointer",
   textDecoration: "underline",
 };
+
+// ✅ Supprimer le halo bleu et appliquer un survol vert doux
+const globalButtonStyle = `
+  button {
+    outline: none;
+    box-shadow: none;
+    transition: all 0.2s ease;
+  }
+
+  button:hover {
+    background-color: #a8c9a3 !important;
+  }
+
+  button:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(186, 213, 183, 0.5) !important;
+  }
+`;
 
 export default Reservation;
