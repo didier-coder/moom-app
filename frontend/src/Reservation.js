@@ -5,10 +5,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format, isToday } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FaUserFriends, FaCalendarAlt, FaClock } from "react-icons/fa";
+import { FaUserFriends, FaCalendarAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "./supabaseClient";
 import "./App.css";
+
 console.log("✅ Reservation.js chargé !");
 
 function Reservation() {
@@ -32,11 +33,37 @@ function Reservation() {
   });
   const [supabaseStatus, setSupabaseStatus] = useState("pending");
 
+  // ✅ Test de connexion à Supabase
+  useEffect(() => {
+    async function testSupabase() {
+      console.log("🚀 Test Supabase démarré");
+      try {
+        const { data, error } = await supabase
+          .from("reservations")
+          .select("*")
+          .limit(1);
+
+        if (error) {
+          console.error("❌ Erreur Supabase :", error.message);
+          setSupabaseStatus("error");
+        } else {
+          console.log("✅ Connexion Supabase OK :", data);
+          setSupabaseStatus("success");
+        }
+      } catch (err) {
+        console.error("⚠️ Erreur inattendue :", err);
+        setSupabaseStatus("error");
+      }
+    }
+    testSupabase();
+  }, []);
+
   // ✅ Génération des horaires
   function genererHeures(debut, fin, intervalleMinutes) {
     const heures = [];
     let [h, m] = debut.split(":").map(Number);
     const [hFin, mFin] = fin.split(":").map(Number);
+
     while (h < hFin || (h === hFin && m <= mFin)) {
       heures.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
       m += intervalleMinutes;
@@ -55,6 +82,7 @@ function Reservation() {
   useEffect(() => {
     const maintenant = new Date();
     const heures = service === "lunch" ? heuresLunch : heuresDiner;
+
     if (selectedDate && isToday(selectedDate)) {
       const heuresFiltrees = heures.filter((h) => {
         const [heure, minute] = h.split(":");
@@ -123,9 +151,15 @@ function Reservation() {
       >
         {/* ✅ Statut Supabase */}
         <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-          {supabaseStatus === "pending" && <p style={{ color: "#6c757d" }}>⏳ Vérification de la connexion à Supabase...</p>}
-          {supabaseStatus === "success" && <p style={{ color: "#28a745" }}>✅ Connexion Supabase OK</p>}
-          {supabaseStatus === "error" && <p style={{ color: "#dc3545" }}>❌ Erreur de connexion à Supabase</p>}
+          {supabaseStatus === "pending" && (
+            <p style={{ color: "#6c757d" }}>⏳ Vérification de la connexion à Supabase...</p>
+          )}
+          {supabaseStatus === "success" && (
+            <p style={{ color: "#28a745" }}>✅ Connexion Supabase OK</p>
+          )}
+          {supabaseStatus === "error" && (
+            <p style={{ color: "#dc3545" }}>❌ Erreur de connexion à Supabase</p>
+          )}
         </div>
 
         {/* ✅ Barre de progression */}
@@ -149,228 +183,194 @@ function Reservation() {
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.4 }}
             >
-              {/* Étape 1 */}
               {step === 1 && (
-                <div style={{ textAlign: "center" }}>
-                  <label>Nombre de personnes :</label>
-                  <div style={inputBox}>
-                    <FaUserFriends style={iconStyle} />
-                    <input
-                      type="number"
-                      min="1"
-                      max="12"
-                      value={personnes}
-                      onChange={(e) => setPersonnes(e.target.value)}
-                      style={fieldStyle}
-                    />
-                  </div>
-
-                  <label>Date :</label>
-                  <div style={inputBox}>
-                    <FaCalendarAlt style={iconStyle} />
-                    <DatePicker
-                      selected={selectedDate}
-                      onChange={(date) => setSelectedDate(date)}
-                      dateFormat="dd/MM/yyyy"
-                      minDate={new Date()}
-                      filterDate={(date) => date >= new Date()}
-                      placeholderText="Sélectionnez une date"
-                      style={fieldStyle}
-                    />
-                  </div>
-
-                  <label>Service :</label>
-                  <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "0.5rem" }}>
-                    <button
-                      onClick={() => setService("lunch")}
-                      style={{
-                        ...serviceButton,
-                        backgroundColor: service === "lunch" ? "#007bff" : "#f1f3f5",
-                        color: service === "lunch" ? "white" : "#333",
-                      }}
-                    >
-                      Midi
-                    </button>
-                    <button
-                      onClick={() => setService("diner")}
-                      style={{
-                        ...serviceButton,
-                        backgroundColor: service === "diner" ? "#007bff" : "#f1f3f5",
-                        color: service === "diner" ? "white" : "#333",
-                      }}
-                    >
-                      Soir
-                    </button>
-                  </div>
-
-                  <label>Heures disponibles :</label>
-                  <div style={heuresGrid}>
-                    {heuresDispo.map((h) => (
-                      <button
-                        key={h}
-                        onClick={() => setSelectedHeure(h)}
-                        style={{
-                          backgroundColor: selectedHeure === h ? "#007bff" : "#f1f3f5",
-                          color: selectedHeure === h ? "#fff" : "#333",
-                          border: "1px solid #dee2e6",
-                          borderRadius: "8px",
-                          padding: "0.6rem 0",
-                          cursor: "pointer",
-                        }}
-                      >
-                        {h}
-                      </button>
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={() =>
-                      selectedHeure ? setStep(2) : toast.warning("⏰ Choisissez une heure !")
-                    }
-                    style={mainButton}
-                  >
-                    Suivant →
-                  </button>
-                </div>
+                <Step1
+                  {...{ personnes, setPersonnes, selectedDate, setSelectedDate, service, setService, heuresDispo, selectedHeure, setSelectedHeure, setStep }}
+                />
               )}
 
-              {/* Étape 2 */}
               {step === 2 && (
-                <div style={{ textAlign: "center" }}>
-                  <h3 style={{ marginBottom: "1rem" }}>Vous êtes :</h3>
-                <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  gap: "1rem",
-                  marginTop: "1rem",
-                  flexWrap: "wrap",
-                }}
-              >
-      <button
-        onClick={() => {
-          setTypeClient("societe");
-          setStep(3);
-        }}
-        style={{ ...mainButton, backgroundColor: "#007bff", minWidth: "140px" }}
-      >
-        Société
-      </button>
+                <Step2 {...{ setTypeClient, setStep }} />
+              )}
 
-      <button
-        onClick={() => {
-          setTypeClient("particulier");
-          setStep(3);
-        }}
-        style={{ ...mainButton, backgroundColor: "#28a745", minWidth: "140px" }}
-      >
-        Particulier
-      </button>
-    </div>
-
-    {/* ✅ Bouton Retour vers l’étape 1 */}
-    <div style={{ marginTop: "1.5rem" }}>
-      <button onClick={() => setStep(1)} style={backLink}>
-        ← Retour
-      </button>
-    </div>
-  </div>
-)}
-
-
-              {/* Étape 3 */}
               {step === 3 && (
-                <div>
-                  {typeClient === "societe" && (
-                    <>
-                      <input
-                        placeholder="Nom de société"
-                        value={formData.societe}
-                        onChange={(e) => setFormData({ ...formData, societe: e.target.value })}
-                        style={inputStyle}
-                      />
-                      <input
-                        placeholder="N° TVA"
-                        value={formData.tva}
-                        onChange={(e) => setFormData({ ...formData, tva: e.target.value })}
-                        style={inputStyle}
-                      />
-                    </>
-                  )}
-
-                  <input
-                    placeholder="Prénom"
-                    value={formData.prenom}
-                    onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
-                    style={inputStyle}
-                  />
-                  <input
-                    placeholder="Nom"
-                    value={formData.nom}
-                    onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
-                    style={inputStyle}
-                  />
-                  <input
-                    placeholder="Téléphone"
-                    value={formData.tel}
-                    onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
-                    style={inputStyle}
-                  />
-                  <input
-                    placeholder="Email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    style={inputStyle}
-                  />
-                  <textarea
-                    placeholder="Remarque (facultatif)"
-                    value={formData.remarque}
-                    onChange={(e) => setFormData({ ...formData, remarque: e.target.value })}
-                    style={{ ...inputStyle, height: "80px" }}
-                  />
-
-                  <div style={{ textAlign: "center", marginTop: "1rem" }}>
-                    <button onClick={handleReservation} disabled={submitting} style={mainButton}>
-                      {submitting ? "Envoi en cours..." : "Confirmer la réservation"}
-                    </button>
-                    <br />
-                    <button onClick={() => setStep(2)} style={backLink}>
-                      ← Retour
-                    </button>
-                  </div>
-                </div>
+                <Step3 {...{ typeClient, formData, setFormData, handleReservation, submitting, setStep }} />
               )}
             </motion.div>
           )}
 
-          {/* Écran final */}
           {confirmed && (
-            <motion.div
-              key="confirmation"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.6 }}
-              style={{ textAlign: "center", padding: "2rem" }}
-            >
-              <h2>🎉 Merci pour votre réservation !</h2>
-              <p style={{ marginTop: "1rem" }}>
-                Nous avons bien enregistré votre demande pour le{" "}
-                <strong>{format(selectedDate, "dd/MM/yyyy")}</strong> à{" "}
-                <strong>{selectedHeure}</strong>.
-              </p>
-              <p>Un e-mail de confirmation vous sera envoyé à {formData.email}.</p>
-              <button onClick={() => window.location.reload()} style={{ ...mainButton, marginTop: "1rem" }}>
-                Nouvelle réservation
-              </button>
-            </motion.div>
+            <Confirmation
+              {...{ selectedDate, selectedHeure, formData }}
+            />
           )}
         </AnimatePresence>
 
         <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
       </motion.div>
-    
+    </div>
+  );
+}
+
+/* --- Composants d’étapes séparés --- */
+// Étape 1 : choix de la date, heure et service
+function Step1({ personnes, setPersonnes, selectedDate, setSelectedDate, service, setService, heuresDispo, selectedHeure, setSelectedHeure, setStep }) {
+  return (
+    <div style={{ textAlign: "center" }}>
+      <label>Nombre de personnes :</label>
+      <div style={inputBox}>
+        <FaUserFriends style={iconStyle} />
+        <input
+          type="number"
+          min="1"
+          max="12"
+          value={personnes}
+          onChange={(e) => setPersonnes(e.target.value)}
+          style={fieldStyle}
+        />
+      </div>
+
+      <label>Date :</label>
+      <div style={inputBox}>
+        <FaCalendarAlt style={iconStyle} />
+        <DatePicker
+          selected={selectedDate}
+          onChange={setSelectedDate}
+          dateFormat="dd/MM/yyyy"
+          minDate={new Date()}
+          placeholderText="Sélectionnez une date"
+          style={fieldStyle}
+        />
+      </div>
+
+      <label>Service :</label>
+      <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "0.5rem" }}>
+        <button
+          onClick={() => setService("lunch")}
+          style={{
+            ...serviceButton,
+            backgroundColor: service === "lunch" ? "#007bff" : "#f1f3f5",
+            color: service === "lunch" ? "white" : "#333",
+          }}
+        >
+          Midi
+        </button>
+        <button
+          onClick={() => setService("diner")}
+          style={{
+            ...serviceButton,
+            backgroundColor: service === "diner" ? "#007bff" : "#f1f3f5",
+            color: service === "diner" ? "white" : "#333",
+          }}
+        >
+          Soir
+        </button>
+      </div>
+
+      <label>Heures disponibles :</label>
+      <div style={heuresGrid}>
+        {heuresDispo.map((h) => (
+          <button
+            key={h}
+            onClick={() => setSelectedHeure(h)}
+            style={{
+              backgroundColor: selectedHeure === h ? "#007bff" : "#f1f3f5",
+              color: selectedHeure === h ? "#fff" : "#333",
+              border: "1px solid #dee2e6",
+              borderRadius: "8px",
+              padding: "0.6rem 0",
+              cursor: "pointer",
+            }}
+          >
+            {h}
+          </button>
+        ))}
+      </div>
+
+      <button
+        onClick={() => (selectedHeure ? setStep(2) : toast.warning("Choisissez une heure !"))}
+        style={mainButton}
+      >
+        Suivant →
+      </button>
+    </div>
+  );
+}
+
+// Étape 2 : type de client
+function Step2({ setTypeClient, setStep }) {
+  return (
+    <div style={{ textAlign: "center" }}>
+      <h3 style={{ marginBottom: "1rem" }}>Vous êtes :</h3>
+      <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "1rem", flexWrap: "wrap" }}>
+        <button onClick={() => { setTypeClient("societe"); setStep(3); }} style={{ ...mainButton, backgroundColor: "#007bff", minWidth: "140px" }}>
+          Société
+        </button>
+        <button onClick={() => { setTypeClient("particulier"); setStep(3); }} style={{ ...mainButton, backgroundColor: "#28a745", minWidth: "140px" }}>
+          Particulier
+        </button>
+      </div>
+
+      <div style={{ marginTop: "1.5rem" }}>
+        <button onClick={() => setStep(1)} style={backLink}>
+          ← Retour
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Étape 3 : formulaire client
+function Step3({ typeClient, formData, setFormData, handleReservation, submitting, setStep }) {
+  return (
+    <div>
+      {typeClient === "societe" && (
+        <>
+          <input placeholder="Nom de société" value={formData.societe} onChange={(e) => setFormData({ ...formData, societe: e.target.value })} style={inputStyle} />
+          <input placeholder="N° TVA" value={formData.tva} onChange={(e) => setFormData({ ...formData, tva: e.target.value })} style={inputStyle} />
+        </>
+      )}
+
+      <input placeholder="Prénom" value={formData.prenom} onChange={(e) => setFormData({ ...formData, prenom: e.target.value })} style={inputStyle} />
+      <input placeholder="Nom" value={formData.nom} onChange={(e) => setFormData({ ...formData, nom: e.target.value })} style={inputStyle} />
+      <input placeholder="Téléphone" value={formData.tel} onChange={(e) => setFormData({ ...formData, tel: e.target.value })} style={inputStyle} />
+      <input placeholder="Email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} style={inputStyle} />
+      <textarea placeholder="Remarque (facultatif)" value={formData.remarque} onChange={(e) => setFormData({ ...formData, remarque: e.target.value })} style={{ ...inputStyle, height: "80px" }} />
+
+      <div style={{ textAlign: "center", marginTop: "1rem" }}>
+        <button onClick={handleReservation} disabled={submitting} style={mainButton}>
+          {submitting ? "Envoi en cours..." : "Confirmer la réservation"}
+        </button>
+        <br />
+        <button onClick={() => setStep(2)} style={backLink}>
+          ← Retour
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Étape finale : confirmation
+function Confirmation({ selectedDate, selectedHeure, formData }) {
+  return (
+    <motion.div
+      key="confirmation"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6 }}
+      style={{ textAlign: "center", padding: "2rem" }}
+    >
+      <h2>🎉 Merci pour votre réservation !</h2>
+      <p style={{ marginTop: "1rem" }}>
+        Nous avons bien enregistré votre demande pour le{" "}
+        <strong>{format(selectedDate, "dd/MM/yyyy")}</strong> à{" "}
+        <strong>{selectedHeure}</strong>.
+      </p>
+      <p>Un e-mail de confirmation vous sera envoyé à {formData.email}.</p>
+      <button onClick={() => window.location.reload()} style={{ ...mainButton, marginTop: "1rem" }}>
+        Nouvelle réservation
+      </button>
+    </motion.div>
   );
 }
 
@@ -408,7 +408,7 @@ const inputBox = {
 
 const heuresGrid = {
   display: "grid",
-  gridTemplateColumns: "repeat(4, 1fr)",
+  gridTemplateColumns: "repeat(3, 1fr)",
   gap: "0.8rem",
   marginTop: "1rem",
   marginBottom: "1rem",
@@ -483,6 +483,7 @@ const backLink = {
 };
 
 export default Reservation;
+
 
 
 
