@@ -277,8 +277,12 @@ function Reservation() {
                     >
                       Particulier
                     </button>
+                        <div style={{ marginTop: "1rem" }}>
+                          <button onClick={() => setStep(1)} style={backLink}>
+                          ← Retour
+                    </button>
                   </div>
-                </div>
+                </div>             
               )}
 
               {/* Étape 3 */}
@@ -411,7 +415,7 @@ const inputBox = {
 
 const heuresGrid = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))",
+  gridTemplateColumns: "repeat(3, 1fr)",
   gap: "0.8rem",
   marginTop: "1rem",
   marginBottom: "1rem",
