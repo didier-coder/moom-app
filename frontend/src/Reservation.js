@@ -33,31 +33,6 @@ function Reservation() {
   });
   const [supabaseStatus, setSupabaseStatus] = useState("pending");
 
-  // ✅ Test de connexion à Supabase
-  useEffect(() => {
-    async function testSupabase() {
-      console.log("🚀 Test Supabase démarré");
-      try {
-        const { data, error } = await supabase
-          .from("reservations")
-          .select("*")
-          .limit(1);
-
-        if (error) {
-          console.error("❌ Erreur Supabase :", error.message);
-          setSupabaseStatus("error");
-        } else {
-          console.log("✅ Connexion Supabase OK :", data);
-          setSupabaseStatus("success");
-        }
-      } catch (err) {
-        console.error("⚠️ Erreur inattendue :", err);
-        setSupabaseStatus("error");
-      }
-    }
-    testSupabase();
-  }, []);
-
   // ✅ Génération des horaires
   function genererHeures(debut, fin, intervalleMinutes) {
     const heures = [];
@@ -149,19 +124,6 @@ function Reservation() {
         transition={{ duration: 0.6 }}
         style={cardStyle}
       >
-        {/* ✅ Statut Supabase */}
-        <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-          {supabaseStatus === "pending" && (
-            <p style={{ color: "#6c757d" }}>⏳ Vérification de la connexion à Supabase...</p>
-          )}
-          {supabaseStatus === "success" && (
-            <p style={{ color: "#28a745" }}>✅ Connexion Supabase OK</p>
-          )}
-          {supabaseStatus === "error" && (
-            <p style={{ color: "#dc3545" }}>❌ Erreur de connexion à Supabase</p>
-          )}
-        </div>
-
         {/* ✅ Barre de progression */}
         <div style={progressBarContainer}>
           <motion.div
