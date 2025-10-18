@@ -257,33 +257,46 @@ function Reservation() {
               {/* Étape 2 */}
               {step === 2 && (
                 <div style={{ textAlign: "center" }}>
-                  <h3>Vous êtes :</h3>
-                  <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "1rem" }}>
-                    <button
-                      onClick={() => {
-                        setTypeClient("societe");
-                        setStep(3);
-                      }}
-                      style={{ ...mainButton, backgroundColor: "#007bff" }}
-                    >
-                      Société
-                    </button>
-                    <button
-                      onClick={() => {
-                        setTypeClient("particulier");
-                        setStep(3);
-                      }}
-                      style={{ ...mainButton, backgroundColor: "#28a745" }}
-                    >
-                      Particulier
-                    </button>
-                        <div style={{ marginTop: "1rem" }}>
-                          <button onClick={() => setStep(1)} style={backLink}>
-                          ← Retour
-                    </button>
-                  </div>
-                </div>             
-              )}
+                  <h3 style={{ marginBottom: "1rem" }}>Vous êtes :</h3>
+                <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "1rem",
+                  marginTop: "1rem",
+                  flexWrap: "wrap",
+                }}
+              >
+      <button
+        onClick={() => {
+          setTypeClient("societe");
+          setStep(3);
+        }}
+        style={{ ...mainButton, backgroundColor: "#007bff", minWidth: "140px" }}
+      >
+        Société
+      </button>
+
+      <button
+        onClick={() => {
+          setTypeClient("particulier");
+          setStep(3);
+        }}
+        style={{ ...mainButton, backgroundColor: "#28a745", minWidth: "140px" }}
+      >
+        Particulier
+      </button>
+    </div>
+
+    {/* ✅ Bouton Retour vers l’étape 1 */}
+    <div style={{ marginTop: "1.5rem" }}>
+      <button onClick={() => setStep(1)} style={backLink}>
+        ← Retour
+      </button>
+    </div>
+  </div>
+)}
+
 
               {/* Étape 3 */}
               {step === 3 && (
