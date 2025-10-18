@@ -12,6 +12,11 @@ import "./App.css";
 
 console.log("✅ Reservation.js chargé !");
 
+// 🎨 Palette
+const themeColor = "#bad5b7";
+const themeHover = "#a8c9a3";
+const themeText = "#2e4a2c";
+
 function Reservation() {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -151,21 +156,17 @@ function Reservation() {
                 />
               )}
 
-              {step === 2 && (
-                <Step2 {...{ setTypeClient, setStep }} />
-              )}
+              {step === 2 && <Step2 {...{ setTypeClient, setStep }} />}
 
               {step === 3 && (
-                <Step3 {...{ typeClient, formData, setFormData, handleReservation, submitting, setStep }} />
+                <Step3
+                  {...{ typeClient, formData, setFormData, handleReservation, submitting, setStep }}
+                />
               )}
             </motion.div>
           )}
 
-          {confirmed && (
-            <Confirmation
-              {...{ selectedDate, selectedHeure, formData }}
-            />
-          )}
+          {confirmed && <Confirmation {...{ selectedDate, selectedHeure, formData }} />}
         </AnimatePresence>
 
         <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
@@ -174,8 +175,7 @@ function Reservation() {
   );
 }
 
-/* --- Composants d’étapes séparés --- */
-// Étape 1 : choix de la date, heure et service
+/* --- Étapes --- */
 function Step1({ personnes, setPersonnes, selectedDate, setSelectedDate, service, setService, heuresDispo, selectedHeure, setSelectedHeure, setStep }) {
   return (
     <div style={{ textAlign: "center" }}>
@@ -211,8 +211,8 @@ function Step1({ personnes, setPersonnes, selectedDate, setSelectedDate, service
           onClick={() => setService("lunch")}
           style={{
             ...serviceButton,
-            backgroundColor: service === "lunch" ? "#007bff" : "#f1f3f5",
-            color: service === "lunch" ? "white" : "#333",
+            backgroundColor: service === "lunch" ? themeColor : "#f1f3f5",
+            color: service === "lunch" ? themeText : "#333",
           }}
         >
           Midi
@@ -221,8 +221,8 @@ function Step1({ personnes, setPersonnes, selectedDate, setSelectedDate, service
           onClick={() => setService("diner")}
           style={{
             ...serviceButton,
-            backgroundColor: service === "diner" ? "#007bff" : "#f1f3f5",
-            color: service === "diner" ? "white" : "#333",
+            backgroundColor: service === "diner" ? themeColor : "#f1f3f5",
+            color: service === "diner" ? themeText : "#333",
           }}
         >
           Soir
@@ -236,8 +236,8 @@ function Step1({ personnes, setPersonnes, selectedDate, setSelectedDate, service
             key={h}
             onClick={() => setSelectedHeure(h)}
             style={{
-              backgroundColor: selectedHeure === h ? "#007bff" : "#f1f3f5",
-              color: selectedHeure === h ? "#fff" : "#333",
+              backgroundColor: selectedHeure === h ? themeColor : "#f1f3f5",
+              color: selectedHeure === h ? themeText : "#333",
               border: "1px solid #dee2e6",
               borderRadius: "8px",
               padding: "0.6rem 0",
@@ -250,7 +250,7 @@ function Step1({ personnes, setPersonnes, selectedDate, setSelectedDate, service
       </div>
 
       <button
-        onClick={() => (selectedHeure ? setStep(2) : toast.warning("Choisissez une heure !"))}
+        onClick={() => (selectedHeure ? setStep(2) : toast.warning("⏰ Choisissez une heure !"))}
         style={mainButton}
       >
         Suivant →
@@ -259,16 +259,41 @@ function Step1({ personnes, setPersonnes, selectedDate, setSelectedDate, service
   );
 }
 
-// Étape 2 : type de client
 function Step2({ setTypeClient, setStep }) {
   return (
     <div style={{ textAlign: "center" }}>
       <h3 style={{ marginBottom: "1rem" }}>Vous êtes :</h3>
-      <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "1rem", flexWrap: "wrap" }}>
-        <button onClick={() => { setTypeClient("societe"); setStep(3); }} style={{ ...mainButton, backgroundColor: "#007bff", minWidth: "140px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: "1rem",
+          marginTop: "1rem",
+        }}
+      >
+        <button
+          onClick={() => {
+            setTypeClient("societe");
+            setStep(3);
+          }}
+          style={{ ...mainButton, minWidth: "140px" }}
+        >
           Société
         </button>
-        <button onClick={() => { setTypeClient("particulier"); setStep(3); }} style={{ ...mainButton, backgroundColor: "#28a745", minWidth: "140px" }}>
+        <button
+          onClick={() => {
+            setTypeClient("particulier");
+            setStep(3);
+          }}
+          style={{
+            ...mainButton,
+            backgroundColor: themeHover,
+            color: themeText,
+            minWidth: "140px",
+          }}
+        >
           Particulier
         </button>
       </div>
@@ -282,22 +307,57 @@ function Step2({ setTypeClient, setStep }) {
   );
 }
 
-// Étape 3 : formulaire client
 function Step3({ typeClient, formData, setFormData, handleReservation, submitting, setStep }) {
   return (
     <div>
       {typeClient === "societe" && (
         <>
-          <input placeholder="Nom de société" value={formData.societe} onChange={(e) => setFormData({ ...formData, societe: e.target.value })} style={inputStyle} />
-          <input placeholder="N° TVA" value={formData.tva} onChange={(e) => setFormData({ ...formData, tva: e.target.value })} style={inputStyle} />
+          <input
+            placeholder="Nom de société"
+            value={formData.societe}
+            onChange={(e) => setFormData({ ...formData, societe: e.target.value })}
+            style={inputStyle}
+          />
+          <input
+            placeholder="N° TVA"
+            value={formData.tva}
+            onChange={(e) => setFormData({ ...formData, tva: e.target.value })}
+            style={inputStyle}
+          />
         </>
       )}
 
-      <input placeholder="Prénom" value={formData.prenom} onChange={(e) => setFormData({ ...formData, prenom: e.target.value })} style={inputStyle} />
-      <input placeholder="Nom" value={formData.nom} onChange={(e) => setFormData({ ...formData, nom: e.target.value })} style={inputStyle} />
-      <input placeholder="Téléphone" value={formData.tel} onChange={(e) => setFormData({ ...formData, tel: e.target.value })} style={inputStyle} />
-      <input placeholder="Email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} style={inputStyle} />
-      <textarea placeholder="Remarque (facultatif)" value={formData.remarque} onChange={(e) => setFormData({ ...formData, remarque: e.target.value })} style={{ ...inputStyle, height: "80px" }} />
+      <input
+        placeholder="Prénom"
+        value={formData.prenom}
+        onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
+        style={inputStyle}
+      />
+      <input
+        placeholder="Nom"
+        value={formData.nom}
+        onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
+        style={inputStyle}
+      />
+      <input
+        placeholder="Téléphone"
+        value={formData.tel}
+        onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
+        style={inputStyle}
+      />
+      <input
+        placeholder="Email"
+        type="email"
+        value={formData.email}
+        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+        style={inputStyle}
+      />
+      <textarea
+        placeholder="Remarque (facultatif)"
+        value={formData.remarque}
+        onChange={(e) => setFormData({ ...formData, remarque: e.target.value })}
+        style={{ ...inputStyle, height: "80px" }}
+      />
 
       <div style={{ textAlign: "center", marginTop: "1rem" }}>
         <button onClick={handleReservation} disabled={submitting} style={mainButton}>
@@ -312,7 +372,6 @@ function Step3({ typeClient, formData, setFormData, handleReservation, submittin
   );
 }
 
-// Étape finale : confirmation
 function Confirmation({ selectedDate, selectedHeure, formData }) {
   return (
     <motion.div
@@ -376,7 +435,7 @@ const heuresGrid = {
   marginBottom: "1rem",
 };
 
-const iconStyle = { color: "#007bff", marginRight: "0.6rem" };
+const iconStyle = { color: themeColor, marginRight: "0.6rem" };
 
 const fieldStyle = {
   border: "none",
@@ -405,7 +464,7 @@ const progressBarContainer = {
 
 const progressBarFill = {
   height: "100%",
-  background: "linear-gradient(90deg, #007bff, #00b4d8)",
+  background: `linear-gradient(90deg, ${themeColor}, ${themeHover})`,
   borderRadius: "3px",
 };
 
@@ -417,14 +476,14 @@ const title = {
 };
 
 const mainButton = {
-  backgroundColor: "#007bff",
-  color: "white",
+  backgroundColor: themeColor,
+  color: themeText,
   border: "none",
   borderRadius: "8px",
   padding: "0.7rem 1.5rem",
   fontSize: "1rem",
   cursor: "pointer",
-  transition: "0.2s ease",
+  transition: "background 0.2s ease",
 };
 
 const serviceButton = {
@@ -445,10 +504,3 @@ const backLink = {
 };
 
 export default Reservation;
-
-
-
-
-
-
-
