@@ -390,7 +390,7 @@ function Reservation() {
 
         <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
       </motion.div>
-    </div>
+    
   );
 }
 
