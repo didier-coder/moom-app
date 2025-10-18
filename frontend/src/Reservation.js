@@ -9,6 +9,7 @@ import { FaUserFriends, FaCalendarAlt, FaClock } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "./supabaseClient";
 import "./App.css";
+console.log("✅ Reservation.js chargé !");
 
 function Reservation() {
   const [step, setStep] = useState(1);
