@@ -52,7 +52,7 @@ function Reservation() {
     testSupabase();
   }, []);
 
-  // ✅ Génération automatique des horaires
+  // ✅ Génération des horaires
   function genererHeures(debut, fin, intervalleMinutes) {
     const heures = [];
     let [h, m] = debut.split(":").map(Number);
@@ -71,7 +71,7 @@ function Reservation() {
   const heuresLunch = genererHeures("12:00", "14:30", 15);
   const heuresDiner = genererHeures("18:00", "22:00", 15);
 
-  // 🕒 Met à jour les heures disponibles selon la date et le service
+  // 🕒 Filtrage des heures selon la date et le service
   useEffect(() => {
     const maintenant = new Date();
     const heures = service === "lunch" ? heuresLunch : heuresDiner;
@@ -149,29 +149,16 @@ function Reservation() {
         </div>
 
         {/* ✅ Barre de progression */}
-        <div
-          style={{
-            height: "6px",
-            background: "#e9ecef",
-            borderRadius: "3px",
-            marginBottom: "1.5rem",
-          }}
-        >
+        <div style={progressBarContainer}>
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.5 }}
-            style={{
-              height: "100%",
-              background: "linear-gradient(90deg, #007bff, #00b4d8)",
-              borderRadius: "3px",
-            }}
+            style={progressBarFill}
           />
         </div>
 
-        <h1 style={{ textAlign: "center", color: "#222", fontSize: "1.8rem", marginBottom: "1.5rem" }}>
-          Réservation
-        </h1>
+        <h1 style={title}>Réservation</h1>
 
         <AnimatePresence mode="wait">
           {!confirmed && (
@@ -182,13 +169,185 @@ function Reservation() {
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.4 }}
             >
-              {/* ⚙️ Étapes 1–3 : ton contenu actuel ici */}
-              <p style={{ textAlign: "center", color: "#6c757d" }}>
-                (Contenu des étapes à insérer ici — inchangé par rapport à ta version précédente)
-              </p>
+              {/* Étape 1 */}
+              {step === 1 && (
+                <div style={{ textAlign: "center" }}>
+                  <label>Nombre de personnes :</label>
+                  <div style={inputBox}>
+                    <FaUserFriends style={iconStyle} />
+                    <input
+                      type="number"
+                      min="1"
+                      max="12"
+                      value={personnes}
+                      onChange={(e) => setPersonnes(e.target.value)}
+                      style={fieldStyle}
+                    />
+                  </div>
+
+                  <label>Date :</label>
+                  <div style={inputBox}>
+                    <FaCalendarAlt style={iconStyle} />
+                    <DatePicker
+                      selected={selectedDate}
+                      onChange={(date) => setSelectedDate(date)}
+                      dateFormat="dd/MM/yyyy"
+                      minDate={new Date()}
+                      filterDate={(date) => date >= new Date()}
+                      placeholderText="Sélectionnez une date"
+                      style={fieldStyle}
+                    />
+                  </div>
+
+                  <label>Service :</label>
+                  <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "0.5rem" }}>
+                    <button
+                      onClick={() => setService("lunch")}
+                      style={{
+                        ...serviceButton,
+                        backgroundColor: service === "lunch" ? "#007bff" : "#f1f3f5",
+                        color: service === "lunch" ? "white" : "#333",
+                      }}
+                    >
+                      Midi
+                    </button>
+                    <button
+                      onClick={() => setService("diner")}
+                      style={{
+                        ...serviceButton,
+                        backgroundColor: service === "diner" ? "#007bff" : "#f1f3f5",
+                        color: service === "diner" ? "white" : "#333",
+                      }}
+                    >
+                      Soir
+                    </button>
+                  </div>
+
+                  <label>Heures disponibles :</label>
+                  <div style={heuresGrid}>
+                    {heuresDispo.map((h) => (
+                      <button
+                        key={h}
+                        onClick={() => setSelectedHeure(h)}
+                        style={{
+                          backgroundColor: selectedHeure === h ? "#007bff" : "#f1f3f5",
+                          color: selectedHeure === h ? "#fff" : "#333",
+                          border: "1px solid #dee2e6",
+                          borderRadius: "8px",
+                          padding: "0.6rem 0",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {h}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() =>
+                      selectedHeure ? setStep(2) : toast.warning("⏰ Choisissez une heure !")
+                    }
+                    style={mainButton}
+                  >
+                    Suivant →
+                  </button>
+                </div>
+              )}
+
+              {/* Étape 2 */}
+              {step === 2 && (
+                <div style={{ textAlign: "center" }}>
+                  <h3>Vous êtes :</h3>
+                  <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "1rem" }}>
+                    <button
+                      onClick={() => {
+                        setTypeClient("societe");
+                        setStep(3);
+                      }}
+                      style={{ ...mainButton, backgroundColor: "#007bff" }}
+                    >
+                      Société
+                    </button>
+                    <button
+                      onClick={() => {
+                        setTypeClient("particulier");
+                        setStep(3);
+                      }}
+                      style={{ ...mainButton, backgroundColor: "#28a745" }}
+                    >
+                      Particulier
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Étape 3 */}
+              {step === 3 && (
+                <div>
+                  {typeClient === "societe" && (
+                    <>
+                      <input
+                        placeholder="Nom de société"
+                        value={formData.societe}
+                        onChange={(e) => setFormData({ ...formData, societe: e.target.value })}
+                        style={inputStyle}
+                      />
+                      <input
+                        placeholder="N° TVA"
+                        value={formData.tva}
+                        onChange={(e) => setFormData({ ...formData, tva: e.target.value })}
+                        style={inputStyle}
+                      />
+                    </>
+                  )}
+
+                  <input
+                    placeholder="Prénom"
+                    value={formData.prenom}
+                    onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
+                    style={inputStyle}
+                  />
+                  <input
+                    placeholder="Nom"
+                    value={formData.nom}
+                    onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
+                    style={inputStyle}
+                  />
+                  <input
+                    placeholder="Téléphone"
+                    value={formData.tel}
+                    onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
+                    style={inputStyle}
+                  />
+                  <input
+                    placeholder="Email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    style={inputStyle}
+                  />
+                  <textarea
+                    placeholder="Remarque (facultatif)"
+                    value={formData.remarque}
+                    onChange={(e) => setFormData({ ...formData, remarque: e.target.value })}
+                    style={{ ...inputStyle, height: "80px" }}
+                  />
+
+                  <div style={{ textAlign: "center", marginTop: "1rem" }}>
+                    <button onClick={handleReservation} disabled={submitting} style={mainButton}>
+                      {submitting ? "Envoi en cours..." : "Confirmer la réservation"}
+                    </button>
+                    <br />
+                    <button onClick={() => setStep(2)} style={backLink}>
+                      ← Retour
+                    </button>
+                  </div>
+                </div>
+              )}
             </motion.div>
           )}
 
+          {/* Écran final */}
           {confirmed && (
             <motion.div
               key="confirmation"
@@ -237,6 +396,67 @@ const cardStyle = {
   padding: "2rem 2.5rem",
 };
 
+const inputBox = {
+  display: "flex",
+  alignItems: "center",
+  background: "#f8f9fa",
+  border: "1px solid #dee2e6",
+  borderRadius: "8px",
+  padding: "0.4rem 0.8rem",
+  marginTop: "0.4rem",
+  marginBottom: "1rem",
+  width: "100%",
+  boxSizing: "border-box",
+};
+
+const heuresGrid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))",
+  gap: "0.8rem",
+  marginTop: "1rem",
+  marginBottom: "1rem",
+};
+
+const iconStyle = { color: "#007bff", marginRight: "0.6rem" };
+
+const fieldStyle = {
+  border: "none",
+  outline: "none",
+  background: "transparent",
+  width: "100%",
+  fontSize: "1rem",
+};
+
+const inputStyle = {
+  width: "100%",
+  marginBottom: "0.8rem",
+  padding: "0.8rem",
+  borderRadius: "8px",
+  border: "1px solid #ced4da",
+  fontSize: "1rem",
+  boxSizing: "border-box",
+};
+
+const progressBarContainer = {
+  height: "6px",
+  background: "#e9ecef",
+  borderRadius: "3px",
+  marginBottom: "1.5rem",
+};
+
+const progressBarFill = {
+  height: "100%",
+  background: "linear-gradient(90deg, #007bff, #00b4d8)",
+  borderRadius: "3px",
+};
+
+const title = {
+  textAlign: "center",
+  color: "#222",
+  fontSize: "1.8rem",
+  marginBottom: "1.5rem",
+};
+
 const mainButton = {
   backgroundColor: "#007bff",
   color: "white",
@@ -248,7 +468,25 @@ const mainButton = {
   transition: "0.2s ease",
 };
 
+const serviceButton = {
+  border: "1px solid #ccc",
+  borderRadius: "8px",
+  padding: "0.6rem 1rem",
+  fontSize: "1rem",
+  cursor: "pointer",
+};
+
+const backLink = {
+  border: "none",
+  background: "none",
+  color: "#6c757d",
+  marginTop: "0.5rem",
+  cursor: "pointer",
+  textDecoration: "underline",
+};
+
 export default Reservation;
+
 
 
 
