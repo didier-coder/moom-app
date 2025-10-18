@@ -12,16 +12,6 @@ import "./App.css";
 
 console.log("✅ Reservation.js chargé !");
 
-useEffect(() => {
-  const style = document.createElement("style");
-  style.innerHTML = globalButtonStyle;
-  document.head.appendChild(style);
-  return () => {
-    document.head.removeChild(style);
-  };
-}, []);
-
-
 // 🎨 Palette
 const themeColor = "#bad5b7";
 const themeHover = "#a8c9a3";
