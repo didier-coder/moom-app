@@ -15,7 +15,7 @@ console.log("✅ Reservation.js chargé !");
 // 🎨 Palette
 const themeColor = "#bad5b7";
 const themeHover = "#a8c9a3";
-const themeText = "#2e4a2c";
+const themeText = "#000000";
 
 function Reservation() {
   const [step, setStep] = useState(1);
