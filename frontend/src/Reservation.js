@@ -278,7 +278,7 @@ function Step2({ setTypeClient, setStep }) {
             setTypeClient("societe");
             setStep(3);
           }}
-          style={{ ...mainButton, minWidth: "140px" }}
+          style={{ ...mainButton, minWidth: "140px", marginTop: "1.5rem" }}
         >
           Société
         </button>
@@ -292,6 +292,7 @@ function Step2({ setTypeClient, setStep }) {
             backgroundColor: themeHover,
             color: themeText,
             minWidth: "140px",
+            marginTop: "1.5rem"
           }}
         >
           Particulier
