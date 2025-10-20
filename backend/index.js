@@ -16,7 +16,29 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // 🌐 Middlewares essentiels
-app.use(cors());
+import cors from "cors";
+
+// 🛡️ Configuration CORS explicite
+const allowedOrigins = [
+  "https://app.moom.be",           // ton domaine principal
+  "https://moom-app-pvq4.vercel.app", // domaine Vercel du frontend (optionnel)
+  "http://localhost:3000"          // utile pour tests locaux
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn("❌ Origine non autorisée par CORS :", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(compression());
 app.use(morgan("tiny"));
