@@ -401,7 +401,7 @@ const responsiveContainer = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  background: "linear-gradient(135deg, #bad5b7 0%, #eef2f3 100%)",
+  background: "transparent",
   minHeight: "100vh",
   padding: "1rem",
 };
