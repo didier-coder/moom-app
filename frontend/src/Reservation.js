@@ -135,6 +135,7 @@ const handleReservation = async () => {
     console.log("📦 Données envoyées :", data);
 
     const url = `${process.env.REACT_APP_API_URL}/api/reservations`;
+    console.log("🔗 URL de l’API :", url);
     const res = await axios.post(url, data);
 
     if (res?.data?.success) {
