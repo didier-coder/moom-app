@@ -409,7 +409,8 @@ const responsiveContainer = {
 const cardStyle = {
   width: "100%",
   maxWidth: "650px",
-  background: "#fff",
+  background: "rgba(255, 255, 255, 0.85)",
+  backdropFilter: "blur(6px)",
   borderRadius: "20px",
   boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
   padding: "2rem 2.5rem",
