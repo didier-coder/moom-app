@@ -1,3 +1,5 @@
+console.log("🔍 process.env.REACT_APP_API_URL =", process.env.REACT_APP_API_URL);
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
