@@ -68,7 +68,7 @@ function Reservation() {
   const heuresLunch = genererHeures("12:00", "14:30", 15);
   const heuresDiner = genererHeures("18:00", "22:00", 15);
 
-  // 🕒 Filtrage des heures selon la date et le service
+  //  Filtrage des heures selon la date et le service
   useEffect(() => {
     const maintenant = new Date();
     const heures = service === "lunch" ? heuresLunch : heuresDiner;
@@ -98,10 +98,18 @@ function Reservation() {
     !formData.prenom ||
     !formData.nom ||
     !formData.email ||
-    !formData.tel // ✅ ajout : téléphone obligatoire
+    !formData.tel 
   ) {
     toast.warning("Merci de compléter tous les champs obligatoires svp.");
     return;
+  }
+   // 🇧🇪 Vérification TVA belge si société
+  if (typeClient === "societe" && formData.tva) {
+    const tvaRegex = /^BE0\d{9}$/;
+    if (!tvaRegex.test(formData.tva.trim())) {
+      toast.warning("Merci d'entrer un numéro de TVA belge valide (ex : BE0123456789).");
+      return;
+    }
   }
 
   setSubmitting(true);
@@ -146,7 +154,7 @@ function Reservation() {
         transition={{ duration: 0.6 }}
         style={cardStyle}
       >
-        {/* ✅ Barre de progression */}
+        {/*  Barre de progression */}
         <div style={progressBarContainer}>
           <motion.div
             initial={{ width: 0 }}
@@ -192,7 +200,7 @@ function Reservation() {
   );
 }
 
-/* --- Étapes --- */
+/* --- Étapes 1--- */
 function Step1({ personnes, setPersonnes, selectedDate, setSelectedDate, service, setService, heuresDispo, selectedHeure, setSelectedHeure, setStep }) {
   return (
     <div style={{ textAlign: "center" }}>
@@ -275,7 +283,7 @@ function Step1({ personnes, setPersonnes, selectedDate, setSelectedDate, service
     </div>
   );
 }
-
+/* --- Étapes 2--- */
 function Step2({ setTypeClient, setStep }) {
   return (
     <div style={{ textAlign: "center" }}>
@@ -324,7 +332,7 @@ function Step2({ setTypeClient, setStep }) {
     </div>
   );
 }
-
+/* --- Étapes 3--- */
 function Step3({ typeClient, formData, setFormData, handleReservation, submitting, setStep }) {
   return (
     <div>
@@ -338,9 +346,10 @@ function Step3({ typeClient, formData, setFormData, handleReservation, submittin
             style={inputStyle}
           />
           <input
-            placeholder="N° TVA"
+            placeholder="N° TVA (ex : BE0123456789)"
             value={formData.tva}
-            onChange={(e) => setFormData({ ...formData, tva: e.target.value })}
+            maxLength={12}
+            onChange={(e) => setFormData({ ...formData, tva: e.target.value.toUpperCase() })}
             style={inputStyle}
           />
         </>
