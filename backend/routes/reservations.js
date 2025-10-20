@@ -12,8 +12,8 @@ const router = express.Router();
  * Fonction d'envoi des emails
  */
 async function sendConfirmationEmails({ email, name, date, heure, personnes, service, comment, tel }) {
-  console.log("📧 Envoi des mails pro...");
-
+  console.log("📨 Envoi d’email en cours pour :", email);
+  
   // Formatage européen de la date
   let formattedDate = date;
   try {
@@ -77,7 +77,7 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
       <p style="color:#777;">Consultez le dashboard Supabase pour plus de détails.</p>
     </div>
   `;
-
+console.log("📤 Envoi mail client...");
   // --- Envoi des emails ---
   await resend.emails.send({
     from: "Restaurant Moom <no-reply@moom.be>",
@@ -85,7 +85,7 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
     subject: "✅ Confirmation de votre réservation - Moom",
     html: htmlClient,
   });
-
+console.log("📤 Envoi mail restaurant...");
   await resend.emails.send({
     from: "Restaurant Moom <no-reply@moom.be>",
     to: ["business@moom.be"],
@@ -142,6 +142,8 @@ const name = `${prenom || ""} ${nom || ""}`.trim();
 }
 
     if (error) throw error;
+
+    console.log("🚀 Envoi de mail imminent :", { email, name, tva });
 
     // ✅ Envoi des e-mails après insertion
     async function sendConfirmationEmails({ email, name, date, heure, personnes, service, comment, tel, societe, tva }) {
