@@ -45,8 +45,6 @@ function Reservation() {
     document.head.removeChild(style);
   };
 }, []);
-
-  });
   const [supabaseStatus, setSupabaseStatus] = useState("pending");
 
   // ✅ Génération des horaires
