@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+document.body.style.backgroundColor = "#bad5b7";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -10,6 +11,4 @@ root.render(
   </React.StrictMode>
 );
 
-// ✅ Supprimé l'appel à reportWebVitals() pour éviter l'erreur de build sur Vercel
-// Si tu veux réactiver les métriques, tu pourras réimporter le fichier plus tard.
 
