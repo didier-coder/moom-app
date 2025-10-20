@@ -35,17 +35,18 @@ function Reservation() {
     tel: "",
     email: "",
     remarque: "",
-    
-    // 🎨 Style global boutons (hover/focus)
-    useEffect(() => {
+  });
+  const [supabaseStatus, setSupabaseStatus] = useState("pending");
+
+  // 🎨 Style global boutons (hover/focus)
+  useEffect(() => {
     const style = document.createElement("style");
     style.innerHTML = globalButtonStyle;
     document.head.appendChild(style);
     return () => {
-    document.head.removeChild(style);
-  };
-}, []);
-  const [supabaseStatus, setSupabaseStatus] = useState("pending");
+      document.head.removeChild(style);
+    };
+  }, []);
 
   // ✅ Génération des horaires
   function genererHeures(debut, fin, intervalleMinutes) {
