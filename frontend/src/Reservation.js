@@ -352,6 +352,8 @@ function Step3({ typeClient, formData, setFormData, handleReservation, submittin
       />
       <input
         placeholder="Téléphone"
+        type="tel"
+        required
         value={formData.tel}
         onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
         style={inputStyle}
