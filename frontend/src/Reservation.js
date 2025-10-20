@@ -100,7 +100,7 @@ function Reservation() {
     !formData.email ||
     !formData.tel // ✅ ajout : téléphone obligatoire
   ) {
-    toast.warning("Merci de compléter tous les champs obligatoires, y compris le numéro de téléphone.");
+    toast.warning("Merci de compléter tous les champs obligatoires svp.");
     return;
   }
 
