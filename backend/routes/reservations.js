@@ -40,6 +40,8 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
             <tr><td><strong>Personnes</strong></td><td>${personnes}</td></tr>
             <tr><td><strong>Service</strong></td><td>${service}</td></tr>
           </table>
+          ${societe ? `<p><strong>Société :</strong> ${societe}</p>` : ""}
+          ${tva ? `<p><strong>TVA :</strong> ${tva}</p>` : ""}
           ${comment ? `<p><em>Remarque :</em> ${comment}</p>` : ""}
           <div style="text-align:center;margin-top:30px;">
             <a href="https://moom-app.onrender.com"
@@ -68,6 +70,8 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
       <p><strong>Heure :</strong> ${heure}</p>
       <p><strong>Personnes :</strong> ${personnes}</p>
       <p><strong>Service :</strong> ${service}</p>
+      ${societe ? `<p><strong>Société :</strong> ${societe}</p>` : ""}
+      ${tva ? `<p><strong>TVA :</strong> ${tva}</p>` : ""}
       ${comment ? `<p><strong>Remarque :</strong> ${comment}</p>` : ""}
       <hr style="margin:20px 0;">
       <p style="color:#777;">Consultez le dashboard Supabase pour plus de détails.</p>
@@ -107,7 +111,8 @@ router.post("/", async (req, res) => {
   service,
   comment,
   tel,
-  societe
+  societe,
+  tva
 } = req.body;
 
 // ✅ Construit le nom complet
@@ -121,13 +126,13 @@ const name = `${prenom || ""} ${nom || ""}`.trim();
     const qrCodeBase64 = await QRCode.toDataURL(qrData);
 
     const { error } = await supabase
-      .from("reservations")
-      .insert([{ id, name, email, date, heure, personnes, service, comment, tel, qrcode: qrCodeBase64 }]);
+    .from("reservations")
+    .insert([{ id, name, email, date, heure, personnes, service, comment, tel, societe, tva, qrcode: qrCodeBase64 }]);
 
     if (error) throw error;
 
     // ✅ Envoi des e-mails après insertion
-    await sendConfirmationEmails({ email, name, date, heure, personnes, service, comment, tel });
+    async function sendConfirmationEmails({ email, name, date, heure, personnes, service, comment, tel, societe, tva }) {
 
     res.status(201).json({ success: true, qrCode: qrCodeBase64 });
   } catch (err) {
