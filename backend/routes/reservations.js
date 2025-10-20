@@ -11,19 +11,18 @@ const router = express.Router();
 /**
  * Fonction d'envoi des emails
  */
-async function sendConfirmationEmails({ email, name, date, heure, personnes, service, comment, tel }) {
+async function sendConfirmationEmails({ email, name, date, heure, personnes, service, comment, tel, societe, tva }) {
   console.log("📨 Envoi d’email en cours pour :", email);
-  
+
   // Formatage européen de la date
   let formattedDate = date;
   try {
-    const { format } = await import("date-fns");
     formattedDate = format(new Date(date), "dd-MM-yyyy");
   } catch (err) {
     console.warn("Erreur formatage date:", err.message);
   }
 
-  // --- Mail client (style ZenChef) ---
+  // --- Mail client ---
   const htmlClient = `
     <div style="font-family:'Helvetica Neue',Arial,sans-serif;background-color:#f9f9f9;padding:40px 0;color:#333;">
       <div style="max-width:600px;margin:0 auto;background:#b3cdb0;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);overflow:hidden;">
@@ -44,7 +43,7 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
           ${tva ? `<p><strong>TVA :</strong> ${tva}</p>` : ""}
           ${comment ? `<p><em>Remarque :</em> ${comment}</p>` : ""}
           <div style="text-align:center;margin-top:30px;">
-            <a href="<a href="https://app.moom.be"
+            <a href="https://app.moom.be"
               style="display:inline-block;background:#000000;color:#ffffff;padding:12px 24px;border-radius:24px;text-decoration:none;">
               Voir ma réservation
             </a>
@@ -66,34 +65,40 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
       <p><strong>Nom :</strong> ${name}</p>
       <p><strong>Email :</strong> ${email}</p>
       <p><strong>Téléphone :</strong> ${tel || "—"}</p>
+      ${societe ? `<p><strong>Société :</strong> ${societe}</p>` : ""}
+      ${tva ? `<p><strong>TVA :</strong> ${tva}</p>` : ""}
       <p><strong>Date :</strong> ${formattedDate}</p>
       <p><strong>Heure :</strong> ${heure}</p>
       <p><strong>Personnes :</strong> ${personnes}</p>
       <p><strong>Service :</strong> ${service}</p>
-      ${societe ? `<p><strong>Société :</strong> ${societe}</p>` : ""}
-      ${tva ? `<p><strong>TVA :</strong> ${tva}</p>` : ""}
       ${comment ? `<p><strong>Remarque :</strong> ${comment}</p>` : ""}
       <hr style="margin:20px 0;">
       <p style="color:#777;">Consultez le dashboard Supabase pour plus de détails.</p>
     </div>
   `;
-console.log("📤 Envoi mail client...");
-  // --- Envoi des emails ---
-  await resend.emails.send({
-    from: "Restaurant Moom <no-reply@moom.be>",
-    to: [email],
-    subject: "✅ Confirmation de votre réservation - Moom",
-    html: htmlClient,
-  });
-console.log("📤 Envoi mail restaurant...");
-  await resend.emails.send({
-    from: "Restaurant Moom <no-reply@moom.be>",
-    to: ["business@moom.be"],
-    subject: `📥 Nouvelle réservation - ${name}`,
-    html: htmlRestaurant,
-  });
 
-  console.log("✅ Mails envoyés avec succès !");
+  try {
+    console.log("📤 Envoi mail client...");
+    await resend.emails.send({
+      from: "Restaurant Moom <no-reply@moom.be>",
+      to: [email],
+      subject: "✅ Confirmation de votre réservation - Moom",
+      html: htmlClient,
+    });
+
+    console.log("📤 Envoi mail restaurant...");
+    await resend.emails.send({
+      from: "Restaurant Moom <no-reply@moom.be>",
+      to: ["business@moom.be"],
+      subject: `📥 Nouvelle réservation - ${name}`,
+      html: htmlRestaurant,
+    });
+
+    console.log("✅ Mails envoyés avec succès !");
+  } catch (err) {
+    console.error("📩 Erreur lors de l’envoi d’e-mails :", err);
+    throw new Error("Échec d’envoi d’e-mails via Resend");
+  }
 }
 
 /**
@@ -101,52 +106,31 @@ console.log("📤 Envoi mail restaurant...");
  */
 router.post("/", async (req, res) => {
   try {
-    const {
-  console.log("📬 Nouvelle requête reçue sur /api/reservations !");
-  console.log("🧠 Corps reçu :", req.body);
-  prenom,
-  nom,
-  email,
-  date,
-  heure,
-  personnes,
-  service,
-  comment,
-  tel,
-  societe,
-  tva
-} = req.body;
+    console.log("📬 Nouvelle requête reçue sur /api/reservations !");
+    console.log("🧠 Corps reçu :", req.body);
 
-// ✅ Construit le nom complet
-const name = `${prenom || ""} ${nom || ""}`.trim();
-
+    const { prenom, nom, email, date, heure, personnes, service, comment, tel, societe, tva } = req.body;
+    const name = `${prenom || ""} ${nom || ""}`.trim();
     const id = uuidv4();
 
-    // ✅ Formatage avant usage dans QR code
     const formattedDate = format(new Date(date), "dd-MM-yyyy");
     const qrData = `Réservation #${id} - ${name} - ${formattedDate} à ${heure}`;
     const qrCodeBase64 = await QRCode.toDataURL(qrData);
 
-    console.log("🧾 Tentative d’insertion Supabase :", {
-  id, name, email, date, heure, personnes, service, comment, tel, societe, tva
-});
+    console.log("🧾 Tentative d’insertion Supabase :", { id, name, email, date, heure, personnes, service, comment, tel, societe, tva });
 
     const { error } = await supabase
-    .from("reservations")
-    .insert([{ id, name, email, date, heure, personnes, service, comment, tel, societe, tva, qrcode: qrCodeBase64 }]);
+      .from("reservations")
+      .insert([{ id, name, email, date, heure, personnes, service, comment, tel, societe, tva, qrcode: qrCodeBase64 }]);
 
     if (error) {
-    console.error("❌ Erreur Supabase :", error.message);
-    console.log("🔍 Détails erreur :", error);
-    throw error;
-}
-
-    if (error) throw error;
+      console.error("❌ Erreur Supabase :", error.message);
+      console.log("🔍 Détails erreur :", error);
+      throw error;
+    }
 
     console.log("🚀 Envoi de mail imminent :", { email, name, tva });
-
-    // ✅ Envoi des e-mails après insertion
-    async function sendConfirmationEmails({ email, name, date, heure, personnes, service, comment, tel, societe, tva }) {
+    await sendConfirmationEmails({ email, name, date, heure, personnes, service, comment, tel, societe, tva });
 
     res.status(201).json({ success: true, qrCode: qrCodeBase64 });
   } catch (err) {
@@ -154,7 +138,6 @@ const name = `${prenom || ""} ${nom || ""}`.trim();
     res.status(500).json({ error: err.message });
   }
 });
-
 
 /**
  * 🧾 ROUTE GET — Liste des réservations
@@ -166,6 +149,7 @@ router.get("/", async (req, res) => {
 });
 
 export default router;
+
 
 
 
