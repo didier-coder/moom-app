@@ -401,7 +401,7 @@ const responsiveContainer = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  background: "transparent",
+  background: "#bad5b7",
   minHeight: "100vh",
   padding: "1rem",
 };
