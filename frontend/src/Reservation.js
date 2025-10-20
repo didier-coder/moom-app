@@ -409,7 +409,7 @@ const responsiveContainer = {
 const cardStyle = {
   width: "100%",
   maxWidth: "650px",
-  background: "#bad5b7",
+  background: "transparent",
   borderRadius: "20px",
   boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
   padding: "2rem 2.5rem",
@@ -418,7 +418,7 @@ const cardStyle = {
 const inputBox = {
   display: "flex",
   alignItems: "center",
-  background: "#f8f9fa",
+  background: "#bad5b7",
   border: "1px solid #dee2e6",
   borderRadius: "8px",
   padding: "0.4rem 0.8rem",
