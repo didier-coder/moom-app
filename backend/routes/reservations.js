@@ -44,7 +44,7 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
           ${tva ? `<p><strong>TVA :</strong> ${tva}</p>` : ""}
           ${comment ? `<p><em>Remarque :</em> ${comment}</p>` : ""}
           <div style="text-align:center;margin-top:30px;">
-            <a href="https://moom-app.onrender.com"
+            <a href="<a href="https://app.moom.be"
               style="display:inline-block;background:#000000;color:#ffffff;padding:12px 24px;border-radius:24px;text-decoration:none;">
               Voir ma réservation
             </a>
