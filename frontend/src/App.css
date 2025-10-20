@@ -156,28 +156,6 @@ textarea:focus {
   border-radius: 0.5rem;
 }
 
-/* --- Toast notifications --- */
-
-/*.Toastify__toast {
-  font-family: "Poppins", sans-serif;
-  border-radius: 10px;
-}
-
-.Toastify__toast--success {
-  background-color: #28a745 !important;
-}
-
-.Toastify__toast--error {
-  background-color: #dc3545 !important;
-}
-
-.Toastify__toast--warning {
-  background-color: #ffc107 !important;
-  color: #212529 !important;
-}*/
-
-/* --- Personnalisation react-toastify --- */
-
 /* Texte blanc pour toutes les notifications */
 .Toastify__toast {
   color: #fff !important;
