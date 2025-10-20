@@ -12,6 +12,17 @@ import "./App.css";
 
 console.log("✅ Reservation.js chargé !");
 
+// 🎨 Style global boutons (hover/focus)
+useEffect(() => {
+  const style = document.createElement("style");
+  style.innerHTML = globalButtonStyle;
+  document.head.appendChild(style);
+  return () => {
+    document.head.removeChild(style);
+  };
+}, []);
+
+
 // 🎨 Palette
 const themeColor = "#bad5b7";
 const themeHover = "#a8c9a3";
@@ -250,7 +261,7 @@ function Step1({ personnes, setPersonnes, selectedDate, setSelectedDate, service
       </div>
 
       <button
-        onClick={() => (selectedHeure ? setStep(2) : toast.warning("⏰ Choisissez une heure !"))}
+        onClick={() => (selectedHeure ? setStep(2) : toast.warning("Choisissez une heure !"))}
         style={mainButton}
       >
         Suivant →
@@ -505,21 +516,21 @@ const backLink = {
   textDecoration: "underline",
 };
 
-// ✅ Supprimer le halo bleu et appliquer un survol vert doux
+// 💚 Style global pour harmoniser les boutons
 const globalButtonStyle = `
   button {
-    outline: none;
-    box-shadow: none;
+    outline: none !important;
+    box-shadow: none !important;
     transition: all 0.2s ease;
   }
 
   button:hover {
-    background-color: #a8c9a3 !important;
+    background-color: #a8c9a3 !important; /* Vert plus soutenu au survol */
   }
 
   button:focus {
     outline: none !important;
-    box-shadow: 0 0 0 3px rgba(186, 213, 183, 0.5) !important;
+    box-shadow: 0 0 0 3px rgba(186, 213, 183, 0.6) !important; /* Halo vert doux */
   }
 `;
 
