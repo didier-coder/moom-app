@@ -12,17 +12,6 @@ import "./App.css";
 
 console.log("✅ Reservation.js chargé !");
 
-// 🎨 Style global boutons (hover/focus)
-useEffect(() => {
-  const style = document.createElement("style");
-  style.innerHTML = globalButtonStyle;
-  document.head.appendChild(style);
-  return () => {
-    document.head.removeChild(style);
-  };
-}, []);
-
-
 // 🎨 Palette
 const themeColor = "#bad5b7";
 const themeHover = "#a8c9a3";
@@ -46,6 +35,17 @@ function Reservation() {
     tel: "",
     email: "",
     remarque: "",
+    
+    // 🎨 Style global boutons (hover/focus)
+    useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = globalButtonStyle;
+    document.head.appendChild(style);
+    return () => {
+    document.head.removeChild(style);
+  };
+}, []);
+
   });
   const [supabaseStatus, setSupabaseStatus] = useState("pending");
 
