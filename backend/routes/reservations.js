@@ -125,9 +125,19 @@ const name = `${prenom || ""} ${nom || ""}`.trim();
     const qrData = `Réservation #${id} - ${name} - ${formattedDate} à ${heure}`;
     const qrCodeBase64 = await QRCode.toDataURL(qrData);
 
+    console.log("🧾 Tentative d’insertion Supabase :", {
+  id, name, email, date, heure, personnes, service, comment, tel, societe, tva
+});
+
     const { error } = await supabase
     .from("reservations")
     .insert([{ id, name, email, date, heure, personnes, service, comment, tel, societe, tva, qrcode: qrCodeBase64 }]);
+
+    if (error) {
+    console.error("❌ Erreur Supabase :", error.message);
+    console.log("🔍 Détails erreur :", error);
+    throw error;
+}
 
     if (error) throw error;
 
