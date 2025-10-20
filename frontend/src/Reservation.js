@@ -419,7 +419,7 @@ const cardStyle = {
 const inputBox = {
   display: "flex",
   alignItems: "center",
-  background: "#bad5b7",
+  background: "#fff",
   border: "1px solid #dee2e6",
   borderRadius: "8px",
   padding: "0.4rem 0.8rem",
