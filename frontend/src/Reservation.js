@@ -86,47 +86,54 @@ function Reservation() {
     }
   }, [selectedDate, service]);
 
-  // ✅ Envoi de la réservation
-  const handleReservation = async () => {
-    if (selectedDate < new Date().setHours(0, 0, 0, 0)) {
-      toast.error("Vous ne pouvez pas réserver pour une date passée.");
-      return;
+ const handleReservation = async () => {
+  if (selectedDate < new Date().setHours(0, 0, 0, 0)) {
+    toast.error("Vous ne pouvez pas réserver pour une date passée.");
+    return;
+  }
+
+  if (
+    !selectedDate ||
+    !selectedHeure ||
+    !formData.prenom ||
+    !formData.nom ||
+    !formData.email ||
+    !formData.tel // ✅ ajout : téléphone obligatoire
+  ) {
+    toast.warning("Merci de compléter tous les champs obligatoires, y compris le numéro de téléphone.");
+    return;
+  }
+
+  setSubmitting(true);
+  try {
+    const formattedDate = format(selectedDate, "yyyy-MM-dd");
+    const data = {
+      restaurant_id: 1,
+      personnes,
+      date: formattedDate,
+      heure: selectedHeure,
+      service,
+      type: typeClient,
+      ...formData,
+    };
+
+    const url = `${process.env.REACT_APP_API_URL}/api/reservations`;
+    const res = await axios.post(url, data);
+
+    if (res?.data?.success) {
+      toast.success("Réservation confirmée !");
+      setConfirmed(true);
+    } else {
+      toast.error("Une erreur est survenue.");
     }
+  } catch (error) {
+    console.error(error);
+    toast.error("Erreur lors de la réservation.");
+  } finally {
+    setSubmitting(false);
+  }
+};
 
-    if (!selectedDate || !selectedHeure || !formData.prenom || !formData.nom || !formData.email) {
-      toast.warning("Merci de compléter tous les champs obligatoires.");
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      const formattedDate = format(selectedDate, "yyyy-MM-dd");
-      const data = {
-        restaurant_id: 1,
-        personnes,
-        date: formattedDate,
-        heure: selectedHeure,
-        service,
-        type: typeClient,
-        ...formData,
-      };
-
-      const url = `${process.env.REACT_APP_API_URL}/api/reservations`;
-      const res = await axios.post(url, data);
-
-      if (res?.data?.success) {
-        toast.success("Réservation confirmée !");
-        setConfirmed(true);
-      } else {
-        toast.error("Une erreur est survenue.");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Erreur lors de la réservation.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   const progress = ((confirmed ? 4 : step) / 4) * 100;
 
@@ -321,6 +328,7 @@ function Step2({ setTypeClient, setStep }) {
 function Step3({ typeClient, formData, setFormData, handleReservation, submitting, setStep }) {
   return (
     <div>
+      {/* Si le client est une société */}
       {typeClient === "societe" && (
         <>
           <input
@@ -338,20 +346,23 @@ function Step3({ typeClient, formData, setFormData, handleReservation, submittin
         </>
       )}
 
+      {/* Champs de base */}
       <input
-        placeholder="Prénom"
+        placeholder="Prénom *"
         value={formData.prenom}
+        required
         onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
         style={inputStyle}
       />
       <input
-        placeholder="Nom"
+        placeholder="Nom *"
         value={formData.nom}
+        required
         onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
         style={inputStyle}
       />
       <input
-        placeholder="Téléphone"
+        placeholder="Téléphone *"
         type="tel"
         required
         value={formData.tel}
@@ -359,8 +370,9 @@ function Step3({ typeClient, formData, setFormData, handleReservation, submittin
         style={inputStyle}
       />
       <input
-        placeholder="Email"
+        placeholder="Email *"
         type="email"
+        required
         value={formData.email}
         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         style={inputStyle}
@@ -372,6 +384,7 @@ function Step3({ typeClient, formData, setFormData, handleReservation, submittin
         style={{ ...inputStyle, height: "80px" }}
       />
 
+      {/* Boutons */}
       <div style={{ textAlign: "center", marginTop: "1rem" }}>
         <button onClick={handleReservation} disabled={submitting} style={mainButton}>
           {submitting ? "Envoi en cours..." : "Confirmer la réservation"}
