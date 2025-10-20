@@ -86,25 +86,32 @@ function Reservation() {
     }
   }, [selectedDate, service]);
 
- const handleReservation = async () => {
+const handleReservation = async () => {
   if (selectedDate < new Date().setHours(0, 0, 0, 0)) {
     toast.error("Vous ne pouvez pas réserver pour une date passée.");
     return;
   }
 
+  // ✅ Champs obligatoires de base
   if (
     !selectedDate ||
     !selectedHeure ||
     !formData.prenom ||
     !formData.nom ||
     !formData.email ||
-    !formData.tel 
+    !formData.tel
   ) {
     toast.warning("Merci de compléter tous les champs obligatoires svp.");
     return;
   }
-   // 🇧🇪 Vérification TVA belge si société
-  if (typeClient === "societe" && formData.tva) {
+
+  // 🇧🇪 Vérification TVA belge si société
+  if (typeClient === "societe") {
+    if (!formData.tva || formData.tva.trim() === "") {
+      toast.warning("Merci d'indiquer votre numéro de TVA.");
+      return;
+    }
+
     const tvaRegex = /^BE0\d{9}$/;
     if (!tvaRegex.test(formData.tva.trim())) {
       toast.warning("Merci d'entrer un numéro de TVA belge valide (ex : BE0123456789).");
@@ -125,6 +132,8 @@ function Reservation() {
       ...formData,
     };
 
+    console.log("📦 Données envoyées :", data);
+
     const url = `${process.env.REACT_APP_API_URL}/api/reservations`;
     const res = await axios.post(url, data);
 
@@ -141,6 +150,7 @@ function Reservation() {
     setSubmitting(false);
   }
 };
+
 
 
   const progress = ((confirmed ? 4 : step) / 4) * 100;
