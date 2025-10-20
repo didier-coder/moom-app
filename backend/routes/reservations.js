@@ -1,3 +1,4 @@
+console.log("🔍 process.env.REACT_APP_API_URL =", process.env.REACT_APP_API_URL);
 import express from "express";
 import supabase from "../db.js";
 import { v4 as uuidv4 } from "uuid";
