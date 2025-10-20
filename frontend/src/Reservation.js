@@ -401,7 +401,7 @@ const responsiveContainer = {
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  background: "linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%)",
+  background: "linear-gradient(135deg, #bad5b7 0%, #eef2f3 100%)",
   minHeight: "100vh",
   padding: "1rem",
 };
@@ -409,7 +409,7 @@ const responsiveContainer = {
 const cardStyle = {
   width: "100%",
   maxWidth: "650px",
-  background: "#fff",
+  background: "#bad5b7",
   borderRadius: "20px",
   boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
   padding: "2rem 2.5rem",
