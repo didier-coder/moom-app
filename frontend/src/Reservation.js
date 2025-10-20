@@ -1,5 +1,3 @@
-console.log("🔍 process.env.REACT_APP_API_URL =", process.env.REACT_APP_API_URL);
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
@@ -11,8 +9,8 @@ import { FaUserFriends, FaCalendarAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "./supabaseClient";
 import "./App.css";
-
 console.log("✅ Reservation.js chargé !");
+console.log("🔍 process.env.REACT_APP_API_URL =", process.env.REACT_APP_API_URL);
 
 // 🎨 Palette
 const themeColor = "#bad5b7";
@@ -87,6 +85,10 @@ function Reservation() {
       setHeuresDispo(heures);
     }
   }, [selectedDate, service]);
+
+const url = `${process.env.REACT_APP_API_URL}/api/reservations`;
+console.log("🔗 URL de l’API :", url);
+
 
 const handleReservation = async () => {
   if (selectedDate < new Date().setHours(0, 0, 0, 0)) {
