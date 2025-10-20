@@ -102,6 +102,8 @@ async function sendConfirmationEmails({ email, name, date, heure, personnes, ser
 router.post("/", async (req, res) => {
   try {
     const {
+  console.log("📬 Nouvelle requête reçue sur /api/reservations !");
+  console.log("🧠 Corps reçu :", req.body);
   prenom,
   nom,
   email,
