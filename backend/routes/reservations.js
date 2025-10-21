@@ -11,19 +11,30 @@ const router = express.Router();
 /**
  * Fonction d'envoi des emails
  */
-async function sendConfirmationEmails({ email, name, date, heure, personnes, service, comment, tel, societe, tva }) {
-  console.log("📨 Envoi d’email en cours pour :", email);
+async function sendConfirmationEmails({
+    email,
+    name,
+    date,
+    heure,
+    personnes,
+    service,
+    comment,
+    tel,
+    societe,
+    tva,
+}) {
+    console.log("📨 Envoi d’email en cours pour :", email);
 
-  // Formatage européen de la date
-  let formattedDate = date;
-  try {
-    formattedDate = format(new Date(date), "dd-MM-yyyy");
-  } catch (err) {
-    console.warn("Erreur formatage date:", err.message);
-  }
+    // Formatage européen de la date
+    let formattedDate = date;
+    try {
+        formattedDate = format(new Date(date), "dd-MM-yyyy");
+    } catch (err) {
+        console.warn("Erreur formatage date:", err.message);
+    }
 
-  // --- Mail client ---
-  const htmlClient = `
+    // --- Mail client ---
+    const htmlClient = `
     <div style="font-family:'Helvetica Neue',Arial,sans-serif;background-color:#f9f9f9;padding:40px 0;color:#333;">
       <div style="max-width:600px;margin:0 auto;background:#b3cdb0;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08);overflow:hidden;">
         <div style="background:#b3cdb0;color:#000000;text-align:center;padding:25px;">
@@ -109,28 +120,83 @@ router.post("/", async (req, res) => {
     console.log("📬 Nouvelle requête reçue sur /api/reservations !");
     console.log("🧠 Corps reçu :", req.body);
 
-    const { prenom, nom, email, date, heure, personnes, service, comment, tel, societe, tva } = req.body;
+    const {
+      prenom,
+      nom,
+      email,
+      date,
+      heure,
+      personnes,
+      service,
+      comment,
+      remarque,
+      tel,
+      societe,
+      tva,
+    } = req.body;
+
+    const normalizedComment =
+      (comment && comment.trim()) || (remarque && remarque.trim()) || "";
+
+    const normalizedService =
+      service && service.toLowerCase() === "diner" ? "dinner" : service;
+
     const name = `${prenom || ""} ${nom || ""}`.trim();
+    const formattedDate = format(new Date(date), "dd-MM-yyyy");
     const id = uuidv4();
 
-    const formattedDate = format(new Date(date), "dd-MM-yyyy");
     const qrData = `Réservation #${id} - ${name} - ${formattedDate} à ${heure}`;
     const qrCodeBase64 = await QRCode.toDataURL(qrData);
 
-    console.log("🧾 Tentative d’insertion Supabase :", { id, name, email, date, heure, personnes, service, comment, tel, societe, tva });
+    console.log("🧾 Tentative d’insertion Supabase :", {
+      id,
+      name,
+      email,
+      date,
+      heure,
+      personnes,
+      service: normalizedService,
+      comment: normalizedComment,
+      tel,
+      societe,
+      tva,
+    });
 
-    const { error } = await supabase
-      .from("reservations")
-      .insert([{ id, name, email, date, heure, personnes, service, comment, tel, societe, tva, qrcode: qrCodeBase64 }]);
+    const { error } = await supabase.from("reservations").insert([
+      {
+        id,
+        name,
+        email,
+        date,
+        heure,
+        personnes,
+        service: normalizedService,
+        comment: normalizedComment,
+        tel,
+        societe,
+        tva,
+        qrcode: qrCodeBase64,
+      },
+    ]);
 
     if (error) {
       console.error("❌ Erreur Supabase :", error.message);
-      console.log("🔍 Détails erreur :", error);
       throw error;
     }
 
     console.log("🚀 Envoi de mail imminent :", { email, name, tva });
-    await sendConfirmationEmails({ email, name, date, heure, personnes, service, comment, tel, societe, tva });
+    await sendConfirmationEmails({
+      email,
+      name,
+      date,
+      heure,
+      personnes,
+      service: normalizedService,
+      comment: normalizedComment,
+      tel,
+      societe,
+      tva,
+    });
 
     res.status(201).json({ success: true, qrCode: qrCodeBase64 });
   } catch (err) {
@@ -149,9 +215,3 @@ router.get("/", async (req, res) => {
 });
 
 export default router;
-
-
-
-
-
-
