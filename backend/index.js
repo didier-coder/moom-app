@@ -1,3 +1,8 @@
+console.log("🚀 [Moom Backend] Démarrage du serveur...");
+console.log("📦 Node version :", process.version);
+console.log("📂 Working directory :", process.cwd());
+console.log("🔍 Environnement :", process.env.NODE_ENV);
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -10,6 +15,17 @@ import logger from "./utils/logger.js";
 import { Resend } from "resend";
 
 dotenv.config();
+
+import dotenv from "dotenv";
+dotenv.config();
+
+console.log("🧠 Variables d’environnement chargées :");
+console.log({
+  SUPABASE_URL: !!process.env.SUPABASE_URL,
+  SUPABASE_KEY: !!process.env.SUPABASE_ANON_KEY,
+  RESEND_API_KEY: !!process.env.RESEND_API_KEY,
+});
+
 
 // 🧱 Initialisation du serveur Express
 const app = express();
@@ -107,6 +123,7 @@ app.use(async (err, req, res, next) => {
 // 🔍 Vérification Supabase
 logger.info("🔑 SUPABASE URL: " + (process.env.SUPABASE_URL ? "✅ Présente" : "❌ Manquante"));
 logger.info("🔑 SUPABASE KEY: " + (process.env.SUPABASE_ANON_KEY ? "✅ Présente" : "❌ Manquante"));
+console.log(`✅ Serveur Express prêt sur le port ${PORT}`);
 
 // 🚀 Lancement du serveur
 app.listen(PORT, () => {
