@@ -43,6 +43,7 @@ app.get("/api/ping", (req, res) => {
 
 // --- Chargement sécurisé des routes ---
 try {
+    console.log("🔍 Tentative de chargement de ./routes/reservations.js ...");
     const reservations = await
     import ("./routes/reservations.js");
     app.use("/api/reservations", reservations.default);
@@ -50,6 +51,7 @@ try {
 } catch (err) {
     console.error("❌ Erreur chargement /api/reservations :", err.message);
 }
+
 
 try {
     const disponibilites = await
