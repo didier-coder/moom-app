@@ -4,9 +4,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-console.log("🚀 [Moom Backend] Serveur Express en cours de démarrage...");
+console.log("🚀 [Moom Backend] Démarrage du serveur sécurisé...");
 
-// --- Initialisation ---
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -14,24 +13,43 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// --- Test simple ---
+// --- Route test ---
 app.get("/api/ping", (req, res) => {
     console.log("✅ /api/ping appelé !");
     res.status(200).send("pong 🧩");
 });
 
-// --- Routes principales ---
-import reservations from "./routes/reservations.js";
-import disponibilites from "./routes/disponibilites.js";
-import fermetures from "./routes/fermetures.js";
+// --- Chargement sécurisé des routes ---
+try {
+    const reservations = await
+    import ("./routes/reservations.js");
+    app.use("/api/reservations", reservations.default);
+    console.log("✅ Route /api/reservations chargée !");
+} catch (err) {
+    console.error("❌ Erreur chargement /api/reservations :", err.message);
+}
 
-app.use("/api/reservations", reservations);
-app.use("/api/disponibilites", disponibilites);
-app.use("/api/fermetures", fermetures);
+try {
+    const disponibilites = await
+    import ("./routes/disponibilites.js");
+    app.use("/api/disponibilites", disponibilites.default);
+    console.log("✅ Route /api/disponibilites chargée !");
+} catch (err) {
+    console.error("❌ Erreur chargement /api/disponibilites :", err.message);
+}
 
-// --- Erreur 404 ---
+try {
+    const fermetures = await
+    import ("./routes/fermetures.js");
+    app.use("/api/fermetures", fermetures.default);
+    console.log("✅ Route /api/fermetures chargée !");
+} catch (err) {
+    console.error("❌ Erreur chargement /api/fermetures :", err.message);
+}
+
+// --- 404 ---
 app.use((req, res) => {
-    console.warn("❌ Route inconnue :", req.originalUrl);
+    console.warn("⚠️ Route inconnue :", req.originalUrl);
     res.status(404).send("Not found");
 });
 
