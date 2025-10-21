@@ -1,72 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
+<html lang="fr">
+
+<head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
+    <!-- ✅ Harmonisation des couleurs sur mobile et PWA -->
+    <meta name="theme-color" content="#bad5b7" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <meta name="description" content="Réservation en ligne – MOOM Restaurant & Bar à Ostende" />
+
+    <!-- ✅ Icônes -->
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-   <!-- ✅ Empêche le cache navigateur en ajoutant une version dynamique -->
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
 
-    
-<script>
-  (function() {
-    const version = new Date().getTime(); // timestamp unique à chaque chargement
-    const links = document.querySelectorAll('link[rel="stylesheet"], script[src]');
-    
-    links.forEach(link => {
-      const attr = link.tagName === 'SCRIPT' ? 'src' : 'href';
-      const url = new URL(link[attr], window.location.origin);
-      url.searchParams.set('v', version);
-      link[attr] = url.toString();
-    });
+    <!-- ✅ Typographie -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
 
-    // Ajoute aussi les headers no-cache
-    const meta1 = document.createElement('meta');
-    meta1.httpEquiv = 'Cache-Control';
-    meta1.content = 'no-cache, no-store, must-revalidate';
-    document.head.appendChild(meta1);
+    <!-- ✅ Empêche le cache navigateur -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
 
-    const meta2 = document.createElement('meta');
-    meta2.httpEquiv = 'Pragma';
-    meta2.content = 'no-cache';
-    document.head.appendChild(meta2);
-
-    const meta3 = document.createElement('meta');
-    meta3.httpEquiv = 'Expires';
-    meta3.content = '0';
-    document.head.appendChild(meta3);
-  })();
-</script>
+    <!-- ✅ Anti-cache automatique -->
+    <script>
+        (function() {
+            const version = new Date().getTime();
+            const links = document.querySelectorAll('link[rel="stylesheet"], script[src]');
+            links.forEach(link => {
+                const attr = link.tagName === 'SCRIPT' ? 'src' : 'href';
+                const url = new URL(link[attr], window.location.origin);
+                url.searchParams.set('v', version);
+                link[attr] = url.toString();
+            });
+        })();
+    </script>
 
     <title>MOOM – Réservation</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+
+    <!-- ✅ Couleur de fond pendant le chargement -->
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #bad5b7;
+            font-family: 'Poppins', sans-serif;
+            color: #000;
+        }
+        /* Animation d’apparition fluide */
+        
+        #root {
+            opacity: 0;
+            animation: fadeIn 0.4s ease-in forwards;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <noscript>Veuillez activer JavaScript pour utiliser cette application.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+</body>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
 </html>
