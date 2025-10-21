@@ -14,6 +14,7 @@ const allowedOrigins = [
     "https://app.moom.be",
     "https://moom-app-pvq4.vercel.app",
     "https://moom-app.vercel.app",
+    "https://moom-5jtdwse73-didier-s-projects-d07f62d5.vercel.app",
     "http://localhost:3000"
 ];
 
