@@ -1,27 +1,42 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
 
-console.log("🚀 [Moom Backend] Test de serveur minimal lancé...");
+dotenv.config();
 
+console.log("🚀 [Moom Backend] Serveur Express en cours de démarrage...");
+
+// --- Initialisation ---
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware CORS simple
+// --- Middleware ---
 app.use(cors());
+app.use(express.json());
 
-// Test route
+// --- Test simple ---
 app.get("/api/ping", (req, res) => {
-  console.log("✅ Requête /api/ping reçue !");
-  res.status(200).send("pong 🧩");
+    console.log("✅ /api/ping appelé !");
+    res.status(200).send("pong 🧩");
 });
 
-// Catch-all pour tester les routes
+// --- Routes principales ---
+import reservations from "./routes/reservations.js";
+import disponibilites from "./routes/disponibilites.js";
+import fermetures from "./routes/fermetures.js";
+
+app.use("/api/reservations", reservations);
+app.use("/api/disponibilites", disponibilites);
+app.use("/api/fermetures", fermetures);
+
+// --- Erreur 404 ---
 app.use((req, res) => {
-  console.log("❌ Route inconnue :", req.originalUrl);
-  res.status(404).send("Not found");
+    console.warn("❌ Route inconnue :", req.originalUrl);
+    res.status(404).send("Not found");
 });
 
-// Démarrage serveur
+// --- Lancement ---
 app.listen(PORT, () => {
-  console.log(`✅ Serveur Express opérationnel sur le port ${PORT}`);
+    console.log(`✅ Serveur actif sur le port ${PORT}`);
+    console.log("🌍 Environnement :", process.env.NODE_ENV || "local");
 });
