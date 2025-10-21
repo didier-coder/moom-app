@@ -9,6 +9,16 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const router = express.Router();
 
 /**
+ * Vérifie le format TVA belge
+ * Doit commencer par "BE" et contenir 10 chiffres
+ */
+function isValidBelgianVAT(tva) {
+    if (!tva) return true; // facultatif, donc on accepte vide
+    const clean = tva.replace(/\s|\.|-/g, "").toUpperCase();
+    return /^BE\d{10}$/.test(clean);
+}
+
+/**
  * Fonction d'envoi des emails
  */
 async function sendConfirmationEmails({
@@ -135,16 +145,24 @@ router.post("/", async (req, res) => {
       tva,
     } = req.body;
 
+    // Normalisations
     const normalizedComment =
       (comment && comment.trim()) || (remarque && remarque.trim()) || "";
-
     const normalizedService =
       service && service.toLowerCase() === "diner" ? "dinner" : service;
-
     const name = `${prenom || ""} ${nom || ""}`.trim();
+
+    // ✅ Vérification TVA
+    if (tva && !isValidBelgianVAT(tva)) {
+      console.warn("⚠️ TVA invalide reçue :", tva);
+      return res
+        .status(400)
+        .json({ error: "Le numéro de TVA doit commencer par 'BE' et comporter 10 chiffres." });
+    }
+
+    // QR code
     const formattedDate = format(new Date(date), "dd-MM-yyyy");
     const id = uuidv4();
-
     const qrData = `Réservation #${id} - ${name} - ${formattedDate} à ${heure}`;
     const qrCodeBase64 = await QRCode.toDataURL(qrData);
 
