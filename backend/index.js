@@ -2,6 +2,10 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
+import reservations from "./routes/reservations.js";
+import disponibilites from "./routes/disponibilites.js";
+import fermetures from "./routes/fermetures.js";
+
 dotenv.config();
 
 console.log("🚀 [Moom Backend] Démarrage du serveur sécurisé...");
@@ -19,33 +23,10 @@ app.get("/api/ping", (req, res) => {
     res.status(200).send("pong 🧩");
 });
 
-// --- Chargement sécurisé des routes ---
-try {
-    const reservations = await
-    import ("./routes/reservations.js");
-    app.use("/api/reservations", reservations.default);
-    console.log("✅ Route /api/reservations chargée !");
-} catch (err) {
-    console.error("❌ Erreur chargement /api/reservations :", err.message);
-}
-
-try {
-    const disponibilites = await
-    import ("./routes/disponibilites.js");
-    app.use("/api/disponibilites", disponibilites.default);
-    console.log("✅ Route /api/disponibilites chargée !");
-} catch (err) {
-    console.error("❌ Erreur chargement /api/disponibilites :", err.message);
-}
-
-try {
-    const fermetures = await
-    import ("./routes/fermetures.js");
-    app.use("/api/fermetures", fermetures.default);
-    console.log("✅ Route /api/fermetures chargée !");
-} catch (err) {
-    console.error("❌ Erreur chargement /api/fermetures :", err.message);
-}
+// --- Routes principales ---
+app.use("/api/reservations", reservations);
+app.use("/api/disponibilites", disponibilites);
+app.use("/api/fermetures", fermetures);
 
 // --- 404 ---
 app.use((req, res) => {
