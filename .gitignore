@@ -1,3 +1,38 @@
+<<<<<<< HEAD
+# --- Dépendances Node ---
+node_modules/
+**/node_modules/
+
+# --- Builds et outputs ---
+build/
+dist/
+.vercel/
+.vercel_build_output/
+
+# --- Environnements ---
+.env
+.env.*
+!.env.example
+
+# --- Logs ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Tests et couverture ---
+coverage/
+.vscode/
+.idea/
+
+# --- Système ---
+.DS_Store
+Thumbs.db
+
+# --- Autres caches ---
+.pnp
+.pnp.js
+=======
 # === Node & React ===
 node_modules/
 build/
@@ -25,3 +60,4 @@ Thumbs.db
 dist/
 
 
+>>>>>>> f6c301db (Ajout du .gitignore global (React + Node))

@@ -86,18 +86,32 @@ textarea:focus {
 
 /* --- Animation FadeIn --- */
 
+.app-container {
+  background-color: #bad5b7; /* ton fond principal */
+  min-height: 100vh;        /* garantit un plein écran */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* on garde ton animation existante */
 .fadeIn {
   animation: fadeIn 0.6s ease forwards;
 }
 
 @keyframes fadeIn {
-  from {
+  0% {
     opacity: 0;
     transform: translateY(8px);
   }
-  to {
+  1% {
+    background-color: #bad5b7; /* affiché dès le premier frame */
+  }
+  100% {
     opacity: 1;
     transform: translateY(0);
+    background-color: #bad5b7;
   }
 }
 
@@ -157,6 +171,19 @@ textarea:focus {
   border-radius: 0.5rem;
 }
 
+/* --- Apparence des notifications Toast --- */
+.Toastify__toast-container {
+  padding: 0 !important;
+}
+
+.Toastify__toast {
+  border-radius: 12px !important;
+  font-weight: 500;
+  text-color: #000;
+  letter-spacing: 0.2px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 /* Texte blanc pour toutes les notifications */
 .Toastify__toast {
   color: #fff !important;
@@ -187,16 +214,15 @@ textarea:focus {
   border-radius: 10px !important;
 }
 
-
-/* 🔘 Bouton de fermeture blanc et discret */
+/* Fermeture blanche discrète */
 .Toastify__close-button {
   color: #fff !important;
   opacity: 0.9;
 }
 
-/* 🧭 Barre de progression translucide */
+/* Barre de progression translucide */
 .Toastify__progress-bar {
-  background: rgba(255, 255, 255, 0.8) !important;
+  background: rgba(255, 255, 255, 0.7) !important;
 }
 
 
@@ -216,3 +242,126 @@ motion.div {
     font-size: 0.9rem;
   }
 }
+
+/* === Carte de réservation MOOM === */
+
+.reservation-card {
+  position: relative;
+  width: 90vw;
+  max-width: 700px;
+  max-height: 90vh;             /* ✅ limite la hauteur globale */
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  padding: clamp(1.8rem, 4vw, 3rem) clamp(1.2rem, 4vw, 2.5rem);
+  backdrop-filter: blur(8px);
+  margin: 5vh auto;
+  box-sizing: border-box;
+
+  overflow-y: auto;             /* ✅ scroll vertical interne si besoin */
+  overflow-x: hidden;           /* ❌ jamais de scroll horizontal */
+  -webkit-overflow-scrolling: touch; /* 🧭 scroll fluide iPhone */
+  scroll-behavior: smooth;      /* ✅ animation douce */
+}
+
+/* === Correctif largeur Chrome/Edge === */
+@supports (-webkit-appearance: none) and (not (-moz-appearance: none)) {
+  .reservation-card {
+    max-width: 720px !important; /* plus large que 640px */
+    width: 94% !important;
+    margin-top: 4.5rem !important;
+    margin-bottom: 4.5rem !important;
+    padding-top: 3.5rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+}
+
+
+/* Survol doux (optionnel) */
+.reservation-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
+}
+
+/* === Ajustement Chrome / Edge === */
+@supports (-webkit-appearance: none) and (not (-moz-appearance: none)) {
+  .reservation-card {
+    margin-top: 4.5rem !important;
+    margin-bottom: 4.5rem !important;
+    padding-top: 3.5rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+}
+
+/* === Responsive mobile === */
+@media (max-width: 768px) {
+  .reservation-card {
+    max-width: 92%;
+    margin: 2rem auto;
+    padding: 2rem;
+  }
+}
+
+/* === Responsive grands écrans === */
+@media (min-width: 1200px) {
+  .reservation-card {
+    max-width: 720px;
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+  }
+}
+/* --- Responsive grille d'heures --- */
+
+/* Mobile : 2 colonnes */
+@media (max-width: 576px) {
+  .reservation-card button {
+    font-size: 0.9rem;
+  }
+}
+
+/* Tablette : 3-4 colonnes */
+@media (min-width: 577px) and (max-width: 992px) {
+  .reservation-card {
+    max-width: 600px;
+  }
+}
+
+/* Desktop large : 5 colonnes confortables */
+@media (min-width: 993px) {
+  .reservation-card {
+    max-width: 720px;
+  }
+}
+.reservation-card::-webkit-scrollbar {
+  width: 6px;
+}
+
+.reservation-card::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.reservation-card::-webkit-scrollbar-track {
+  background: transparent;
+}
+  /* --- Organisation responsive des champs de formulaire --- */
+.form-row {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+.form-row input {
+  flex: 1;
+}
+
+/* ✅ Sur mobile / tablette : repasse en colonne */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+}
+
+
+

@@ -16,6 +16,8 @@
 
     <!-- ✅ Icônes -->
     <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/logo192.png" />
+    <!-- ✅ Icônes -->
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
     <!-- ✅ Typographie -->
@@ -26,6 +28,27 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
 
+    <!-- ✅ Typographie -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- ✅ Empêche le cache navigateur -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <!-- ✅ Anti-cache automatique -->
+    <script>
+        (function() {
+            const version = new Date().getTime();
+            const links = document.querySelectorAll('link[rel="stylesheet"], script[src]');
+            links.forEach(link => {
+                const attr = link.tagName === 'SCRIPT' ? 'src' : 'href';
+                const url = new URL(link[attr], window.location.origin);
+                url.searchParams.set('v', version);
+                link[attr] = url.toString();
+            });
+        })();
+    </script>
     <!-- ✅ Anti-cache automatique -->
     <script>
         (function() {
@@ -75,5 +98,6 @@
     <noscript>Veuillez activer JavaScript pour utiliser cette application.</noscript>
     <div id="root"></div>
 </body>
+
 
 </html>

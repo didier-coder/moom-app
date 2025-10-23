@@ -16,9 +16,10 @@ function App() {
           transition={{ duration: 0.4 }}
           style={{
             fontFamily: "system-ui, sans-serif",
-            backgroundColor: "#f8f9fa",
+            backgroundColor: "#bad5b7", // ton fond vert
             minHeight: "100vh",
-          }}
+            overflowX: "hidden",
+        }}
         >
           <Routes>
             <Route
