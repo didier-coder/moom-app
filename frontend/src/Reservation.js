@@ -151,7 +151,7 @@ function Reservation() {
             console.log("🔗 URL de l’API :", url);
             const res = await axios.post(url, data);
 
-            if (res ? .data ? .success) {
+            if (res ?.data ?.success) {
                 toast.success("Réservation confirmée !");
                 setConfirmed(true);
             } else {
