@@ -1,7 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-
-// 🧭 Pages et layout Admin
 import Admin from "./admin/Admin";
 import Dashboard from "./admin/pages/Dashboard";
 import Reservations from "./admin/pages/Reservations";
@@ -10,16 +8,16 @@ import Restaurants from "./admin/pages/Restaurants";
 import Horaires from "./admin/pages/Horaires";
 import Fermetures from "./admin/pages/Fermetures";
 import Disponibilites from "./admin/pages/Disponibilites";
-// import Reservation from "./Reservation"; // (optionnel, pour le public)
+import Reservation from "./Reservation"; // ✅ ta page publique
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Redirige la racine vers le tableau de bord admin */}
-        <Route path="/" element={<Navigate to="/admin" replace />} />
+        {/* 🌿 Page publique */}
+        <Route path="/" element={<Reservation />} />
 
-        {/* Layout principal de l’admin */}
+        {/* 🌿 Espace Admin */}
         <Route path="/admin" element={<Admin />}>
           <Route index element={<Dashboard />} />
           <Route path="reservations" element={<Reservations />} />
@@ -30,8 +28,8 @@ function App() {
           <Route path="disponibilites" element={<Disponibilites />} />
         </Route>
 
-        {/* Redirection par défaut vers /admin */}
-        <Route path="*" element={<Navigate to="/admin" replace />} />
+        {/* Redirection si route inconnue */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
