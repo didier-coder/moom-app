@@ -1,7 +1,14 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = "https://gssxvuhzvoxbatbqanaz.supabase.co"; // ton URL Supabase
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdzc3h2dWh6dm94YmF0YnFhbmF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAwNTQzMzAsImV4cCI6MjA3NTYzMDMzMH0.CnpRx5cZyRcKGCLvx-8tOtAXwx9nEc2NJLzK2yNAg9E"; // ta clé publique (ANON KEY)
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
+console.log("✅ Supabase client initialisé :", supabaseUrl);
+
+(async() => {
+    const { data, error } = await supabase.from("restaurants").select("*").limit(1);
+    if (error) console.error("❌ Erreur de connexion Supabase :", error.message);
+    else console.log("✅ Connexion Supabase OK, exemple data :", data);
+})();

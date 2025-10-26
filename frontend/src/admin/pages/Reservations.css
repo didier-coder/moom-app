@@ -1,0 +1,130 @@
+.reservations-page {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 1.5rem;
+    position: relative;
+    z-index: 1;
+    background: transparent;
+    height: 100%;
+    overflow-y: auto;
+    /* Permet le scroll si besoin */
+    box-sizing: border-box;
+}
+
+
+/* Barre de filtres en haut */
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem;
+    backdrop-filter: blur(4px);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    /* reste visible en haut lors du scroll */
+    z-index: 10;
+}
+
+
+/* Champs de saisie */
+
+.filters input[type="text"],
+.filters input[type="date"],
+.filters select {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: "Poppins", sans-serif;
+    background-color: #fff;
+}
+
+.filters input[type="text"] {
+    flex: 1;
+    min-width: 220px;
+}
+
+.btn-reset {
+    background-color: #198754;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-reset:hover {
+    background-color: #157347;
+    transform: scale(1.03);
+}
+
+
+/* Tableau */
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.table th,
+.table td {
+    padding: 0.9rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.table th {
+    background-color: #0d6efd;
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+    position: sticky;
+    top: 70px;
+    /* sous la barre de filtres */
+    z-index: 5;
+}
+
+.table tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+.table-empty {
+    text-align: center;
+    color: #6c757d;
+    padding: 2rem;
+    font-style: italic;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .btn-reset {
+        width: 100%;
+    }
+    .table th,
+    .table td {
+        padding: 0.7rem 0.5rem;
+        font-size: 0.85rem;
+    }
+}

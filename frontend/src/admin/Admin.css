@@ -1,0 +1,176 @@
+/* === Layout général === */
+
+
+/* --- Correctif global pour Admin --- */
+
+#root,
+body,
+html {
+    display: block !important;
+    justify-content: unset !important;
+    align-items: unset !important;
+    text-align: left !important;
+    background: #bad5b7;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.admin-content {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+    background-color: #bad5b7;
+    height: 100vh;
+}
+
+
+/* === SCOPED RESET ADMIN === */
+
+.admin-scope,
+.admin-scope * {
+    all: unset;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+.admin-scope {
+    all: revert;
+    /* remet à zéro les styles hérités du reste */
+    display: block;
+    width: 100%;
+    height: 100vh;
+    background: #bad5b7;
+    color: #333;
+}
+
+
+/* réinitialise les balises de base dans le scope */
+
+.admin-scope h1,
+.admin-scope h2,
+.admin-scope h3,
+.admin-scope p,
+.admin-scope a,
+.admin-scope button,
+.admin-scope input,
+.admin-scope table {
+    all: revert;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+
+/* === Disposition principale === */
+
+.admin-layout {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: #bad5b7;
+    font-family: "Poppins", sans-serif;
+    color: #333;
+    overflow: hidden;
+}
+
+
+/* --- Sidebar (fixe et élégante) --- */
+
+.sidebar {
+    position: sticky;
+    /* ✅ reste visible pendant le scroll */
+    top: 0;
+    height: 100vh;
+    /* pleine hauteur de la fenêtre */
+    width: 240px;
+    background: #ffffffd9;
+    padding: 2rem 1rem;
+    border-right: 1px solid #dee2e6;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    /* ✅ effet “verre dépoli” moderne */
+}
+
+.sidebar h2 {
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #0d6efd;
+    letter-spacing: 0.5px;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+}
+
+.sidebar a:hover {
+    background-color: #e7f1ff;
+}
+
+.sidebar a.active {
+    color: #0d6efd;
+    background-color: #e9f2ff;
+    font-weight: 600;
+}
+
+
+/* === Contenu principal === */
+
+.admin-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #bad5b7;
+}
+
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        height: auto;
+        width: 100%;
+        bottom: 0;
+        top: auto;
+        flex-direction: row;
+        justify-content: space-around;
+        border-right: none;
+        border-top: 1px solid #dee2e6;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .admin-content {
+        padding: 1rem;
+        height: calc(100vh - 60px);
+        /* espace pour la barre mobile */
+    }
+}

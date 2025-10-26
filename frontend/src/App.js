@@ -1,58 +1,38 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
-import Reservation from "./Reservation";
-import Admin from "./Admin";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
+// 🧭 Pages et layout Admin
+import Admin from "./admin/Admin";
+import Dashboard from "./admin/pages/Dashboard";
+import Reservations from "./admin/pages/Reservations";
+import Clients from "./admin/pages/Clients";
+import Restaurants from "./admin/pages/Restaurants";
+import Horaires from "./admin/pages/Horaires";
+import Fermetures from "./admin/pages/Fermetures";
+import Disponibilites from "./admin/pages/Disponibilites";
+// import Reservation from "./Reservation"; // (optionnel, pour le public)
 
 function App() {
   return (
     <Router>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key="app"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.4 }}
-          style={{
-            fontFamily: "system-ui, sans-serif",
-            backgroundColor: "#bad5b7", // ton fond vert
-            minHeight: "100vh",
-            overflowX: "hidden",
-        }}
-        >
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <motion.div
-                  key="reservation"
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -40 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <Reservation />
-                </motion.div>
-              }
-            />
-            <Route
-              path="/admin"
-              element={
-                <motion.div
-                  key="admin"
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -40 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <Admin />
-                </motion.div>
-              }
-            />
-          </Routes>
-        </motion.div>
-      </AnimatePresence>
+      <Routes>
+        {/* Redirige la racine vers le tableau de bord admin */}
+        <Route path="/" element={<Navigate to="/admin" replace />} />
+
+        {/* Layout principal de l’admin */}
+        <Route path="/admin" element={<Admin />}>
+          <Route index element={<Dashboard />} />
+          <Route path="reservations" element={<Reservations />} />
+          <Route path="clients" element={<Clients />} />
+          <Route path="restaurants" element={<Restaurants />} />
+          <Route path="horaires" element={<Horaires />} />
+          <Route path="fermetures" element={<Fermetures />} />
+          <Route path="disponibilites" element={<Disponibilites />} />
+        </Route>
+
+        {/* Redirection par défaut vers /admin */}
+        <Route path="*" element={<Navigate to="/admin" replace />} />
+      </Routes>
     </Router>
   );
 }

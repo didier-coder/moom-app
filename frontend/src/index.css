@@ -1,41 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 body {
-  background-color: #bad5b7 !important;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    background-color: #bad5b7 !important;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+.hover\:border-secondary:hover {
+    border-color: #a8c9a3 !important;
+}
+
 .react-datepicker__header {
-  background-color: #007bff;
-  color: white;
-  border-bottom: none;
+    background-color: #007bff;
+    color: white;
+    border-bottom: none;
 }
 
 .react-datepicker__current-month,
 .react-datepicker-time__header,
 .react-datepicker-year-header {
-  color: white;
-  font-weight: 600;
+    color: white;
+    font-weight: 600;
 }
 
 .react-datepicker__day--selected,
 .react-datepicker__day--keyboard-selected {
-  background-color: #007bff !important;
-  color: white !important;
-  border-radius: 50%;
+    background-color: #007bff !important;
+    color: white !important;
+    border-radius: 50%;
 }
 
 .react-datepicker {
-  border-radius: 12px !important;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  z-index: 9999 !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    z-index: 9999 !important;
 }
-

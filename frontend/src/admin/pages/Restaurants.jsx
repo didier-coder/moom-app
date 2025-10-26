@@ -1,30 +1,46 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 
-export default function Restaurants() {
+const Restaurants = () => {
   const [restaurants, setRestaurants] = useState([]);
 
-console.log("🌍 SUPABASE_URL =", process.env.REACT_APP_SUPABASE_URL);
-console.log("🔑 SUPABASE_KEY =", process.env.REACT_APP_SUPABASE_ANON_KEY ? "✅ Clé détectée" : "❌ Clé manquante");
-
-
-  // ✅ Test de connexion Supabase à l'intérieur du composant
   useEffect(() => {
-    const testConnection = async () => {
-      const { data, error } = await supabase.from("restaurants").select("id, nom").limit(1);
-      if (error) {
-        console.error("❌ Erreur de connexion Supabase:", error.message);
-      } else {
-        console.log("✅ Connexion Supabase réussie :", data);
-      }
+    const testSupabase = async () => {
+      const { data, error } = await supabase.from("restaurants").select("*");
+      if (error) console.error("❌ Erreur connexion Supabase :", error.message);
+      else console.log("✅ Connexion Supabase réussie :", data);
     };
-    testConnection();
+    testSupabase();
   }, []);
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h2>🍴 Restaurants</h2>
-      <p>Test de connexion Supabase dans la console ✅</p>
+    <div style={styles.container}>
+      <h1>Gestion des restaurants</h1>
+      {restaurants.length === 0 ? (
+        <p>Aucun restaurant trouvé.</p>
+      ) : (
+        <ul style={styles.list}>
+          {restaurants.map((r) => (
+            <li key={r.id} style={styles.item}>
+              <strong>{r.nom}</strong> — {r.adresse || "Adresse inconnue"}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
-}
+};
+
+const styles = {
+  container: { padding: "1rem" },
+  list: { listStyle: "none", padding: 0 },
+  item: {
+    background: "#fff",
+    borderRadius: "8px",
+    padding: "0.8rem 1rem",
+    marginBottom: "0.6rem",
+    boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
+  },
+};
+
+export default Restaurants;

@@ -1,0 +1,3 @@
+constraint_name,referenced_table,column_name
+reservations_heure_id_fkey,heure,heure_id
+reservations_restaurant_id_fkey,restaurants,restaurant_id
