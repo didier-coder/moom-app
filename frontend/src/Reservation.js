@@ -41,7 +41,7 @@ function Reservation() {
             try {
                 const res = await fetch(`${process.env.REACT_APP_API_URL}/api/heures`);
                 const data = await res.json();
-                if (data ? .success) {
+                if (data ?.success) {
                     setHeuresDispo(data.heures); // [{ id: 1, horaire: "12:00" }, ...]
                 }
             } catch (error) {
