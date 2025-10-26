@@ -228,115 +228,90 @@ function Reservation() {
   );
 }
 
-/* --- Étape 1 --- */
-function Step1({
-  personnes,
-  setPersonnes,
-  selectedDate,
-  setSelectedDate,
-  service,
-  setService,
-  heuresDispo,
-  selectedHeure,
-  setSelectedHeure,
-  setStep,
-}) {
-  return (
-    <div style={{ textAlign: "center" }}>
-      <label>Nombre de personnes:</label>
-      <div style={inputBox}>
-        <FaUserFriends style={iconStyle} />
-        <input
-          type="number"
-          min="1"
-          max="12"
-          value={personnes}
-          onChange={(e) => setPersonnes(e.target.value)}
-          style={fieldStyle}
-        />
-      </div>
+{/* Étape 1 */}
+              {step === 1 && (
+                <div style={{ textAlign: "center" }}>
+                  <label>Nombre de personnes :</label>
+                  <div style={inputBox}>
+                    <FaUserFriends style={iconStyle} />
+                    <input
+                      type="number"
+                      min="1"
+                      max="12"
+                      value={personnes}
+                      onChange={(e) => setPersonnes(e.target.value)}
+                      style={fieldStyle}
+                    />
+                  </div>
 
-      <label>Date:</label>
-      <div style={inputBox}>
-        <FaCalendarAlt style={iconStyle} />
-        <DatePicker
-          selected={selectedDate}
-          onChange={setSelectedDate}
-          dateFormat="dd/MM/yyyy"
-          minDate={new Date()}
-          placeholderText="Sélectionnez une date"
-          style={fieldStyle}
-        />
-      </div>
+                  <label>Date :</label>
+                  <div style={inputBox}>
+                    <FaCalendarAlt style={iconStyle} />
+                    <DatePicker
+                      selected={selectedDate}
+                      onChange={(date) => setSelectedDate(date)}
+                      dateFormat="dd/MM/yyyy"
+                      minDate={new Date()}
+                      filterDate={(date) => date >= new Date()}
+                      placeholderText="Sélectionnez une date"
+                      style={fieldStyle}
+                    />
+                  </div>
 
-      <label>Service:</label>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: "1rem",
-          marginTop: "0.5rem",
-        }}
-      >
-        <button
-          onClick={() => setService("lunch")}
-          style={{
-            ...serviceButton,
-            backgroundColor:
-              service === "lunch" ? themeColor : "#f1f3f5",
-            color: service === "lunch" ? themeText : "#333",
-          }}
-        >
-          Midi
-        </button>
-        <button
-          onClick={() => setService("diner")}
-          style={{
-            ...serviceButton,
-            backgroundColor:
-              service === "diner" ? themeColor : "#f1f3f5",
-            color: service === "diner" ? themeText : "#333",
-          }}
-        >
-          Soir
-        </button>
-      </div>
+                  <label>Service :</label>
+                  <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "0.5rem" }}>
+                    <button
+                      onClick={() => setService("lunch")}
+                      style={{
+                        ...serviceButton,
+                        backgroundColor: service === "lunch" ? "#007bff" : "#f1f3f5",
+                        color: service === "lunch" ? "white" : "#333",
+                      }}
+                    >
+                      Midi
+                    </button>
+                    <button
+                      onClick={() => setService("diner")}
+                      style={{
+                        ...serviceButton,
+                        backgroundColor: service === "diner" ? "#007bff" : "#f1f3f5",
+                        color: service === "diner" ? "white" : "#333",
+                      }}
+                    >
+                      Soir
+                    </button>
+                  </div>
 
-      <label>Heures disponibles:</label>
-      <div style={heuresGrid}>
-        {heuresDispo.map((h) => (
-          <button
-            key={h.id}
-            onClick={() => setSelectedHeure(h)}
-            style={{
-              backgroundColor:
-                selectedHeure?.id === h.id ? themeColor : "#f1f3f5",
-              color:
-                selectedHeure?.id === h.id ? themeText : "#333",
-              border: "1px solid #dee2e6",
-              borderRadius: "8px",
-              padding: "0.6rem 0",
-              cursor: "pointer",
-            }}
-          >
-            {h.horaire.slice(0, 5).replace(":", "h")}
-          </button>
-        ))}
-      </div>
+                  <label>Heures disponibles :</label>
+                  <div style={heuresGrid}>
+                    {heuresDispo.map((h) => (
+                      <button
+                        key={h}
+                        onClick={() => setSelectedHeure(h)}
+                        style={{
+                          backgroundColor: selectedHeure === h ? "#007bff" : "#f1f3f5",
+                          color: selectedHeure === h ? "#fff" : "#333",
+                          border: "1px solid #dee2e6",
+                          borderRadius: "8px",
+                          padding: "0.6rem 0",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {h}
+                      </button>
+                    ))}
+                  </div>
 
-      <button
-        onClick={() =>
-          selectedHeure
-            ? setStep(2)
-            : toast.warning("Choisissez une heure !")
-        }
-        style={mainButton}
-      >
-        Suivant →
-      </button>
-    </div>
-  );
-}
+                  <button
+                    onClick={() =>
+                      selectedHeure ? setStep(2) : toast.warning("⏰ Choisissez une heure !")
+                    }
+                    style={mainButton}
+                  >
+                    Suivant →
+                  </button>
+                </div>
+              )}
 
 /* --- Étape 2 --- */
 function Step2({ setTypeClient, setStep }) {
