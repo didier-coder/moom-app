@@ -350,28 +350,25 @@ function Reservation() {
 
                         <
                         label > Heures disponibles: < /label> <
-                        div style = { heuresGrid } > {
-                            {
-                                heuresDispo.map((h) => ( <
-                                    button key = { h.id }
-                                    onClick = {
-                                        () => setSelectedHeure(h)
-                                    } // on garde l’objet complet { id, horaire }
-                                    style = {
-                                        {
-                                            backgroundColor: selectedHeure ? .id === h.id ? themeColor : "#f1f3f5",
-                                            color: selectedHeure ? .id === h.id ? themeText : "#333",
-                                            border: "1px solid #dee2e6",
-                                            borderRadius: "8px",
-                                            padding: "0.6rem 0",
-                                            cursor: "pointer",
-                                        }
-                                    } > { h.horaire.slice(0, 5).replace(":", "h") } <
-                                    /button>
-                                ))
-                            } <
-                            /div>
-
+                        <div style={heuresGrid}>
+  {heuresDispo.map((h) => (
+    <button
+      key={h.id}
+      onClick={() => setSelectedHeure(h)} // on garde l’objet complet { id, horaire }
+      style={{
+        backgroundColor:
+          selectedHeure?.id === h.id ? themeColor : "#f1f3f5",
+        color: selectedHeure?.id === h.id ? themeText : "#333",
+        border: "1px solid #dee2e6",
+        borderRadius: "8px",
+        padding: "0.6rem 0",
+        cursor: "pointer",
+      }}
+    >
+      {h.horaire.slice(0, 5).replace(":", "h")}
+    </button>
+  ))}
+</div>
                             <
                             button onClick = {
                                 () => (selectedHeure ? setStep(2) : toast.warning("Choisissez une heure !"))
