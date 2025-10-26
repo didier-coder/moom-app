@@ -7,7 +7,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaUserFriends, FaCalendarAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "./supabaseClient";
 import "./App.css";
 console.log("✅ Reservation.js chargé !");
 console.log("🔍 process.env.REACT_APP_API_URL =", process.env.REACT_APP_API_URL);
@@ -36,7 +35,22 @@ function Reservation() {
         email: "",
         remarque: "",
     });
-    const [supabaseStatus, setSupabaseStatus] = useState("pending");
+
+    useEffect(() => {
+  const fetchHeures = async () => {
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/heures`);
+      const data = await res.json();
+      if (data?.success) {
+        setHeuresDispo(data.heures); // [{ id: 1, horaire: "12:00" }, ...]
+      }
+    } catch (error) {
+      console.error("Erreur chargement heures:", error);
+    }
+  };
+  fetchHeures();
+}, []);
+
 
     // 🎨 Style global boutons (hover/focus)
     useEffect(() => {
@@ -136,14 +150,14 @@ function Reservation() {
         try {
             const formattedDate = format(selectedDate, "yyyy-MM-dd");
             const data = {
-                restaurant_id: 1,
-                personnes,
-                date: formattedDate,
-                heure: selectedHeure,
-                service,
-                type: typeClient,
-                ...formData,
-            };
+  restaurant_id: 1,
+  personnes,
+  date: formattedDate,
+  heure_id: selectedHeure.id, // ✅ on envoie maintenant l’ID
+  service,
+  type: typeClient,
+  ...formData,
+};
 
             console.log("📦 Données envoyées :", data);
 
@@ -230,8 +244,7 @@ function Reservation() {
                                 Step3 {... { typeClient, formData, setFormData, handleReservation, submitting, setStep } }
                                 />
                             )
-                        } <
-                        /motion.div>
+                        } < /motion.div>
                     )
                 }
 
@@ -340,24 +353,23 @@ function Reservation() {
                     <
                     label > Heures disponibles: < /label> <
                     div style = { heuresGrid } > {
-                        heuresDispo.map((h) => ( <
-                            button key = { h }
-                            onClick = {
-                                () => setSelectedHeure(h)
-                            }
-                            style = {
-                                {
-                                    backgroundColor: selectedHeure === h ? themeColor : "#f1f3f5",
-                                    color: selectedHeure === h ? themeText : "#333",
-                                    border: "1px solid #dee2e6",
-                                    borderRadius: "8px",
-                                    padding: "0.6rem 0",
-                                    cursor: "pointer",
-                                }
-                            } > { h } <
-                            /button>
-                        ))
-                    } <
+                        {heuresDispo.map((h) => (
+  <button
+    key={h.id}
+    onClick={() => setSelectedHeure(h)} // on garde l’objet complet { id, horaire }
+    style={{
+      backgroundColor: selectedHeure?.id === h.id ? themeColor : "#f1f3f5",
+      color: selectedHeure?.id === h.id ? themeText : "#333",
+      border: "1px solid #dee2e6",
+      borderRadius: "8px",
+      padding: "0.6rem 0",
+      cursor: "pointer",
+    }}
+  >
+    {h.horaire.slice(0, 5).replace(":", "h")}
+  </button>
+))}
+ <
                     /div>
 
                     <
@@ -601,7 +613,7 @@ function Reservation() {
                 marginTop: "1rem",
                 marginBottom: "1.5rem",
                 width: "100%",
-                maxWidth: "550px", // ✅ un peu plus large pour 5 colonnes
+                maxWidth: "550px",
                 marginInline: "auto",
                 boxSizing: "border-box",
             };
@@ -674,7 +686,7 @@ function Reservation() {
                 textDecoration: "underline",
             };
 
-            // 💚 Style global pour harmoniser les boutons
+
             const globalButtonStyle = `
   button {
     outline: none !important;

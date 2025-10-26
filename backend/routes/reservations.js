@@ -25,7 +25,7 @@ async function sendConfirmationEmails({
     email,
     name,
     date,
-    heure,
+    heure_id,
     personnes,
     service,
     comment,
@@ -56,7 +56,7 @@ async function sendConfirmationEmails({
           <p>Nous avons le plaisir de confirmer votre réservation au restaurant <strong>Moom</strong>.</p>
           <table style="width:100%;margin:20px 0;border-collapse:collapse;">
             <tr><td><strong>Date</strong></td><td>${formattedDate}</td></tr>
-            <tr><td><strong>Heure</strong></td><td>${heure}</td></tr>
+            <tr><td><strong>Heure</strong></td><td>${heure_id}</td></tr>
             <tr><td><strong>Personnes</strong></td><td>${personnes}</td></tr>
             <tr><td><strong>Service</strong></td><td>${service}</td></tr>
           </table>
@@ -89,7 +89,7 @@ async function sendConfirmationEmails({
       ${societe ? `<p><strong>Société :</strong> ${societe}</p>` : ""}
       ${tva ? `<p><strong>TVA :</strong> ${tva}</p>` : ""}
       <p><strong>Date :</strong> ${formattedDate}</p>
-      <p><strong>Heure :</strong> ${heure}</p>
+      <p><strong>Heure :</strong> ${heure_id}</p>
       <p><strong>Personnes :</strong> ${personnes}</p>
       <p><strong>Service :</strong> ${service}</p>
       ${comment ? `<p><strong>Remarque :</strong> ${comment}</p>` : ""}
@@ -135,7 +135,7 @@ router.post("/", async (req, res) => {
       nom,
       email,
       date,
-      heure,
+      heure_id, // ✅ on attend maintenant un ID d'heure
       personnes,
       service,
       comment,
@@ -163,7 +163,7 @@ router.post("/", async (req, res) => {
     // QR code
     const formattedDate = format(new Date(date), "dd-MM-yyyy");
     const id = uuidv4();
-    const qrData = `Réservation #${id} - ${name} - ${formattedDate} à ${heure}`;
+    const qrData = `Réservation #${id} - ${name} - ${formattedDate}`;
     const qrCodeBase64 = await QRCode.toDataURL(qrData);
 
     console.log("🧾 Tentative d’insertion Supabase :", {
@@ -171,7 +171,7 @@ router.post("/", async (req, res) => {
       name,
       email,
       date,
-      heure,
+      heure_id,
       personnes,
       service: normalizedService,
       comment: normalizedComment,
@@ -180,13 +180,14 @@ router.post("/", async (req, res) => {
       tva,
     });
 
+    // ✅ insertion avec heure_id
     const { error } = await supabase.from("reservations").insert([
       {
         id,
         name,
         email,
         date,
-        heure,
+        heure_id,
         personnes,
         service: normalizedService,
         comment: normalizedComment,
@@ -198,16 +199,25 @@ router.post("/", async (req, res) => {
     ]);
 
     if (error) {
-      console.error("❌ Erreur Supabase :", error.message);
-      throw error;
+      console.error("❌ Erreur Supabase :", error);
+      return res.status(500).json({ error: error.message, details: error });
     }
+    
+    // ✅ Envoi des emails avec affichage horaire optionnel
+    const { data: heureData } = await supabase
+      .from("heure")
+      .select("horaire")
+      .eq("id", heure_id)
+      .single();
 
-    console.log("🚀 Envoi de mail imminent :", { email, name, tva });
+    const heure = heureData?.horaire || "—";
+
+    console.log("🚀 Envoi de mail imminent :", { email, name, heure });
     await sendConfirmationEmails({
       email,
       name,
       date,
-      heure,
+      heure_id,
       personnes,
       service: normalizedService,
       comment: normalizedComment,
