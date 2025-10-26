@@ -153,7 +153,7 @@ function Reservation() {
                 restaurant_id: 1,
                 personnes,
                 date: formattedDate,
-                heure_id: selectedHeure, // ✅ on envoie maintenant l’ID
+                heure_id: selectedHeure ?.id || selectedHeure,
                 service,
                 type: typeClient,
                 ...formData,
