@@ -12,6 +12,7 @@ console.log("🚀 [Moom Backend] Démarrage du serveur sécurisé...");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const heuresRoutes = require("./routes/heures");
 
 /* -------------------------------------------
    🔐 Configuration CORS (pour Vercel + local)
@@ -56,6 +57,7 @@ app.get("/api/ping", (req, res) => {
 app.use("/api/reservations", reservations);
 app.use("/api/disponibilites", disponibilites);
 app.use("/api/fermetures", fermetures);
+app.use("/api/heures", heuresRoutes);
 
 /* -------------------------------------------
    ⚠️ Gestion des 404
