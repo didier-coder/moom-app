@@ -32,26 +32,22 @@ function Reservation() {
   });
   const [supabaseStatus, setSupabaseStatus] = useState("pending");
 
-  // ✅ Test de connexion à Supabase
-  useEffect(() => {
-    async function testSupabase() {
-      console.log("🚀 Test Supabase démarré");
-      try {
-        const { data, error } = await supabase.from("reservations").select("*").limit(1);
-        if (error) {
-          console.error("❌ Erreur Supabase :", error.message);
-          setSupabaseStatus("error");
-        } else {
-          console.log("✅ Connexion Supabase OK :", data);
-          setSupabaseStatus("success");
-        }
-      } catch (err) {
-        console.error("⚠️ Erreur inattendue :", err);
-        setSupabaseStatus("error");
-      }
+ useEffect(() => {
+  const fetchHeures = async () => {
+    try {
+      console.log("🔄 Chargement des heures depuis :", process.env.REACT_APP_API_URL);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/heures`);
+      if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
+      const data = await response.json();
+      console.log("✅ Heures chargées :", data);
+      setHeures(data);
+    } catch (error) {
+      console.error("❌ Erreur chargement heures:", error);
     }
-    testSupabase();
-  }, []);
+  };
+  fetchHeures();
+}, []);
+
 
   // ✅ Génération des horaires
   function genererHeures(debut, fin, intervalleMinutes) {

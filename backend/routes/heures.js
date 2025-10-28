@@ -1,21 +1,21 @@
-// backend/routes/heures.js
-const express = require("express");
+import express from "express";
+import { supabase } from "../db.js"; // ✅ bien avec { ... }
+
 const router = express.Router();
-const { supabase } = require("../supabaseClient");
 
-// 🔹 Récupération de tous les horaires disponibles
 router.get("/", async(req, res) => {
-    const { data, error } = await supabase
-        .from("heure")
-        .select("id, horaire")
-        .order("horaire", { ascending: true });
+    try {
+        const { data, error } = await supabase
+            .from("heure")
+            .select("*")
+            .order("horaire", { ascending: true });
 
-    if (error) {
-        console.error("Erreur Supabase heures:", error);
-        return res.status(500).json({ error: error.message });
+        if (error) throw error;
+        res.status(200).json(data);
+    } catch (err) {
+        console.error("❌ Erreur /api/heures :", err.message);
+        res.status(500).json({ error: err.message });
     }
-
-    res.json(data);
 });
 
-module.exports = router;
+export default router;
