@@ -5,16 +5,17 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format, isToday } from "date-fns";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FaUserFriends, FaCalendarAlt, FaClock } from "react-icons/fa";
+import { FaUserFriends, FaCalendarAlt } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "./supabaseClient";
 import "./App.css";
+
 console.log("✅ Reservation.js chargé !");
 
 function Reservation() {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedHeure, setSelectedHeure] = useState("");
+  const [selectedHeureId, setSelectedHeureId] = useState("");   
   const [personnes, setPersonnes] = useState(2);
   const [service, setService] = useState("lunch");
   const [typeClient, setTypeClient] = useState("");
@@ -32,24 +33,24 @@ function Reservation() {
   });
   const [supabaseStatus, setSupabaseStatus] = useState("pending");
 
- useEffect(() => {
-  const fetchHeures = async () => {
-    try {
-      console.log("🔄 Chargement des heures depuis :", process.env.REACT_APP_API_URL);
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/heures`);
-      if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
-      const data = await response.json();
-      console.log("✅ Heures chargées :", data);
-      setHeures(data);
-    } catch (error) {
-      console.error("❌ Erreur chargement heures:", error);
-    }
-  };
-  fetchHeures();
-}, []);
+  /* --- Récupération des heures depuis le backend --- */
+  useEffect(() => {
+    const fetchHeures = async () => {
+      try {
+        console.log("🔄 Chargement des heures depuis :", process.env.REACT_APP_API_URL);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/heures`);
+        if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
+        const data = await response.json();
+        console.log("✅ Heures chargées :", data);
+        setHeuresDispo(data.map((h) => h.horaire));
+      } catch (error) {
+        console.error("❌ Erreur chargement heures:", error);
+      }
+    };
+    fetchHeures();
+  }, []);
 
-
-  // ✅ Génération des horaires
+  /* --- Génération des horaires --- */
   function genererHeures(debut, fin, intervalleMinutes) {
     const heures = [];
     let [h, m] = debut.split(":").map(Number);
@@ -68,7 +69,7 @@ function Reservation() {
   const heuresLunch = genererHeures("12:00", "14:30", 15);
   const heuresDiner = genererHeures("18:00", "22:00", 15);
 
-  // 🕒 Filtrage des heures selon la date et le service
+  /* --- Filtrage des heures selon la date et le service --- */
   useEffect(() => {
     const maintenant = new Date();
     const heures = service === "lunch" ? heuresLunch : heuresDiner;
@@ -85,14 +86,14 @@ function Reservation() {
     }
   }, [selectedDate, service]);
 
-  // ✅ Envoi de la réservation
+  /* --- Envoi de la réservation --- */
   const handleReservation = async () => {
     if (selectedDate < new Date().setHours(0, 0, 0, 0)) {
       toast.error("Vous ne pouvez pas réserver pour une date passée.");
       return;
     }
 
-    if (!selectedDate || !selectedHeure || !formData.prenom || !formData.nom || !formData.email) {
+    if (!selectedDate || !setSelectedHeureId || !formData.prenom || !formData.nom || !formData.email) {
       toast.warning("Merci de compléter tous les champs obligatoires.");
       return;
     }
@@ -104,7 +105,7 @@ function Reservation() {
         restaurant_id: 1,
         personnes,
         date: formattedDate,
-        heure: selectedHeure,
+        heure_id: selectedHeureId,
         service,
         type: typeClient,
         ...formData,
@@ -130,32 +131,32 @@ function Reservation() {
   const progress = ((confirmed ? 4 : step) / 4) * 100;
 
   return (
-    <div style={responsiveContainer}>
+    <div className="app-container fadeIn">
       <motion.div
         layout
         initial={{ opacity: 0, y: 40, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6 }}
-        style={cardStyle}
+        className="reservation-card"
       >
         {/* ✅ Statut Supabase */}
-        <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-          {supabaseStatus === "pending" && <p style={{ color: "#6c757d" }}>⏳ Vérification de la connexion à Supabase...</p>}
+        <div className="supabase-status">
+          {supabaseStatus === "pending" && <p>⏳ Vérification de la connexion à Supabase...</p>}
           {supabaseStatus === "success" && <p style={{ color: "#28a745" }}>✅ Connexion Supabase OK</p>}
           {supabaseStatus === "error" && <p style={{ color: "#dc3545" }}>❌ Erreur de connexion à Supabase</p>}
         </div>
 
         {/* ✅ Barre de progression */}
-        <div style={progressBarContainer}>
+        <div className="progress-bar-container">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.5 }}
-            style={progressBarFill}
+            className="progress-bar-fill"
           />
         </div>
 
-        <h1 style={title}>Réservation</h1>
+        <h1 className="title">Réservation</h1>
 
         <AnimatePresence mode="wait">
           {!confirmed && (
@@ -168,23 +169,23 @@ function Reservation() {
             >
               {/* Étape 1 */}
               {step === 1 && (
-                <div style={{ textAlign: "center" }}>
+                <div className="step-content">
                   <label>Nombre de personnes :</label>
-                  <div style={inputBox}>
-                    <FaUserFriends style={iconStyle} />
+                  <div className="input-box">
+                    <FaUserFriends className="icon" />
                     <input
                       type="number"
                       min="1"
                       max="12"
                       value={personnes}
                       onChange={(e) => setPersonnes(e.target.value)}
-                      style={fieldStyle}
+                      className="field"
                     />
                   </div>
 
                   <label>Date :</label>
-                  <div style={inputBox}>
-                    <FaCalendarAlt style={iconStyle} />
+                  <div className="input-box">
+                    <FaCalendarAlt className="icon" />
                     <DatePicker
                       selected={selectedDate}
                       onChange={(date) => setSelectedDate(date)}
@@ -192,48 +193,33 @@ function Reservation() {
                       minDate={new Date()}
                       filterDate={(date) => date >= new Date()}
                       placeholderText="Sélectionnez une date"
-                      style={fieldStyle}
+                      className="field"
                     />
                   </div>
 
                   <label>Service :</label>
-                  <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "0.5rem" }}>
+                  <div className="service-buttons">
                     <button
                       onClick={() => setService("lunch")}
-                      style={{
-                        ...serviceButton,
-                        backgroundColor: service === "lunch" ? "#007bff" : "#f1f3f5",
-                        color: service === "lunch" ? "white" : "#333",
-                      }}
+                      className={`service-button ${service === "lunch" ? "active" : ""}`}
                     >
                       Midi
                     </button>
                     <button
                       onClick={() => setService("diner")}
-                      style={{
-                        ...serviceButton,
-                        backgroundColor: service === "diner" ? "#007bff" : "#f1f3f5",
-                        color: service === "diner" ? "white" : "#333",
-                      }}
+                      className={`service-button ${service === "diner" ? "active" : ""}`}
                     >
                       Soir
                     </button>
                   </div>
 
                   <label>Heures disponibles :</label>
-                  <div style={heuresGrid}>
+                  <div className="heures-grid">
                     {heuresDispo.map((h) => (
                       <button
                         key={h}
-                        onClick={() => setSelectedHeure(h)}
-                        style={{
-                          backgroundColor: selectedHeure === h ? "#007bff" : "#f1f3f5",
-                          color: selectedHeure === h ? "#fff" : "#333",
-                          border: "1px solid #dee2e6",
-                          borderRadius: "8px",
-                          padding: "0.6rem 0",
-                          cursor: "pointer",
-                        }}
+                        onClick={() => selectedHeureId(h)}
+                        className={`heure-button ${setSelectedHeureId === h ? "active" : ""}`}
                       >
                         {h}
                       </button>
@@ -242,9 +228,9 @@ function Reservation() {
 
                   <button
                     onClick={() =>
-                      selectedHeure ? setStep(2) : toast.warning("⏰ Choisissez une heure !")
+                      setSelectedHeureId ? setStep(2) : toast.warning("⏰ Choisissez une heure !")
                     }
-                    style={mainButton}
+                    className="main-button"
                   >
                     Suivant →
                   </button>
@@ -253,64 +239,52 @@ function Reservation() {
 
               {/* Étape 2 */}
               {step === 2 && (
-                <div style={{ textAlign: "center" }}>
-                  <h3 style={{ marginBottom: "1rem" }}>Vous êtes :</h3>
-                <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  gap: "1rem",
-                  marginTop: "1rem",
-                  flexWrap: "wrap",
-                }}
-              >
-      <button
-        onClick={() => {
-          setTypeClient("societe");
-          setStep(3);
-        }}
-        style={{ ...mainButton, backgroundColor: "#007bff", minWidth: "140px" }}
-      >
-        Société
-      </button>
+                <div className="step-content">
+                  <h3>Vous êtes :</h3>
+                  <div className="client-buttons">
+                    <button
+                      onClick={() => {
+                        setTypeClient("societe");
+                        setStep(3);
+                      }}
+                      className="main-button"
+                    >
+                      Société
+                    </button>
 
-      <button
-        onClick={() => {
-          setTypeClient("particulier");
-          setStep(3);
-        }}
-        style={{ ...mainButton, backgroundColor: "#28a745", minWidth: "140px" }}
-      >
-        Particulier
-      </button>
-    </div>
+                    <button
+                      onClick={() => {
+                        setTypeClient("particulier");
+                        setStep(3);
+                      }}
+                      className="main-button green"
+                    >
+                      Particulier
+                    </button>
+                  </div>
 
-    {/* ✅ Bouton Retour vers l’étape 1 */}
-    <div style={{ marginTop: "1.5rem" }}>
-      <button onClick={() => setStep(1)} style={backLink}>
-        ← Retour
-      </button>
-    </div>
-  </div>
-)}
-
+                  <button onClick={() => setStep(1)} className="back-link">
+                    ← Retour
+                  </button>
+                </div>
+              )}
 
               {/* Étape 3 */}
               {step === 3 && (
-                <div>
+                <div className="step-content">
                   {typeClient === "societe" && (
                     <>
                       <input
                         placeholder="Nom de société"
                         value={formData.societe}
                         onChange={(e) => setFormData({ ...formData, societe: e.target.value })}
-                        style={inputStyle}
+                        className="input-field"
                       />
                       <input
                         placeholder="N° TVA"
                         value={formData.tva}
                         onChange={(e) => setFormData({ ...formData, tva: e.target.value })}
-                        style={inputStyle}
+                        className="input-field"
                       />
                     </>
                   )}
@@ -319,66 +293,63 @@ function Reservation() {
                     placeholder="Prénom"
                     value={formData.prenom}
                     onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
-                    style={inputStyle}
+                    className="input-field"
                   />
                   <input
                     placeholder="Nom"
                     value={formData.nom}
                     onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
-                    style={inputStyle}
+                    className="input-field"
                   />
                   <input
                     placeholder="Téléphone"
                     value={formData.tel}
                     onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
-                    style={inputStyle}
+                    className="input-field"
                   />
                   <input
                     placeholder="Email"
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    style={inputStyle}
+                    className="input-field"
                   />
                   <textarea
                     placeholder="Remarque (facultatif)"
                     value={formData.remarque}
                     onChange={(e) => setFormData({ ...formData, remarque: e.target.value })}
-                    style={{ ...inputStyle, height: "80px" }}
+                    className="input-field"
+                    style={{ height: "80px" }}
                   />
 
-                  <div style={{ textAlign: "center", marginTop: "1rem" }}>
-                    <button onClick={handleReservation} disabled={submitting} style={mainButton}>
-                      {submitting ? "Envoi en cours..." : "Confirmer la réservation"}
-                    </button>
-                    <br />
-                    <button onClick={() => setStep(2)} style={backLink}>
-                      ← Retour
-                    </button>
-                  </div>
+                  <button onClick={handleReservation} disabled={submitting} className="main-button">
+                    {submitting ? "Envoi en cours..." : "Confirmer la réservation"}
+                  </button>
+                  <button onClick={() => setStep(2)} className="back-link">
+                    ← Retour
+                  </button>
                 </div>
               )}
             </motion.div>
           )}
 
-          {/* Écran final */}
+          {/* Confirmation */}
           {confirmed && (
             <motion.div
               key="confirmation"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
               transition={{ duration: 0.6 }}
-              style={{ textAlign: "center", padding: "2rem" }}
+              className="confirmation"
             >
               <h2>🎉 Merci pour votre réservation !</h2>
-              <p style={{ marginTop: "1rem" }}>
+              <p>
                 Nous avons bien enregistré votre demande pour le{" "}
                 <strong>{format(selectedDate, "dd/MM/yyyy")}</strong> à{" "}
-                <strong>{selectedHeure}</strong>.
+                <strong>{setSelectedHeureId}</strong>.
               </p>
               <p>Un e-mail de confirmation vous sera envoyé à {formData.email}.</p>
-              <button onClick={() => window.location.reload()} style={{ ...mainButton, marginTop: "1rem" }}>
+              <button onClick={() => window.location.reload()} className="main-button">
                 Nouvelle réservation
               </button>
             </motion.div>
@@ -387,122 +358,9 @@ function Reservation() {
 
         <ToastContainer position="top-center" autoClose={2500} hideProgressBar />
       </motion.div>
-    
+    </div>
   );
 }
 
-/* --- Styles --- */
-const responsiveContainer = {
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  background: "linear-gradient(135deg, #f8f9fa 0%, #eef2f3 100%)",
-  minHeight: "100vh",
-  padding: "1rem",
-};
-
-const cardStyle = {
-  width: "100%",
-  maxWidth: "650px",
-  background: "#fff",
-  borderRadius: "20px",
-  boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-  padding: "2rem 2.5rem",
-};
-
-const inputBox = {
-  display: "flex",
-  alignItems: "center",
-  background: "#f8f9fa",
-  border: "1px solid #dee2e6",
-  borderRadius: "8px",
-  padding: "0.4rem 0.8rem",
-  marginTop: "0.4rem",
-  marginBottom: "1rem",
-  width: "100%",
-  boxSizing: "border-box",
-};
-
-const heuresGrid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(3, 1fr)",
-  gap: "0.8rem",
-  marginTop: "1rem",
-  marginBottom: "1rem",
-};
-
-const iconStyle = { color: "#007bff", marginRight: "0.6rem" };
-
-const fieldStyle = {
-  border: "none",
-  outline: "none",
-  background: "transparent",
-  width: "100%",
-  fontSize: "1rem",
-};
-
-const inputStyle = {
-  width: "100%",
-  marginBottom: "0.8rem",
-  padding: "0.8rem",
-  borderRadius: "8px",
-  border: "1px solid #ced4da",
-  fontSize: "1rem",
-  boxSizing: "border-box",
-};
-
-const progressBarContainer = {
-  height: "6px",
-  background: "#e9ecef",
-  borderRadius: "3px",
-  marginBottom: "1.5rem",
-};
-
-const progressBarFill = {
-  height: "100%",
-  background: "linear-gradient(90deg, #007bff, #00b4d8)",
-  borderRadius: "3px",
-};
-
-const title = {
-  textAlign: "center",
-  color: "#222",
-  fontSize: "1.8rem",
-  marginBottom: "1.5rem",
-};
-
-const mainButton = {
-  backgroundColor: "#007bff",
-  color: "white",
-  border: "none",
-  borderRadius: "8px",
-  padding: "0.7rem 1.5rem",
-  fontSize: "1rem",
-  cursor: "pointer",
-  transition: "0.2s ease",
-};
-
-const serviceButton = {
-  border: "1px solid #ccc",
-  borderRadius: "8px",
-  padding: "0.6rem 1rem",
-  fontSize: "1rem",
-  cursor: "pointer",
-};
-
-const backLink = {
-  border: "none",
-  background: "none",
-  color: "#6c757d",
-  marginTop: "0.5rem",
-  cursor: "pointer",
-  textDecoration: "underline",
-};
-
 export default Reservation;
-
-
-
-
-
 

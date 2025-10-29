@@ -5,8 +5,9 @@ import QRCode from "qrcode";
 import { Resend } from "resend";
 import { format } from "date-fns";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const router = express.Router();
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 
 /**
  * Vérifie le format TVA belge
@@ -123,7 +124,7 @@ async function sendConfirmationEmails({
 }
 
 /**
- *  ROUTE POST — Création de réservation
+ *  ROUTE POST — Création de réservation (version sécurisée)
  */
 router.post("/", async (req, res) => {
   try {
@@ -135,7 +136,7 @@ router.post("/", async (req, res) => {
       nom,
       email,
       date,
-      heure_id, // ✅ on attend maintenant un ID d'heure
+      heure_id,
       personnes,
       service,
       comment,
@@ -145,43 +146,39 @@ router.post("/", async (req, res) => {
       tva,
     } = req.body;
 
-    // Normalisations
+    // Normalisation des champs
     const normalizedComment =
       (comment && comment.trim()) || (remarque && remarque.trim()) || "";
     const normalizedService =
       service && service.toLowerCase() === "diner" ? "dinner" : service;
     const name = `${prenom || ""} ${nom || ""}`.trim();
 
-    // ✅ Vérification TVA
+    // 🧾 Vérification TVA (facultative)
     if (tva && !isValidBelgianVAT(tva)) {
-      console.warn("⚠️ TVA invalide reçue :", tva);
+      console.warn("⚠️ TVA invalide :", tva);
       return res
         .status(400)
-        .json({ error: "Le numéro de TVA doit commencer par 'BE' et comporter 10 chiffres." });
+        .json({ success: false, message: "Numéro de TVA invalide (ex: BE0123456789)" });
     }
 
-    // QR code
+    // 🕒 Vérification champs requis
+    if (!email || !date || !heure_id) {
+      console.warn("⚠️ Champs manquants :", { email, date, heure_id });
+      return res
+        .status(400)
+        .json({ success: false, message: "Champs requis manquants" });
+    }
+
+    // 🧩 Génération QR Code
     const formattedDate = format(new Date(date), "dd-MM-yyyy");
     const id = uuidv4();
     const qrData = `Réservation #${id} - ${name} - ${formattedDate}`;
     const qrCodeBase64 = await QRCode.toDataURL(qrData);
 
-    console.log("🧾 Tentative d’insertion Supabase :", {
-      id,
-      name,
-      email,
-      date,
-      heure_id,
-      personnes,
-      service: normalizedService,
-      comment: normalizedComment,
-      tel,
-      societe,
-      tva,
-    });
+    console.log("🧾 Tentative insertion Supabase…");
 
-    // ✅ insertion avec heure_id
-    const { error } = await supabase.from("reservations").insert([
+    // ✅ Insertion dans la table "reservations"
+    const { error: insertError } = await supabase.from("reservations").insert([
       {
         id,
         name,
@@ -198,38 +195,58 @@ router.post("/", async (req, res) => {
       },
     ]);
 
-    if (error) {
-      console.error("❌ Erreur Supabase :", error);
-      return res.status(500).json({ error: error.message, details: error });
+    if (insertError) {
+      console.error("❌ Erreur insertion Supabase :", insertError.message);
+      return res.status(500).json({
+        success: false,
+        error: insertError.message,
+      });
     }
-    
-    // ✅ Envoi des emails avec affichage horaire optionnel
-    const { data: heureData } = await supabase
-      .from("heure")
-      .select("horaire")
-      .eq("id", heure_id)
-      .single();
 
-    const heure = heureData?.horaire || "—";
+    // ✅ Récupération de l’heure associée
+    let heure = "—";
+    try {
+      const { data: heureData, error: heureError } = await supabase
+        .from("heure")
+        .select("horaire")
+        .eq("id", heure_id)
+        .maybeSingle();
 
-    console.log("🚀 Envoi de mail imminent :", { email, name, heure });
-    await sendConfirmationEmails({
-      email,
-      name,
-      date,
-      heure_id,
-      personnes,
-      service: normalizedService,
-      comment: normalizedComment,
-      tel,
-      societe,
-      tva,
+      if (heureError) console.warn("⚠️ Erreur récupération heure :", heureError.message);
+      heure = heureData?.horaire || "—";
+    } catch (err) {
+      console.warn("⚠️ Impossible de récupérer l’heure :", err.message);
+    }
+
+    // ✉️ Envoi d’email (sécurisé, non bloquant)
+    try {
+      console.log("🚀 Envoi d’email à", email);
+      await sendConfirmationEmails({
+        email,
+        name,
+        date,
+        heure,
+        personnes,
+        service: normalizedService,
+        tel,
+        societe,
+        tva,
+      });
+    } catch (mailError) {
+      console.warn("⚠️ Erreur d’envoi email :", mailError.message);
+    }
+
+    res.status(201).json({
+      success: true,
+      message: "Réservation enregistrée avec succès ✅",
+      qrCode: qrCodeBase64,
     });
-
-    res.status(201).json({ success: true, qrCode: qrCodeBase64 });
   } catch (err) {
-    console.error("❌ Erreur POST /api/reservations :", err);
-    res.status(500).json({ error: err.message });
+    console.error("💥 Erreur interne /api/reservations :", err);
+    res.status(500).json({
+      success: false,
+      error: err.message || "Erreur serveur inconnue",
+    });
   }
 });
 
@@ -237,9 +254,14 @@ router.post("/", async (req, res) => {
  * 🧾 ROUTE GET — Liste des réservations
  */
 router.get("/", async (req, res) => {
-  const { data, error } = await supabase.from("reservations").select("*");
-  if (error) return res.status(500).json({ error: error.message });
-  res.json(data);
+  try {
+    const { data, error } = await supabase.from("reservations").select("*");
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error("❌ Erreur GET /api/reservations :", err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 export default router;

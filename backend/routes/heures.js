@@ -1,5 +1,5 @@
 import express from "express";
-import { supabase } from "../db.js"; // ✅ bien avec { ... }
+import { supabase } from "../db.js";
 
 const router = express.Router();
 
