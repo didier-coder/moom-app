@@ -24,18 +24,13 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-    origin: function(origin, callback) {
-        console.log("🌐 Requête CORS depuis :", origin);
-        if (!origin || allowedOrigins.includes(origin) || /\.moom\.be$/.test(origin)) {
-            callback(null, true);
-        } else {
-            console.warn(`❌ CORS refusé pour : ${origin}`);
-            callback(new Error(`Non autorisé par CORS : ${origin}`));
-        }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: [
+        "https://app.moom.be",
+        "https://moom-app.vercel.app",
+        "http://localhost:3000"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
 }));
 
 app.use(express.json());

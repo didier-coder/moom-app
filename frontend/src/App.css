@@ -140,6 +140,27 @@ label {
 
 /* ---- Boutons principaux ---- */
 
+.heure-button {
+  margin: 5px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  transition: all 0.2s ease-in-out;
+}
+
+.heure-button:hover {
+  background-color: #f7f7f7;
+  transform: scale(1.05);
+}
+
+.heure-button.active {
+  background-color: #222;
+  color: white;
+  border-color: #222;
+  transform: scale(1.1);
+}
+
 .main-button {
     background-color: #bad5b7;
     color: white;

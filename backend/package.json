@@ -1,8 +1,8 @@
 {
     "name": "moom-backend",
     "version": "1.0.0",
-    "type": "module",
     "description": "Backend API for Moom (Express + Supabase + Resend)",
+    "type": "module",
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
