@@ -13,24 +13,13 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// ✅ CORS avec autorisation des sous-domaines moom.be
-const allowedOrigins = [
-    "http://localhost:3000",
-    "https://app.moom.be",
-    "https://www.app.moom.be",
-    "https://moom-frontend.vercel.app",
-    "https://moom-app.vercel.app",
-    "https://moom-backend-clean.vercel.app"
-];
-
+// Autoriser uniquement ton frontend
 app.use(cors({
-    origin: [
-        "https://app.moom.be",
-        "https://moom-app.vercel.app",
-        "http://localhost:3000"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
+  origin: [
+    "https://moom-frontend.vercel.app",
+    "https://app.moom.be",
+    "http://localhost:3000"
+  ]
 }));
 
 app.use(express.json());
@@ -42,9 +31,9 @@ app.use("/api/fermetures", fermetures);
 app.use("/api/reservations", reservations);
 
 app.get("/api/ping", (req, res) => {
-    res.json({ message: "pong 🧩 serveur backend actif !" });
+  res.json({ message: "pong 🧩 serveur backend actif !" });
 });
 
 app.listen(PORT, () => {
-    console.log(`✅ Serveur en écoute sur le port ${PORT}`);
+  console.log(`✅ Serveur en écoute sur le port ${PORT}`);
 });
